@@ -2,9 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
-const twilio = require('twilio');
 const nodemailer = require('nodemailer');
-const axios = require('axios');
 const { Pool } = require('pg');
 const app = express();
 
@@ -20,14 +18,26 @@ const pool = dbUrl
         database: process.env.DB_DATABASE || 'rentplay',
     });
 
-pool.on('error', (err) => console.error('[DB] Unexpected pool error:', err.message));
-
 // Middleware
-app.use(cors({ origin: '*', methods: 'GET,POST,PUT,DELETE,OPTIONS', allowedHeaders: 'Content-Type,Authorization' }));
+app.use(cors({ origin: '*', methods: 'GET,POST,PUT,DELETE,OPTIONS' }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// SMS / Email Setup
+// ── STATIC WEBSITE SERVING ──
+// 1. Serve files from public folder
+app.use(express.static(path.join(__dirname, 'public')));
+
+// 2. Handle extension-less URLs (e.g. /search -> search.html)
+app.get('/:page', (req, res, next) => {
+    const page = req.params.page;
+    if (page.includes('.') || page.startsWith('api')) return next();
+    const filePath = path.join(__dirname, 'public', `${page}.html`);
+    res.sendFile(filePath, (err) => {
+        if (err) next();
+    });
+});
+
+// ── EMAIL SETUP ──
 const emailUser = process.env.EMAIL_USER || '';
 const emailPass = process.env.EMAIL_PASS || '';
 let mailTransporter = null;
@@ -37,24 +47,17 @@ if (emailUser && emailPass && !emailUser.includes('your-email')) {
 
 async function sendBookingEmail(toEmail, userName, itemName, bookingId, totalPrice) {
     if (!toEmail || !mailTransporter) return;
-    const html = `<div style="font-family:'Segoe UI',sans-serif;max-width:500px;margin:auto;background:#0b0d12;border-radius:16px;padding:30px;color:#fff;">
+    const html = `<div style="font-family:sans-serif;max-width:500px;margin:auto;background:#0b0d12;border-radius:16px;padding:30px;color:#fff;">
         <h2>Booking Confirmed ✅</h2>
         <p>Hello ${userName}, your order for <b>${itemName}</b> is confirmed.</p>
         <p><b>Booking ID:</b> #${bookingId}</p>
         <p><b>Total:</b> ${totalPrice}</p>
     </div>`;
-    try { await mailTransporter.sendMail({ from: `"GearGo" <${emailUser}>`, to: toEmail, subject: `✅ Booking Confirmed: ${itemName}`, html }); } catch (err) { console.error(`[Email] Failed: ${err.message}`); }
+    try { await mailTransporter.sendMail({ from: `"GearGo" <${emailUser}>`, to: toEmail, subject: `✅ Booking Confirmed: ${itemName}`, html }); } catch (err) { }
 }
 
 // ── API ROUTES ──
-
-// Simple health check
 app.get('/api/health', (req, res) => res.json({ status: 'ok', mode: 'PostgreSQL' }));
-
-// Root fallback (for Vercel routing edge cases)
-app.get('/', (req, res) => {
-    res.sendFile(path.join(process.cwd(), 'public', 'index.html'));
-});
 
 app.get('/api/search', async (req, res) => {
     const query = (req.query.q || '').toLowerCase();
@@ -140,11 +143,16 @@ app.post('/api/reviews', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+// Root fallback (Home page)
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 // Export the app for Vercel
 module.exports = app;
 
 // Local dev support
 if (process.env.NODE_ENV !== 'production') {
     const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => console.log(`🚀 API running on http://localhost:${PORT}`));
+    app.listen(PORT, () => console.log(`🚀 Master Server running on http://localhost:${PORT}`));
 }
