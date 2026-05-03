@@ -6,10 +6,10 @@
     "type": "git",
     "url": "git+https://github.com/kummithaabhiramreddy/Gear-Go.git"
   },
-  "main": "server.js",
+  "main": "api/index.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "npx nodemon server.js",
+    "start": "node api/index.js",
+    "dev": "npx nodemon api/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

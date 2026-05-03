@@ -149,7 +149,7 @@ async function sendBookingEmail(toEmail, userName, itemName, bookingId, totalPri
 //  API ROUTES — All using PostgreSQL
 // ══════════════════════════════════════════════════════════
 
-app.get('/', (_req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+app.get('/', (_req, res) => res.sendFile(path.join(__dirname, '..', 'index.html')));
 
 // ── SEARCH / ITEMS ──
 app.get('/api/search', async (req, res) => {
@@ -498,7 +498,7 @@ app.get('/api/booking-status/:id', async (req, res) => {
 });
 
 // ── STATIC FILES ──
-app.use(express.static('./'));
+app.use(express.static(path.join(__dirname, '..')));
 
 // ── START SERVER ──
 if (process.env.NODE_ENV !== 'production') {
