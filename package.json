@@ -1,0 +1,35 @@
+{
+  "name": "@kummithaabhiramreddy/gear-go",
+  "version": "1.0.0",
+  "description": "Gear Go - A gaming rental platform",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kummithaabhiramreddy/Gear-Go.git"
+  },
+  "main": "server.js",
+  "scripts": {
+    "start": "dotenvx run -- node server.js",
+    "dev": "dotenvx run -- npx nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@dotenvx/dotenvx": "^1.61.0",
+    "@kummithaabhiramreddy/gear-go": "^1.0.0",
+    "axios": "^1.15.0",
+    "body-parser": "^2.2.2",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.0",
+    "express": "^4.22.1",
+    "nodemailer": "^8.0.5",
+    "pg": "^8.20.0",
+    "qrcode": "^1.5.4",
+    "twilio": "^5.13.1"
+  }
+}
