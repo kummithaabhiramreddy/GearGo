@@ -149,7 +149,7 @@ async function sendBookingEmail(toEmail, userName, itemName, bookingId, totalPri
 //  API ROUTES — All using PostgreSQL
 // ══════════════════════════════════════════════════════════
 
-app.get('/', (_req, res) => res.send('GearGo API (PostgreSQL Mode) is Running!'));
+app.get('/', (_req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 
 // ── SEARCH / ITEMS ──
 app.get('/api/search', async (req, res) => {
