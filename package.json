@@ -6,7 +6,6 @@
     "type": "git",
     "url": "git+https://github.com/kummithaabhiramreddy/Gear-Go.git"
   },
-  "main": "api/index.js",
   "scripts": {
     "start": "node api/index.js",
     "dev": "npx nodemon api/index.js"

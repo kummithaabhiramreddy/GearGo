@@ -51,6 +51,11 @@ async function sendBookingEmail(toEmail, userName, itemName, bookingId, totalPri
 // Simple health check
 app.get('/api/health', (req, res) => res.json({ status: 'ok', mode: 'PostgreSQL' }));
 
+// Root fallback (for Vercel routing edge cases)
+app.get('/', (req, res) => {
+    res.sendFile(path.join(process.cwd(), 'index.html'));
+});
+
 app.get('/api/search', async (req, res) => {
     const query = (req.query.q || '').toLowerCase();
     const { storeId } = req.query;
