@@ -956,7 +956,7 @@ async function clearAllPartners() {
   const isLocal = window.location.protocol === 'file:';
   if (isLocal) { allPartners=[]; saveLocalDashboardData(DASHBOARD_PARTNER_KEY, allPartners); toast("All partners removed",'ok'); fetchData(); return; }
   try {
-    const res = await fetch('http://127.0.0.1:3000/api/delete-all-delivery-boys',{method:'POST'});
+    const res = await fetch('/api/delete-all-delivery-boys',{method:'POST'});
     const r = await res.json();
     if (r.success) { toast("All partners removed",'ok'); fetchData(); } else toast(r.error||"Failed",'err');
   } catch { toast("Network error",'err'); }
@@ -973,7 +973,7 @@ async function deletePartner(id) {
     toast('Deleted successfully','ok'); fetchData(); return;
   }
   try {
-    const base='http://127.0.0.1:3000';
+    const base = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '3000' ? 'http://localhost:3000' : '';
     const path = contextTargetType==='review' ? `/api/reviews/${id}` : `/api/delete-delivery-boy`;
     const res = await fetch(`${base}${path}`,{method: contextTargetType==='review'?'DELETE':'POST', headers:{'Content-Type':'application/json'}, body: contextTargetType==='review'?null:JSON.stringify({id})});
     if (!res.ok) throw new Error(await res.text()||res.statusText);
@@ -1049,7 +1049,7 @@ function updateMetricsUI() {
 }
 
 async function fetchData() {
-  const api = (window.location.port==='3000') ? '' : 'http://localhost:3000';
+  const api = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '3000' ? 'http://localhost:3000' : '';
   let localRentals  = loadLocalDashboardData(DASHBOARD_BOOKING_KEY, SAMPLE_DASHBOARD_RENTALS);
   let localPartners = loadLocalDashboardData(DASHBOARD_PARTNER_KEY, SAMPLE_DASHBOARD_PARTNERS);
   let localReviews  = loadLocalDashboardData(DASHBOARD_REVIEW_KEY,  SAMPLE_DASHBOARD_REVIEWS);

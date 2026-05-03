@@ -1511,6 +1511,15 @@
 
     // ─── PAGE LOAD / STATS ────────────────────────────────────────
     window.addEventListener('load', async () => {
+      // Check for signin parameter (from reset page)
+      const params = new URLSearchParams(window.location.search);
+      if (params.has('signin')) {
+        const email = params.get('signin');
+        openSignin();
+        document.getElementById('si-email').value = email;
+        showToast('✅ Password updated! Please sign in.');
+      }
+
       // Check if client ID is configured and show notice if not
       if (GOOGLE_CLIENT_ID === '' || GOOGLE_CLIENT_ID.includes('YOUR_')) {
         document.getElementById('gauthNotice').classList.add('show');
@@ -1520,7 +1529,7 @@
       initGoogleAuth();
 
       try {
-        const r = await fetch('http://localhost:3000/api/stats');
+        const r = await fetch('/api/stats');
         const s = await r.json();
         setTimeout(() => {
           animateCounter(document.getElementById('ctr-items'), s.itemsNearby || 30, '+', 1400);
@@ -1993,10 +2002,10 @@
 
       try {
         if (window.location.protocol === 'file:') {
-          throw new Error('Please run the server (npm start) and open http://localhost:3000 to use this feature.');
+          throw new Error('Please run the server (npm start) to use this feature.');
         }
 
-        const res = await fetch('http://localhost:3000/api/auth-flow/dispatch-otp', {
+        const res = await fetch('/api/auth-flow/dispatch-otp', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: _fpEmail })
@@ -2004,7 +2013,7 @@
 
         if (!res.ok) {
           if (!res.headers.get('X-Backend')) {
-            throw new Error('You are hitting the wrong server (e.g., Live Server). Please open http://localhost:3000 instead.');
+            throw new Error('You are hitting the wrong server. Please use the correct URL.');
           }
           const errData = await res.json().catch(() => ({ message: 'Server responded with error ' + res.status }));
           throw new Error(errData.message || 'Server error');
@@ -2021,13 +2030,13 @@
             document.getElementById('fpEmailPreview').style.display = 'block';
             document.getElementById('fpCodeDisplay').style.display = 'block';
             document.getElementById('fpCodeDisplay').textContent = data.otp;
-            document.getElementById('fpSimMsg').textContent = '⚠️ Email credentials not set in server. Code logged above.';
-            showToast('📧 Code generated (Simulated)');
+            document.getElementById('fpSimMsg').innerHTML = `⚠️ Email not set. <br><a href="${data.link}" style="color:var(--accent); text-decoration:underline;">Click here to use the Reset Link</a>`;
+            showToast('📧 Link generated (Simulated)');
           } else {
             document.getElementById('fpEmailPreview').style.display = 'block';
             document.getElementById('fpCodeDisplay').style.display = 'none';
-            document.getElementById('fpSimMsg').textContent = '✅ Reset code sent to your email. Please check your inbox.';
-            showToast('📧 Reset code sent to your email!');
+            document.getElementById('fpSimMsg').textContent = '✅ A reset link has been sent to your email. You can click the link in your email or enter the OTP code below.';
+            showToast('📧 Reset link sent to your email!');
           }
 
           goFPStep(2);
@@ -2056,14 +2065,14 @@
       showToast('⏳ Verifying code...');
 
       try {
-        const res = await fetch('http://localhost:3000/api/auth-flow/confirm-otp', {
+        const res = await fetch('/api/auth-flow/confirm-otp', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: _fpEmail, otp: entered })
         });
 
         if (!res.ok || !res.headers.get('X-Backend')) {
-          throw new Error('You are hitting the wrong server. Please open http://localhost:3000 instead.');
+          throw new Error('You are hitting the wrong server. Please use the correct URL.');
         }
 
         const data = await res.json();
@@ -2135,7 +2144,7 @@
       
       if (!isLocalHTML) {
         try {
-          const res = await fetch('http://localhost:3000/api/delivery-boys');
+          const res = await fetch('/api/delivery-boys');
           if (res.ok) {
             const data = await res.json();
             if (Array.isArray(data)) riders = data.length;
