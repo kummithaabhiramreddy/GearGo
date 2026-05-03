@@ -53,7 +53,7 @@ app.get('/api/health', (req, res) => res.json({ status: 'ok', mode: 'PostgreSQL'
 
 // Root fallback (for Vercel routing edge cases)
 app.get('/', (req, res) => {
-    res.sendFile(path.join(process.cwd(), 'index.html'));
+    res.sendFile(path.join(process.cwd(), 'public', 'index.html'));
 });
 
 app.get('/api/search', async (req, res) => {
