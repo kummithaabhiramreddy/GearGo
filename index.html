@@ -1219,8 +1219,8 @@
     <div class="logo" onclick="window.location.href='index.html'">Gear<span>Go</span></div>
     <div class="nav-links">
       <a onclick="window.location.href='index.html'">Home</a>
-      <a onclick="window.location.href='Reviewpage.html'">Reviews</a>
-      <a onclick="window.location.href='Dashboard.html'">Dashboard</a>
+      <a onclick="window.location.href='reviews.html'">Reviews</a>
+      <a onclick="window.location.href='dashboard.html'">Dashboard</a>
     </div>
     <div class="nav-right">
       <div id="navAuthBtns" style="display:flex;gap:12px;align-items:center;">
@@ -1301,9 +1301,9 @@
     <div class="logo" style="font-size:1.1rem">Gear<span style="color:var(--accent)">Go</span></div>
     <div>© 2026 GearGo · Rent smart, play more.</div>
     <div style="display:flex;gap:18px">
-      <a href="Terms&conditions.html" style="color:var(--muted);text-decoration:none">T&amp;C</a>
-      <a href="Privacy.html" style="color:var(--muted);text-decoration:none">Privacy</a>
-      <a href="Support.html" style="color:var(--muted);text-decoration:none">Support</a>
+      <a href="terms.html" style="color:var(--muted);text-decoration:none">T&amp;C</a>
+      <a href="privacy.html" style="color:var(--muted);text-decoration:none">Privacy</a>
+      <a href="support.html" style="color:var(--muted);text-decoration:none">Support</a>
     </div>
   </footer>
 
@@ -1926,7 +1926,7 @@
 
       if (!navigator.geolocation) {
         msg.innerHTML = '<span style="color:var(--accent3)">❌ GPS not supported.</span><br>Redirecting...';
-        setTimeout(() => { window.location.href = 'Search page.html'; }, 1500);
+        setTimeout(() => { window.location.href = 'search.html'; }, 1500);
         return;
       }
 
@@ -1937,7 +1937,7 @@
           bar.style.animation = 'none';
           bar.style.width = '100%';
           bar.style.background = 'var(--accent2)';
-          setTimeout(() => { window.location.href = 'Search page.html'; }, 1000);
+          setTimeout(() => { window.location.href = 'search.html'; }, 1000);
         },
         (err) => {
           // GPS OFF or Denied
