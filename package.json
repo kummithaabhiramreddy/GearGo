@@ -2,9 +2,6 @@
   "name": "@kummithaabhiramreddy/gear-go",
   "version": "1.0.0",
   "description": "Gear Go - A gaming rental platform",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kummithaabhiramreddy/Gear-Go.git"
@@ -21,7 +18,6 @@
   "type": "commonjs",
   "dependencies": {
     "@dotenvx/dotenvx": "^1.61.0",
-    "@kummithaabhiramreddy/gear-go": "^1.0.0",
     "axios": "^1.15.0",
     "body-parser": "^2.2.2",
     "cors": "^2.8.6",
