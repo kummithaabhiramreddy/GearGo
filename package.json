@@ -1,5 +1,5 @@
 {
-  "name": "@kummithaabhiramreddy/gear-go",
+  "name": "geargo",
   "version": "1.0.0",
   "description": "Gear Go - A gaming rental platform",
   "repository": {
@@ -17,7 +17,6 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "@dotenvx/dotenvx": "^1.61.0",
     "axios": "^1.15.0",
     "body-parser": "^2.2.2",
     "cors": "^2.8.6",
