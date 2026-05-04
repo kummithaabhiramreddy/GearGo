@@ -1,2197 +1,1093 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GearGo – Rent Anything Near You</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap"
-    rel="stylesheet" />
-
-  <!-- ════════════════════════════════════════════════════════════
-     Google Identity Services SDK  — loads the REAL Google OAuth
-     Client ID: 609499873823-9a5pqf9pqv3ka6v15s3qe3srrdakcein.apps.googleusercontent.com
-════════════════════════════════════════════════════════════ -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
-
-  <style>
-    :root {
-      --bg: #0a0a0f;
-      --surface: #13131a;
-      --card: #1a1a26;
-      --border: #2a2a3d;
-      --accent: #f0e040;
-      --accent2: #4ef0a0;
-      --accent3: #f04e7a;
-      --text: #f0f0f8;
-      --muted: #888899;
-      --radius: 16px;
-      --radius-sm: 10px;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 9999;
-    }
-
-    /* NAV */
-    nav {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 18px 40px;
-      background: rgba(10, 10, 15, 0.88);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .logo {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 1.5rem;
-      letter-spacing: -0.03em;
-      cursor: pointer;
-    }
-
-    .logo span {
-      color: var(--accent);
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 28px;
-      font-size: 0.9rem;
-      font-weight: 500;
-    }
-
-    .nav-links a {
-      color: var(--muted);
-      text-decoration: none;
-      transition: color .2s;
-      cursor: pointer;
-    }
-
-    .nav-links a:hover {
-      color: var(--text);
-    }
-
-    .nav-right {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .btn {
-      padding: 10px 22px;
-      border-radius: 50px;
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 0.85rem;
-      cursor: pointer;
-      border: none;
-      transition: all .2s;
-    }
-
-    .btn-ghost {
-      background: transparent;
-      border: 1.5px solid var(--border);
-      color: var(--text);
-    }
-
-    .btn-ghost:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #0a0a0f;
-    }
-
-    .btn-primary:hover {
-      background: #ffe800;
-      transform: scale(1.04);
-    }
-
-    /* HERO */
-    .hero {
-      position: relative;
-      padding: 90px 40px 70px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 60px;
-      align-items: center;
-      max-width: 1280px;
-      margin: 0 auto;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(17, 102, 135, 0.12);
-      border: 1px solid rgba(240, 224, 64, 0.3);
-      color: var(--accent);
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      padding: 6px 14px;
-      border-radius: 50px;
-      margin-bottom: 22px;
-      animation: fadeUp .6s ease both;
-    }
-
-    .dot-live {
-      width: 7px;
-      height: 7px;
-      background: var(--accent2);
-      border-radius: 50%;
-      animation: pulse 1.4s infinite;
-    }
-
-    @keyframes pulse {
-
-      0%,
-      100% {
-        opacity: 1
-      }
-
-      50% {
-        opacity: .3
-      }
-    }
-
-    h1 {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: clamp(2.4rem, 4vw, 3.8rem);
-      line-height: 1.08;
-      letter-spacing: -0.04em;
-      animation: fadeUp .7s .1s ease both;
-    }
-
-    h1 em {
-      font-style: normal;
-      color: var(--accent);
-    }
-
-    .hero-sub {
-      margin-top: 20px;
-      color: var(--muted);
-      font-size: 1.05rem;
-      line-height: 1.6;
-      max-width: 440px;
-      animation: fadeUp .7s .2s ease both;
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 14px;
-      margin-top: 32px;
-      animation: fadeUp .7s .3s ease both;
-    }
-
-    .hero-stats {
-      display: flex;
-      gap: 32px;
-      margin-top: 44px;
-      animation: fadeUp .7s .4s ease both;
-    }
-
-    .stat-num {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 1.8rem;
-      color: var(--accent2);
-    }
-
-    .stat-label {
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-
-    /* HERO MAP */
-    .hero-visual {
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: right;
-      animation: fadeUp .8s .2s ease both;
-    }
-
-    .map-blob {
-      width: 420px;
-      height: 360px;
-      background: radial-gradient(ellipse at 40% 50%, rgba(78, 240, 160, 0.12) 0%, rgba(240, 78, 122, 0.06) 50%, transparent 70%);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .map-grid {
-      position: absolute;
-      inset: 0;
-      background-image: linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-      background-size: 40px 40px;
-    }
-
-    .map-pin {
-      position: absolute;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      animation: pinBounce 2s ease infinite;
-    }
-
-    @keyframes pinBounce {
-
-      0%,
-      100% {
-        transform: translate(-50%, -50%) translateY(0)
-      }
-
-      50% {
-        transform: translate(-50%, -50%) translateY(-6px)
-      }
-    }
-
-    .map-pin .pin-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 50% 50% 50% 0;
-      transform: rotate(-45deg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1rem;
-    }
-
-    .map-pin .pin-label {
-      margin-top: 6px;
-      font-size: 0.72rem;
-      font-weight: 600;
-      background: var(--card);
-      border: 1px solid var(--border);
-      padding: 3px 8px;
-      border-radius: 20px;
-      white-space: nowrap;
-    }
-
-    .pin-user {
-      top: 50%;
-      left: 45%;
-    }
-
-    .pin-user .pin-icon {
-      background: var(--accent);
-    }
-
-    .pin-item1 {
-      top: 25%;
-      left: 25%;
-      animation-delay: .3s;
-    }
-
-    .pin-item1 .pin-icon {
-      background: var(--accent3);
-    }
-
-    .pin-item2 {
-      top: 60%;
-      left: 68%;
-      animation-delay: .6s;
-    }
-
-    .pin-item2 .pin-icon {
-      background: var(--accent2);
-    }
-
-    .pin-delivery {
-      top: 38%;
-      left: 62%;
-      animation-delay: .9s;
-    }
-
-    .pin-delivery .pin-icon {
-      background: #8a6fff;
-    }
-
-    .route-line {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-    }
-
-    .distance-badge {
-      position: absolute;
-      top: 14px;
-      right: 14px;
-      background: rgba(78, 240, 160, 0.15);
-      border: 1px solid rgba(78, 240, 160, 0.4);
-      color: var(--accent2);
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 6px 12px;
-      border-radius: 50px;
-    }
-
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px)
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0)
-      }
-    }
-
-    /* SECTION */
-    .section {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 0 40px 80px;
-    }
-
-    /* DOWNLOAD */
-    .download-strip {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 0 40px 90px;
-      text-align: center;
-    }
-
-    .dl-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      padding: 18px 52px;
-      background: var(--accent);
-      color: #0a0a0f;
-      border: none;
-      border-radius: 50px;
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 1.05rem;
-      cursor: pointer;
-      transition: all .25s;
-    }
-
-    .dl-btn:hover {
-      background: #e2c417;
-      transform: scale(1.05);
-      box-shadow: 0 0 40px rgba(240, 224, 64, 0.25);
-    }
-
-    .dl-sub {
-      color: var(--muted);
-      font-size: 0.82rem;
-      margin-top: 12px;
-    }
-
-    /* COMING SOON BANNER */
-    .coming-soon-banner {
-      display: footer;
-      align-items: center;
-      gap: 10px;
-      margin-top: 18px;
-      padding: 14px 32px;
-      background: rgba(240, 224, 64, 0.10);
-      border: 0.5px solid rgba(200, 20, 128, 0.35);
-      border-radius: 100px;
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 1rem;
-      color: var(--accent);
-      letter-spacing: 0.04em;
-      opacity: 0;
-      transform: translateY(10px) scale(0.96);
-      pointer-events: none;
-      transition: opacity .35s cubic-bezier(.34, 1.56, .64, 1), transform .35s cubic-bezier(.34, 1.56, .64, 1);
-    }
-
-    .coming-soon-banner.show {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-      pointer-events: auto;
-    }
-
-    /* AUTH MODAL */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.82);
-      z-index: 500;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(8px);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .3s;
-    }
-
-    .modal-overlay.open {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    .modal {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 44px 40px;
-      max-width: 460px;
-      width: 90%;
-      position: relative;
-      transform: translateY(24px) scale(0.97);
-      transition: transform .35s cubic-bezier(.34, 1.56, .64, 1);
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .modal-overlay.open .modal {
-      transform: translateY(0) scale(1);
-    }
-
-    .modal-eyebrow {
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      margin-bottom: 8px;
-    }
-
-    .modal-eyebrow.green {
-      color: var(--accent2);
-    }
-
-    .modal-eyebrow.yellow {
-      color: var(--accent);
-    }
-
-    .modal-eyebrow.pink {
-      color: var(--accent3);
-    }
-
-    .modal-title {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 1.7rem;
-      letter-spacing: -0.03em;
-      margin-bottom: 6px;
-    }
-
-    .modal-sub {
-      color: var(--muted);
-      font-size: 0.88rem;
-      margin-bottom: 26px;
-      line-height: 1.5;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-bottom: 14px;
-      position: relative;
-    }
-
-    .form-group label {
-      font-size: 0.74rem;
-      font-weight: 700;
-      color: var(--muted);
-      letter-spacing: 0.06em;
-    }
-
-    .form-group input {
-      background: var(--surface);
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 13px 16px;
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.92rem;
-      outline: none;
-      transition: border-color .2s;
-    }
-
-    .form-group input:focus {
-      border-color: var(--accent2);
-    }
-
-    .signin-modal .form-group input:focus {
-      border-color: var(--accent);
-    }
-
-    .fp-modal .form-group input:focus {
-      border-color: var(--accent3);
-    }
-
-    .form-group input.input-error {
-      border-color: var(--accent3) !important;
-    }
-
-    .form-group input.input-ok {
-      border-color: var(--accent2) !important;
-    }
-
-    .field-msg {
-      font-size: 0.74rem;
-      font-weight: 600;
-      margin-top: 4px;
-      display: none;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .field-msg.show {
-      display: flex;
-    }
-
-    .field-msg.err {
-      color: var(--accent3);
-    }
-
-    .field-msg.ok {
-      color: var(--accent2);
-    }
-
-    .modal-submit {
-      width: 100%;
-      padding: 15px;
-      border-radius: var(--radius-sm);
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 0.95rem;
-      cursor: pointer;
-      border: none;
-      transition: all .2s;
-      margin-top: 4px;
-    }
-
-    .submit-green {
-      background: var(--accent2);
-      color: #0a0a0f;
-    }
-
-    .submit-green:hover {
-      background: #3de090;
-      transform: translateY(-2px);
-    }
-
-    .submit-yellow {
-      background: var(--accent);
-      color: #0a0a0f;
-    }
-
-    .submit-yellow:hover {
-      background: #ffe800;
-      transform: translateY(-2px);
-    }
-
-    .submit-pink {
-      background: var(--accent3);
-      color: #fff;
-    }
-
-    .submit-pink:hover {
-      background: #e03366;
-      transform: translateY(-2px);
-    }
-
-    .modal-note {
-      font-size: 0.75rem;
-      color: var(--muted);
-      text-align: center;
-      margin-top: 14px;
-    }
-
-    .modal-note a {
-      color: var(--accent);
-      cursor: pointer;
-      text-decoration: none;
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all .2s;
-    }
-
-    .modal-close:hover {
-      border-color: var(--accent3);
-      color: var(--accent3);
-    }
-
-    /* Duplicate email warning in signup */
-    .dup-bar {
-      display: none;
-      background: rgba(240, 78, 122, 0.08);
-      border: 1px solid rgba(240, 78, 122, 0.3);
-      border-radius: var(--radius-sm);
-      padding: 10px 14px;
-      font-size: 0.8rem;
-      color: var(--accent3);
-      margin-bottom: 16px;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .dup-bar.show {
-      display: flex;
-    }
-
-    .dup-bar a {
-      color: var(--accent);
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    /* Password strength bar */
-    .strength-wrap {
-      margin-top: 6px;
-    }
-
-    .strength-track {
-      height: 4px;
-      background: var(--border);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .strength-fill {
-      height: 100%;
-      border-radius: 2px;
-      width: 0;
-      transition: width .3s, background .3s;
-    }
-
-    .strength-label {
-      font-size: 0.72rem;
-      margin-top: 4px;
-      font-weight: 600;
-    }
-
-    /* Forgot password steps */
-    .fp-step {
-      display: none;
-    }
-
-    .fp-step.active {
-      display: block;
-    }
-
-    /* Step indicator */
-    .step-indicator {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 20px;
-    }
-
-    .step-dot {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.72rem;
-      font-weight: 700;
-      border: 2px solid var(--border);
-      color: var(--muted);
-      transition: all .3s;
-      flex-shrink: 0;
-    }
-
-    .step-dot.done {
-      background: var(--accent2);
-      border-color: var(--accent2);
-      color: #0a0a0f;
-    }
-
-    .step-dot.active {
-      border-color: var(--accent3);
-      color: var(--accent3);
-    }
-
-    .step-line {
-      flex: 1;
-      height: 2px;
-      background: var(--border);
-      border-radius: 1px;
-      transition: background .3s;
-    }
-
-    .step-line.done {
-      background: var(--accent2);
-    }
-
-    /* Simulated email preview */
-    .email-preview {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 16px;
-      margin: 16px 0;
-      font-size: 0.82rem;
-    }
-
-    .email-preview .ep-to {
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-
-    .email-preview .ep-to span {
-      color: var(--accent2);
-      font-weight: 600;
-    }
-
-    .email-preview .ep-body {
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    .email-preview .ep-code {
-      font-family: monospace;
-      font-size: 1.3rem;
-      font-weight: 800;
-      color: var(--accent3);
-      letter-spacing: 0.18em;
-      text-align: center;
-      margin: 10px 0;
-      padding: 10px;
-      background: rgba(240, 78, 122, 0.08);
-      border-radius: 8px;
-      border: 1px dashed rgba(240, 78, 122, 0.3);
-    }
-
-    .ep-note {
-      font-size: 0.74rem;
-      color: var(--muted);
-      margin-top: 8px;
-      font-style: italic;
-    }
-
-    /* REDIRECT OVERLAY */
-    .redirect-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(10, 10, 15, 0.96);
-      z-index: 1000;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
-    }
-
-    .redirect-overlay.show {
-      display: flex;
-    }
-
-    .redirect-logo {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 2rem;
-      color: var(--text);
-    }
-
-    .redirect-logo span {
-      color: var(--accent);
-    }
-
-    .redirect-msg {
-      color: var(--muted);
-      font-size: 1rem;
-      text-align: center;
-      line-height: 1.5;
-    }
-
-    .redirect-spinner {
-      width: 48px;
-      height: 48px;
-      border: 3px solid var(--border);
-      border-top-color: var(--accent2);
-      border-radius: 50%;
-      animation: spin .8s linear infinite;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .redirect-bar-track {
-      width: 240px;
-      height: 4px;
-      background: var(--border);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .redirect-bar-fill {
-      height: 100%;
-      background: var(--accent2);
-      border-radius: 2px;
-      width: 0;
-    }
-
-    @keyframes fillBar {
-      to {
-        width: 100%;
-      }
-    }
-
-    /* TOAST */
-    .toast {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: var(--surface);
-      border: 1px solid var(--accent2);
-      border-radius: 50px;
-      padding: 14px 28px;
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: var(--accent2);
-      z-index: 600;
-      transition: transform .4s cubic-bezier(.34, 1.56, .64, 1);
-      white-space: nowrap;
-    }
-
-    .toast.show {
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .toast.warn {
-      border-color: var(--accent3);
-      color: var(--accent3);
-    }
-
-    /* FOOTER */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 30px 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      color: var(--muted);
-      font-size: 0.82rem;
-    }
-
-    @media(max-width:900px) {
-      .hero {
-        grid-template-columns: 1fr;
-        padding: 60px 24px 40px;
-      }
-
-      .hero-visual {
-        display: none;
-      }
-
-      nav {
-        padding: 16px 24px;
-      }
-
-      .nav-links {
-        display: none;
-      }
-
-      .section,
-      .download-strip {
-        padding-left: 24px;
-        padding-right: 24px;
-      }
-
-      footer {
-        flex-direction: column;
-        gap: 14px;
-        text-align: center;
-      }
-
-      .modal {
-        padding: 36px 24px;
-      }
-    }
-
-    /* GOOGLE AUTH STYLES */
-    .separator {
-      display: flex;
-      align-items: center;
-      text-align: center;
-      margin: 24px 0;
-      color: var(--muted);
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-
-    .separator::before,
-    .separator::after {
-      content: '';
-      flex: 1;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .separator:not(:empty)::before {
-      margin-right: 1.5em;
-    }
-
-    .separator:not(:empty)::after {
-      margin-left: 1.5em;
-    }
-
-    .btn-google {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      width: 100%;
-      padding: 14px;
-      border-radius: var(--radius-sm);
-      background: #ffffff;
-      color: #1f1f1f;
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 700;
-      font-size: 0.92rem;
-      border: 1px solid #dadce0;
-      cursor: pointer;
-      transition: all 0.25s;
-      margin-top: 10px;
-    }
-
-    .btn-google:hover {
-      background: #f8f9fa;
-      transform: translateY(-1px);
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      border-color: #d2e3fc;
-    }
-
-    .btn-google svg {
-      width: 20px;
-      height: 20px;
-    }
-
-    .btn-google span {
-      margin-top: 1px;
-    }
-
-    .g-logo-p1 {
-      fill: #4285f4;
-    }
-
-    .g-logo-p2 {
-      fill: #34a853;
-    }
-
-    .g-logo-p3 {
-      fill: #fbbc05;
-    }
-
-    .g-logo-p4 {
-      fill: #ea4335;
-    }
-
-    /* ═══════════════════════════════════════════
-     GOOGLE AUTH WAITING OVERLAY
-     (shown while Google's own popup is open)
-  ═══════════════════════════════════════════ */
-    #googleWaitOverlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.75);
-      z-index: 10000;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(10px);
-    }
-
-    #googleWaitOverlay.show {
-      display: flex;
-    }
-
-    .gw-card {
-      background: #202124;
-      border-radius: 24px;
-      padding: 40px 48px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
-      animation: gwPop .4s cubic-bezier(.34, 1.56, .64, 1);
-      max-width: 360px;
-      width: 90%;
-    }
-
-    @keyframes gwPop {
-      from {
-        opacity: 0;
-        transform: scale(0.92) translateY(20px)
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1) translateY(0)
-      }
-    }
-
-    .gw-google-logo {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .gw-google-logo svg {
-      width: 74px;
-      height: 24px;
-    }
-
-    .gw-spinner {
-      width: 44px;
-      height: 44px;
-      border: 3px solid rgba(138, 180, 248, 0.18);
-      border-top-color: #8ab4f8;
-      border-radius: 50%;
-      animation: spin .8s linear infinite;
-    }
-
-    .gw-title {
-      font-family: 'Google Sans', 'DM Sans', sans-serif;
-      font-size: 1rem;
-      font-weight: 400;
-      color: #e8eaed;
-      text-align: center;
-      line-height: 1.5;
-    }
-
-    .gw-sub {
-      font-size: 0.8rem;
-      color: #9aa0a6;
-      text-align: center;
-      line-height: 1.5;
-    }
-
-    .gw-cancel {
-      background: transparent;
-      border: 1px solid rgba(138, 180, 248, 0.3);
-      color: #8ab4f8;
-      border-radius: 50px;
-      padding: 9px 28px;
-      font-size: 0.85rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background .2s;
-      font-family: 'DM Sans', sans-serif;
-    }
-
-    .gw-cancel:hover {
-      background: rgba(138, 180, 248, 0.1);
-    }
-
-    /* ═══════════════════════════════════════════
-     NOTICE when no Google Client ID is set
-  ═══════════════════════════════════════════ */
-    .gauth-notice {
-      background: rgba(240, 224, 64, 0.07);
-      border: 1px solid rgba(240, 224, 64, 0.25);
-      border-radius: var(--radius-sm);
-      padding: 12px 16px;
-      font-size: 0.78rem;
-      color: var(--accent);
-      line-height: 1.6;
-      margin-top: 12px;
-      display: none;
-    }
-
-    .gauth-notice.show {
-      display: block;
-    }
-
-    .gauth-notice code {
-      background: rgba(240, 224, 64, 0.12);
-      padding: 1px 6px;
-      border-radius: 4px;
-      font-family: monospace;
-      font-size: 0.76rem;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GearGo – Rent Anything Near You</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+
+<!-- Google Identity Services SDK — Real Google OAuth -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<style>
+  /* ════════════════════════════════════════
+     ALL STYLES FROM PAGE 1
+  ════════════════════════════════════════ */
+  :root {
+    --bg: #0a0a0f; --surface: #13131a; --card: #1a1a26; --border: #2a2a3d;
+    --accent: #f0e040; --accent2: #4ef0a0; --accent3: #f04e7a;
+    --text: #f0f0f8; --muted: #888899; --radius: 16px; --radius-sm: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; font-size: 14px; }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 30px;
+    background: rgba(10,10,15,0.88); backdrop-filter: blur(16px);
+    border-bottom: none;
+  }
+  .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.3rem; letter-spacing: -0.03em; cursor:pointer; }
+  .logo span { color: var(--accent); }
+  .nav-right { display: flex; gap: 10px; align-items: center; }
+  .btn { padding: 8px 18px; border-radius: 50px; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.8rem; cursor: pointer; border: none; transition: all .2s; }
+  .btn-ghost { background: transparent; border: 1.5px solid var(--border); color: var(--text); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-primary { background: var(--accent); color: #0a0a0f; }
+  .btn-primary:hover { background: #ffe800; transform: scale(1.04); }
+
+  /* HAMBURGER */
+  .hamburger {
+    width: 38px; height: 38px; border-radius: 10px; background: var(--surface);
+    border: none; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 5px; cursor: pointer; transition: background .2s; flex-shrink: 0;
+  }
+  .hamburger:hover { background: rgba(240,224,64,0.07); }
+  .hamburger span {
+    display: block; width: 18px; height: 2px; background: var(--text);
+    border-radius: 2px; transition: background .2s, transform .3s, opacity .3s; transform-origin: center;
+  }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .hamburger.open span { background: var(--accent); }
+
+  /* HERO-LEVEL NAV DRAWER */
+  .hero-nav-drawer { overflow: hidden; max-height: 0; opacity: 0; transition: max-height .38s cubic-bezier(.4,0,.2,1), opacity .28s ease; margin-bottom: 0; }
+  .hero-nav-drawer.open { max-height: 320px; opacity: 1; margin-bottom: 0; }
+  .hero-nav-inner { display: flex; flex-wrap: wrap; gap: 10px; padding: 0 0 20px 0; }
+  .hero-nav-link {
+    display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px;
+    background: var(--card); border: 1px solid var(--border); border-radius: 50px;
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.8rem; color: var(--muted);
+    cursor: pointer; text-decoration: none; transition: all .2s cubic-bezier(.34,1.56,.64,1); white-space: nowrap;
+  }
+  .hero-nav-link:hover { border-color: var(--accent); color: var(--accent); background: rgba(240,224,64,0.07); transform: translateY(-2px); }
+  .link-icon { font-size: 0.95rem; }
+  .drawer-divider { height: 2px; background: linear-gradient(90deg, var(--accent) 0%, transparent 100%); border-radius: 2px; margin-bottom: 18px; width: 0; transition: width .4s ease; }
+  .drawer-divider.show { width: 60px; }
+
+  /* HERO */
+  .hero { position: relative; padding: 70px 30px 50px; display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; max-width: 1100px; margin: 0 auto; }
+  .hero-left { min-width: 0; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(17,102,135,0.12); border: 1px solid rgba(240,224,64,0.3); color: var(--accent); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; padding: 5px 12px; border-radius: 50px; margin-bottom: 18px; animation: fadeUp .6s ease both; }
+  .dot-live { width: 7px; height: 7px; background: var(--accent2); border-radius: 50%; animation: pulse 1.4s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+  h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(2rem,3.5vw,3.2rem); line-height: 1.08; letter-spacing: -0.04em; animation: fadeUp .7s .1s ease both; }
+  h1 em { font-style: normal; color: var(--accent); }
+  .hero-sub { margin-top: 16px; color: var(--muted); font-size: 0.95rem; line-height: 1.6; max-width: 400px; animation: fadeUp .7s .2s ease both; }
+  .hero-actions { display: flex; gap: 12px; margin-top: 28px; animation: fadeUp .7s .3s ease both; }
+  .hero-stats { display: flex; gap: 28px; margin-top: 36px; animation: fadeUp .7s .4s ease both; }
+  .stat-num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.5rem; color: var(--accent2); }
+  .stat-label { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+  /* MAP */
+  .hero-visual { position: relative; display: flex; justify-content: center; animation: fadeUp .8s .2s ease both; }
+  .map-blob { width: 360px; height: 310px; background: radial-gradient(ellipse at 40% 50%, rgba(78,240,160,0.12) 0%, rgba(240,78,122,0.06) 50%, transparent 70%); border: 1px solid var(--border); border-radius: 24px; position: relative; overflow: hidden; }
+  .map-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px); background-size: 40px 40px; }
+  .map-pin { position: absolute; display: flex; flex-direction: column; align-items: center; animation: pinBounce 2s ease infinite; }
+  @keyframes pinBounce { 0%,100%{transform:translate(-50%,-50%) translateY(0)} 50%{transform:translate(-50%,-50%) translateY(-6px)} }
+  .map-pin .pin-icon { width: 36px; height: 36px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+  .map-pin .pin-label { margin-top: 6px; font-size: 0.72rem; font-weight: 600; background: var(--card); border: 1px solid var(--border); padding: 3px 8px; border-radius: 20px; white-space: nowrap; }
+  .pin-user { top:50%; left:45%; } .pin-user .pin-icon { background: var(--accent); }
+  .pin-item1 { top:25%; left:25%; animation-delay:.3s; } .pin-item1 .pin-icon { background: var(--accent3); }
+  .pin-item2 { top:60%; left:68%; animation-delay:.6s; } .pin-item2 .pin-icon { background: var(--accent2); }
+  .pin-delivery { top:38%; left:62%; animation-delay:.9s; } .pin-delivery .pin-icon { background: #8a6fff; }
+  .route-line { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; }
+  .distance-badge { position: absolute; top:14px; right:14px; background: rgba(78,240,160,0.15); border: 1px solid rgba(78,240,160,0.4); color: var(--accent2); font-size: 0.75rem; font-weight: 700; padding: 6px 12px; border-radius: 50px; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+  /* COMING SOON BANNER */
+  .coming-soon-banner { display: block; margin-top: 18px; padding: 14px 32px; background: rgba(240,224,64,0.10); border: 0.5px solid rgba(200,20,128,0.35); border-radius: 100px; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem; color: var(--accent); letter-spacing: 0.04em; opacity: 0; transform: translateY(10px) scale(0.96); pointer-events: none; transition: opacity .35s cubic-bezier(.34,1.56,.64,1), transform .35s cubic-bezier(.34,1.56,.64,1); }
+  .coming-soon-banner.show { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+
+  /* DOWNLOAD */
+  .download-strip { max-width:800px; margin:0 auto; padding:0 30px 50px; text-align:center; }
+  .dl-btn { display: inline-flex; align-items: center; gap: 12px; padding: 18px 52px; background: var(--accent); color: #0a0a0f; border: none; border-radius: 50px; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.05rem; cursor: pointer; transition: all .25s; }
+  .dl-btn:hover { background: #e2c417; transform: scale(1.05); box-shadow: 0 0 40px rgba(240,224,64,0.25); }
+  .dl-sub { color:var(--muted); font-size:0.75rem; margin-top:10px; }
+
+  /* ════════════════════════════════════════
+     AUTH MODAL BASE
+  ════════════════════════════════════════ */
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.82); z-index:500; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(8px); opacity:0; pointer-events:none; transition:opacity .3s; }
+  .modal-overlay.open { opacity:1; pointer-events:all; }
+  .modal { background:var(--card); border:1px solid var(--border); border-radius:24px; padding:32px; max-width:460px; width:90%; position:relative; transform:translateY(24px) scale(0.97); transition:transform .35s cubic-bezier(.34,1.56,.64,1); max-height:90vh; overflow-y:auto; }
+  .modal-overlay.open .modal { transform:translateY(0) scale(1); }
+  .modal-eyebrow { font-size:0.72rem; font-weight:700; letter-spacing:0.12em; margin-bottom:8px; }
+  .modal-eyebrow.green { color:var(--accent2); } .modal-eyebrow.yellow { color:var(--accent); } .modal-eyebrow.pink { color:var(--accent3); } .modal-eyebrow.purple { color:#8a6fff; }
+  .modal-title { font-family:'Syne',sans-serif; font-weight:800; font-size:1.5rem; letter-spacing:-0.03em; margin-bottom:6px; }
+  .modal-sub { color:var(--muted); font-size:0.82rem; margin-bottom:26px; line-height:1.5; }
+  .form-group { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; position:relative; }
+  .form-group label { font-size:0.74rem; font-weight:700; color:var(--muted); letter-spacing:0.06em; }
+  .form-group input { background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:13px 16px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.92rem; outline:none; transition:border-color .2s; }
+  .form-group input:focus { border-color:var(--accent2); }
+  .signin-modal .form-group input:focus { border-color:var(--accent); }
+  .fp-modal .form-group input:focus { border-color:var(--accent3); }
+  .form-group input.input-error { border-color:var(--accent3) !important; }
+  .form-group input.input-ok { border-color:var(--accent2) !important; }
+  .field-msg { font-size:0.74rem; font-weight:600; margin-top:4px; display:none; align-items:center; gap:5px; }
+  .field-msg.show { display:flex; } .field-msg.err { color:var(--accent3); } .field-msg.ok { color:var(--accent2); }
+  .modal-submit { width:100%; padding:15px; border-radius:var(--radius-sm); font-family:'Syne',sans-serif; font-weight:800; font-size:0.95rem; cursor:pointer; border:none; transition:all .2s; margin-top:4px; }
+  .submit-green { background:var(--accent2); color:#0a0a0f; } .submit-green:hover { background:#3de090; transform:translateY(-2px); }
+  .submit-yellow { background:var(--accent); color:#0a0a0f; } .submit-yellow:hover { background:#ffe800; transform:translateY(-2px); }
+  .submit-pink { background:var(--accent3); color:#fff; } .submit-pink:hover { background:#e03060; transform:translateY(-2px); }
+  .modal-note { font-size:0.75rem; color:var(--muted); text-align:center; margin-top:14px; }
+  .modal-note a { color:var(--accent); cursor:pointer; text-decoration:none; }
+  .modal-close { position:absolute; top:16px; right:16px; background:var(--surface); border:1px solid var(--border); color:var(--muted); width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:1rem; display:flex; align-items:center; justify-content:center; transition:all .2s; }
+  .modal-close:hover { border-color:var(--accent3); color:var(--accent3); }
+
+  /* Duplicate email bar */
+  .dup-bar { display:none; background:rgba(240,78,122,0.08); border:1px solid rgba(240,78,122,0.3); border-radius:var(--radius-sm); padding:10px 14px; font-size:0.8rem; color:var(--accent3); margin-bottom:16px; align-items:center; gap:8px; }
+  .dup-bar.show { display:flex; }
+  .dup-bar a { color:var(--accent); font-weight:700; cursor:pointer; }
+
+  /* Password strength bar */
+  .strength-wrap { margin-top:6px; }
+  .strength-track { height:4px; background:var(--border); border-radius:2px; overflow:hidden; }
+  .strength-fill { height:100%; border-radius:2px; width:0; transition:width .3s, background .3s; }
+  .strength-label { font-size:0.72rem; margin-top:4px; font-weight:600; }
+
+  /* Forgot password steps */
+  .fp-step { display:none; }
+  .fp-step.active { display:block; }
+  .step-indicator { display:flex; align-items:center; gap:8px; margin-bottom:20px; }
+  .step-dot { width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.72rem; font-weight:700; border:2px solid var(--border); color:var(--muted); transition:all .3s; flex-shrink:0; }
+  .step-dot.done { background:var(--accent2); border-color:var(--accent2); color:#0a0a0f; }
+  .step-dot.active { border-color:var(--accent3); color:var(--accent3); }
+  .step-line { flex:1; height:2px; background:var(--border); border-radius:1px; transition:background .3s; }
+  .step-line.done { background:var(--accent2); }
+
+  /* Simulated email preview */
+  .email-preview { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px; margin:16px 0; font-size:0.82rem; }
+  .email-preview .ep-to { color:var(--muted); margin-bottom:6px; }
+  .email-preview .ep-to span { color:var(--accent2); font-weight:600; }
+  .email-preview .ep-body { color:var(--muted); line-height:1.6; }
+  .email-preview .ep-code { font-family:monospace; font-size:1.3rem; font-weight:800; color:var(--accent3); letter-spacing:0.18em; text-align:center; margin:10px 0; padding:10px; background:rgba(240,78,122,0.08); border-radius:8px; border:1px dashed rgba(240,78,122,0.3); }
+  .ep-note { font-size:0.74rem; color:var(--muted); margin-top:8px; font-style:italic; }
+
+  /* SEPARATOR / GOOGLE */
+  .separator { display:flex; align-items:center; text-align:center; margin:24px 0; color:var(--muted); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; }
+  .separator::before,.separator::after { content:''; flex:1; border-bottom:1px solid var(--border); }
+  .separator:not(:empty)::before { margin-right:1.5em; }
+  .separator:not(:empty)::after { margin-left:1.5em; }
+  .btn-google { display:flex; align-items:center; justify-content:center; gap:12px; width:100%; padding:14px; border-radius:var(--radius-sm); background:#ffffff; color:#1f1f1f; font-family:'DM Sans',sans-serif; font-weight:700; font-size:0.92rem; border:1px solid #dadce0; cursor:pointer; transition:all .25s; margin-top:10px; }
+  .btn-google:hover { background:#f8f9fa; transform:translateY(-1px); box-shadow:0 2px 10px rgba(0,0,0,0.1); border-color:#d2e3fc; }
+  .btn-google svg { width:20px; height:20px; }
+  .g-logo-p1{fill:#4285f4} .g-logo-p2{fill:#34a853} .g-logo-p3{fill:#fbbc05} .g-logo-p4{fill:#ea4335}
+  .gauth-notice { background:rgba(240,224,64,0.07); border:1px solid rgba(240,224,64,0.25); border-radius:var(--radius-sm); padding:12px 16px; font-size:0.78rem; color:var(--accent); line-height:1.6; margin-top:12px; display:none; }
+  .gauth-notice.show { display:block; }
+
+  /* GOOGLE WAIT OVERLAY */
+  #googleWaitOverlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:10000; align-items:center; justify-content:center; backdrop-filter:blur(10px); }
+  #googleWaitOverlay.show { display:flex; }
+  .gw-card { background:#202124; border-radius:24px; padding:40px 48px; display:flex; flex-direction:column; align-items:center; gap:20px; box-shadow:0 24px 80px rgba(0,0,0,0.6),0 0 0 1px rgba(255,255,255,0.08); animation:gwPop .4s cubic-bezier(.34,1.56,.64,1); max-width:360px; width:90%; }
+  @keyframes gwPop { from{opacity:0;transform:scale(0.92) translateY(20px)} to{opacity:1;transform:scale(1) translateY(0)} }
+  .gw-spinner { width:44px; height:44px; border:3px solid rgba(138,180,248,0.18); border-top-color:#8ab4f8; border-radius:50%; animation:spin .8s linear infinite; }
+  .gw-title { font-size:1rem; font-weight:400; color:#e8eaed; text-align:center; }
+  .gw-sub { font-size:0.8rem; color:#9aa0a6; text-align:center; line-height:1.5; }
+  .gw-cancel { background:transparent; border:1px solid rgba(138,180,248,0.3); color:#8ab4f8; border-radius:50px; padding:9px 28px; font-size:0.85rem; font-weight:500; cursor:pointer; transition:background .2s; }
+  .gw-cancel:hover { background:rgba(138,180,248,0.1); }
+
+  /* REDIRECT OVERLAY */
+  .redirect-overlay { display:none; position:fixed; inset:0; background:rgba(10,10,15,0.96); z-index:1000; flex-direction:column; align-items:center; justify-content:center; gap:20px; }
+  .redirect-overlay.show { display:flex; }
+  .redirect-logo { font-family:'Syne',sans-serif; font-weight:800; font-size:2rem; color:var(--text); }
+  .redirect-logo span { color:var(--accent); }
+  .redirect-msg { color:var(--muted); font-size:1rem; text-align:center; line-height:1.5; }
+  .redirect-spinner { width:48px; height:48px; border:3px solid var(--border); border-top-color:var(--accent2); border-radius:50%; animation:spin .8s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .redirect-bar-track { width:240px; height:4px; background:var(--border); border-radius:2px; overflow:hidden; }
+  .redirect-bar-fill { height:100%; background:var(--accent2); border-radius:2px; width:0; }
+  @keyframes fillBar { to { width:100%; } }
+
+  /* TOAST */
+  .toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(100px); background:var(--surface); border:1px solid var(--accent2); border-radius:50px; padding:14px 28px; font-weight:600; font-size:0.9rem; color:var(--accent2); z-index:600; transition:transform .4s cubic-bezier(.34,1.56,.64,1); white-space:nowrap; }
+  .toast.show { transform:translateX(-50%) translateY(0); }
+  .toast.warn { border-color:var(--accent3); color:var(--accent3); }
+
+  /* FOOTER */
+  footer { border-top:1px solid var(--border); padding:12px 40px; display:flex; align-items:center; justify-content:space-between; color:var(--muted); font-size:0.75rem; }
+
+  @media(max-width:900px){
+    .hero { grid-template-columns:1fr; padding:40px 20px 30px; }
+    .hero-visual { display:none; }
+    nav { padding:12px 20px; }
+    .download-strip { padding-left:20px; padding-right:20px; }
+    footer { flex-direction:column; gap:12px; text-align:center; padding:20px; }
+    .modal { padding:24px 20px; }
+  }
+  @media(max-width:480px){
+    body { font-size:13px; }
+    h1 { font-size:1.6rem !important; }
+    .hero-sub { font-size:0.88rem; margin-top:12px; }
+    .hero-actions { flex-direction:column; gap:10px; }
+    .hero-actions .btn { width:100%; text-align:center; }
+    .hero-stats { gap:16px; flex-wrap:wrap; }
+    .stat-num { font-size:1.3rem; }
+    .logo { font-size:1.1rem; }
+    .btn { padding:8px 14px; font-size:0.75rem; }
+    .hero-nav-link { font-size:0.75rem; padding:8px 14px; }
+    .gw-card { padding:28px 24px; }
+  }
+</style>
 </head>
-
 <body>
 
-  <!-- REDIRECT OVERLAY -->
-  <div class="redirect-overlay" id="redirectOverlay">
-    <div class="redirect-logo">Gear<span>Go</span></div>
-    <div class="redirect-spinner"></div>
-    <div class="redirect-msg" id="redirectMsg">Sign in successful — loading Search page…</div>
-    <div class="redirect-bar-track">
-      <div class="redirect-bar-fill" id="redirectBar"></div>
+<!-- REDIRECT OVERLAY -->
+<div class="redirect-overlay" id="redirectOverlay">
+  <div class="redirect-logo">Gear<span>Go</span></div>
+  <div class="redirect-spinner"></div>
+  <div class="redirect-msg" id="redirectMsg">Sign in successful — loading Search page…</div>
+  <div class="redirect-bar-track"><div class="redirect-bar-fill" id="redirectBar"></div></div>
+</div>
+
+<!-- GOOGLE WAITING OVERLAY -->
+<div id="googleWaitOverlay">
+  <div class="gw-card">
+    <svg viewBox="0 0 74 24" xmlns="http://www.w3.org/2000/svg" style="width:74px;height:24px">
+      <path d="M9.24 8.19v2.46h5.88c-.18 1.38-.64 2.34-1.44 3.06-.85.77-2.17 1.62-4.44 1.62-3.54 0-6.3-2.85-6.3-6.39 0-3.54 2.76-6.39 6.3-6.39 1.92 0 3.31.75 4.34 1.71l1.74-1.74C13.84 1.27 11.87.33 9.24.33c-4.95 0-9.12 4.02-9.12 8.97s4.17 8.97 9.12 8.97c2.67 0 4.69-.87 6.26-2.51 1.62-1.62 2.13-3.9 2.13-5.73 0-.57-.06-1.11-.15-1.56H9.24v.72z" fill="#4285F4"/>
+      <path d="M25 6.19c-3.21 0-5.83 2.44-5.83 5.81 0 3.34 2.62 5.81 5.83 5.81s5.83-2.46 5.83-5.81c0-3.37-2.62-5.81-5.83-5.81zm0 9.33c-1.76 0-3.28-1.45-3.28-3.52 0-2.09 1.52-3.52 3.28-3.52s3.28 1.43 3.28 3.52c0 2.07-1.52 3.52-3.28 3.52z" fill="#EA4335"/>
+      <path d="M53.58 7.49h-.09c-.57-.68-1.67-1.3-3.06-1.3C47.53 6.19 45 8.72 45 12c0 3.26 2.53 5.81 5.43 5.81 1.39 0 2.49-.62 3.06-1.32h.09v.83c0 2.22-1.19 3.41-3.1 3.41-1.56 0-2.53-1.12-2.93-2.07l-2.22.92c.64 1.54 2.33 3.43 5.15 3.43 2.99 0 5.52-1.76 5.52-6.05V6.49h-2.42v1zm-2.93 8.03c-1.76 0-3.1-1.5-3.1-3.52 0-2.05 1.34-3.52 3.1-3.52 1.74 0 3.1 1.49 3.1 3.54 0 2.03-1.36 3.5-3.1 3.5z" fill="#4285F4"/>
+      <path d="M38 6.19c-3.21 0-5.83 2.44-5.83 5.81 0 3.34 2.62 5.81 5.83 5.81s5.83-2.46 5.83-5.81c0-3.37-2.62-5.81-5.83-5.81zm0 9.33c-1.76 0-3.28-1.45-3.28-3.52 0-2.09 1.52-3.52 3.28-3.52s3.28 1.43 3.28 3.52c0 2.07-1.52 3.52-3.28 3.52z" fill="#FBBC05"/>
+      <path d="M58 .33h2.55v17.17H58z" fill="#34A853"/>
+      <path d="M63.69 14.06c-.64 1.71-2.07 3.75-4.86 3.75-2.93 0-5.37-2.3-5.37-5.81 0-3.45 2.42-5.81 5.1-5.81 2.71 0 4.04 1.62 4.46 2.51l.28.68-6.91 2.86c.53 1.04 1.35 1.57 2.51 1.57 1.16 0 1.97-.57 2.55-1.44l2.24 1.69zm-6.96-2.38l4.62-1.92c-.26-.64-.98-1.09-1.86-1.09-1.12 0-2.68.98-2.76 3.01z" fill="#EA4335"/>
+    </svg>
+    <div class="gw-spinner"></div>
+    <div class="gw-title">Sign in with Google</div>
+    <div class="gw-sub">A Google account chooser popup has opened.<br>Please select your account there.</div>
+    <button class="gw-cancel" onclick="cancelGoogleWait()">Cancel</button>
+  </div>
+</div>
+
+<!-- Hidden Google One Tap container -->
+<div id="g_id_onload"
+     data-client_id="440675514682-lng0e1v467junk79btos6fvdbbuht0jv.apps.googleusercontent.com"
+     data-callback="onGoogleSignInCallback"
+     data-auto_prompt="false"></div>
+
+<!-- NAV (Page 1 style — hamburger) -->
+<nav>
+  <div class="logo" onclick="window.location.href='index.html'">Gear<span>Go</span></div>
+  <div class="nav-right">
+    <div id="navAuthBtns" style="display:flex;gap:12px;align-items:center;">
+      <button class="btn btn-ghost" onclick="openSignin()">Sign In</button>
+      <button class="btn btn-primary" onclick="openSignup()">Create AC</button>
+    </div>
+    <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()" aria-label="Open navigation menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <!-- Hamburger drawer (Page 1 style) -->
+    <div class="hero-nav-drawer" id="heroNavDrawer">
+      <div class="hero-nav-inner">
+        <a class="hero-nav-link" onclick="window.location.href='index.html'"><span class="link-icon">🏠</span> Home</a>
+        <a class="hero-nav-link" onclick="window.location.href='Reviewpage.html'"><span class="link-icon">⭐</span> Reviews</a>
+        <a class="hero-nav-link" onclick="window.location.href='Dashboard.html'"><span class="link-icon">📊</span> Dashboard</a>
+        <a class="hero-nav-link" onclick="window.location.href='Delivery boy registation form.html'"><span class="link-icon">🛵</span> Delivery Boy Register</a>
+      </div>
+    </div>
+    <div class="drawer-divider" id="drawerDivider"></div>
+
+    <div class="hero-badge"><span class="dot-live"></span> Live near you</div>
+    <h1>Rent <em>anything</em> within minutes.</h1>
+    <p class="hero-sub">Sports gear, games, bikes, camping kits — borrow from neighbours. A delivery boy picks it up and drops it at your door.</p>
+    <div class="hero-actions">
+      <button class="btn btn-primary" id="heroGetStarted" onclick="openSignup()">Get Started 📍</button>
+      <button class="btn btn-ghost" onclick="showComingSoon('heroBanner')">Download App</button>
+    </div>
+    <div class="coming-soon-banner" id="heroBanner">🚀 Coming Soon!</div>
+    <div class="hero-stats">
+      <div><div class="stat-num" id="ctr-items">0</div><div class="stat-label">Items nearby</div></div>
+      <div><div class="stat-num" id="ctr-riders">0</div><div class="stat-label">Delivery boys</div></div>
+      <div><div class="stat-num" id="ctr-time">0</div><div class="stat-label">Avg mins delivery</div></div>
+    </div>
+
+    <!-- Mobile map -->
+    <div class="map-blob" style="margin-top:30px;width:100%;max-width:400px;height:320px;">
+      <div class="map-grid"></div>
+      <svg class="route-line" viewBox="0 0 420 360">
+        <path d="M130 100 Q200 140 210 190" stroke="rgba(240,78,122,0.4)" stroke-width="2" fill="none" stroke-dasharray="6 4"/>
+        <path d="M280 230 Q250 210 210 190" stroke="rgba(78,240,160,0.5)" stroke-width="2" fill="none" stroke-dasharray="6 4"/>
+        <path d="M265 155 Q240 170 210 190" stroke="rgba(138,111,255,0.4)" stroke-width="2" fill="none" stroke-dasharray="6 4"/>
+      </svg>
+      <div class="map-pin pin-user"><div class="pin-icon">🏠</div><div class="pin-label">You</div></div>
+      <div class="map-pin pin-item1"><div class="pin-icon">⚽</div><div class="pin-label">0.4 km</div></div>
+      <div class="map-pin pin-item2"><div class="pin-icon">🎮</div><div class="pin-label">1.1 km</div></div>
+      <div class="map-pin pin-delivery"><div class="pin-icon">🛵</div><div class="pin-label">Raju · En Route</div></div>
+      <div class="distance-badge">⚡ Nearest: 15-20 km</div>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════
-     GOOGLE WAITING OVERLAY
-     Shows while Google's native popup is open
-═══════════════════════════════════════════ -->
-  <div id="googleWaitOverlay">
-    <div class="gw-card">
-      <div class="gw-google-logo">
-        <!-- Google wordmark -->
-        <svg viewBox="0 0 74 24" xmlns="http://www.w3.org/2000/svg">
-          <path
-            d="M9.24 8.19v2.46h5.88c-.18 1.38-.64 2.34-1.44 3.06-.85.77-2.17 1.62-4.44 1.62-3.54 0-6.3-2.85-6.3-6.39 0-3.54 2.76-6.39 6.3-6.39 1.92 0 3.31.75 4.34 1.71l1.74-1.74C13.84 1.27 11.87.33 9.24.33c-4.95 0-9.12 4.02-9.12 8.97s4.17 8.97 9.12 8.97c2.67 0 4.69-.87 6.26-2.51 1.62-1.62 2.13-3.9 2.13-5.73 0-.57-.06-1.11-.15-1.56H9.24v.72z"
-            fill="#4285F4" />
-          <path
-            d="M25 6.19c-3.21 0-5.83 2.44-5.83 5.81 0 3.34 2.62 5.81 5.83 5.81s5.83-2.46 5.83-5.81c0-3.37-2.62-5.81-5.83-5.81zm0 9.33c-1.76 0-3.28-1.45-3.28-3.52 0-2.09 1.52-3.52 3.28-3.52s3.28 1.43 3.28 3.52c0 2.07-1.52 3.52-3.28 3.52z"
-            fill="#EA4335" />
-          <path
-            d="M53.58 7.49h-.09c-.57-.68-1.67-1.3-3.06-1.3C47.53 6.19 45 8.72 45 12c0 3.26 2.53 5.81 5.43 5.81 1.39 0 2.49-.62 3.06-1.32h.09v.83c0 2.22-1.19 3.41-3.1 3.41-1.56 0-2.53-1.12-2.93-2.07l-2.22.92c.64 1.54 2.33 3.43 5.15 3.43 2.99 0 5.52-1.76 5.52-6.05V6.49h-2.42v1zm-2.93 8.03c-1.76 0-3.1-1.5-3.1-3.52 0-2.05 1.34-3.52 3.1-3.52 1.74 0 3.1 1.49 3.1 3.54 0 2.03-1.36 3.5-3.1 3.5z"
-            fill="#4285F4" />
-          <path
-            d="M38 6.19c-3.21 0-5.83 2.44-5.83 5.81 0 3.34 2.62 5.81 5.83 5.81s5.83-2.46 5.83-5.81c0-3.37-2.62-5.81-5.83-5.81zm0 9.33c-1.76 0-3.28-1.45-3.28-3.52 0-2.09 1.52-3.52 3.28-3.52s3.28 1.43 3.28 3.52c0 2.07-1.52 3.52-3.28 3.52z"
-            fill="#FBBC05" />
-          <path d="M58 .33h2.55v17.17H58z" fill="#34A853" />
-          <path
-            d="M63.69 14.06c-.64 1.71-2.07 3.75-4.86 3.75-2.93 0-5.37-2.3-5.37-5.81 0-3.45 2.42-5.81 5.1-5.81 2.71 0 4.04 1.62 4.46 2.51l.28.68-6.91 2.86c.53 1.04 1.35 1.57 2.51 1.57 1.16 0 1.97-.57 2.55-1.44l2.24 1.69zm-6.96-2.38l4.62-1.92c-.26-.64-.98-1.09-1.86-1.09-1.12 0-2.68.98-2.76 3.01z"
-            fill="#EA4335" />
-        </svg>
-      </div>
-      <div class="gw-spinner"></div>
-      <div class="gw-title">Sign in with Google</div>
-      <div class="gw-sub">A Google account chooser popup has opened.<br>Please select your account there.</div>
-      <button class="gw-cancel" onclick="cancelGoogleWait()">Cancel</button>
+  <!-- Desktop map -->
+  <div class="hero-visual">
+    <div class="map-blob">
+      <div class="map-grid"></div>
+      <svg class="route-line" viewBox="0 0 420 360">
+        <path d="M130 100 Q200 140 210 190" stroke="rgba(240,78,122,0.4)" stroke-width="2" fill="none" stroke-dasharray="6 4"/>
+        <path d="M280 230 Q250 210 210 190" stroke="rgba(78,240,160,0.5)" stroke-width="2" fill="none" stroke-dasharray="6 4"/>
+        <path d="M265 155 Q240 170 210 190" stroke="rgba(138,111,255,0.4)" stroke-width="2" fill="none" stroke-dasharray="6 4"/>
+      </svg>
+      <div class="map-pin pin-user"><div class="pin-icon">🏠</div><div class="pin-label">You</div></div>
+      <div class="map-pin pin-item1"><div class="pin-icon">⚽</div><div class="pin-label">0.4 km</div></div>
+      <div class="map-pin pin-item2"><div class="pin-icon">🎮</div><div class="pin-label">1.1 km</div></div>
+      <div class="map-pin pin-delivery"><div class="pin-icon">🛵</div><div class="pin-label">Raju · En Route</div></div>
+      <div class="distance-badge">⚡ Nearest: 15-20 km</div>
     </div>
   </div>
+</section>
+<br><br>
 
-  <!-- Hidden Google One Tap / OAuth button container -->
-  <div id="g_id_onload" data-client_id="609499873823-9a5pqf9pqv3ka6v15s3qe3srrdakcein.apps.googleusercontent.com"
-    data-callback="onGoogleSignInCallback" data-auto_prompt="false">
+<!-- DOWNLOAD STRIP -->
+<section class="download-strip">
+  <button class="dl-btn" onclick="showComingSoon('footerBanner')">📲 Download the App</button>
+  <div class="coming-soon-banner" id="footerBanner">🚀 Coming Soon!</div>
+  <div class="dl-sub">iOS &amp; Android · Free to download · Available soon</div>
+</section>
+<br><br>
+
+<footer>
+  <div class="logo" style="font-size:1.1rem">Gear<span style="color:var(--accent)">Go</span></div>
+  <div style="display:flex;gap:18px">
+    <a href="Terms&conditions.html" style="color:var(--muted);text-decoration:none">T&amp;C</a>
+    <a href="Privacy.html" style="color:var(--muted);text-decoration:none">Privacy</a>
+    <a href="Support.html" style="color:var(--muted);text-decoration:none">Support</a>
   </div>
+  <div>© 2026 GearGo · Rent smart, play more.</div>
+</footer>
 
-  <!-- NAV -->
-  <nav>
-    <div class="logo" onclick="window.location.href='index.html'">Gear<span>Go</span></div>
-    <div class="nav-links">
-      <a onclick="window.location.href='index.html'">Home</a>
-      <a onclick="window.location.href='reviews.html'">Reviews</a>
-      <a onclick="window.location.href='dashboard.html'">Dashboard</a>
-    </div>
-    <div class="nav-right">
-      <div id="navAuthBtns" style="display:flex;gap:12px;align-items:center;">
-        <button class="btn btn-ghost" onclick="openSignin()">Sign In</button>
-        <button class="btn btn-primary" onclick="openSignup()">Create Account</button>
-      </div>
-    </div>
-  </nav>
-
-  <!-- HERO -->
-  <section class="hero">
-    <div>
-      <div class="hero-badge"><span class="dot-live"></span> Live near you</div>
-      <h1>Rent <em>anything</em> within minutes.</h1>
-      <p class="hero-sub">Student Equipments . single . kits — borrow from neighbours. A delivery boy picks it up
-        and drops it at your door.</p>
-      <div class="hero-actions">
-        <button class="btn btn-primary" id="heroGetStarted" onclick="openSignup()">Get Started 📍</button>
-        <button class="btn btn-ghost" onclick="showComingSoon('heroBanner')">Download App</button>
-      </div>
-      <div class="coming-soon-banner" id="heroBanner">🚀 Coming Soon!</div>
-      <div class="hero-stats">
-        <div>
-          <div class="stat-num" id="ctr-items">30</div>
-          <div class="stat-label">Items nearby</div>
-        </div>
-        <div>
-          <div class="stat-num" id="ctr-riders">6</div>
-          <div class="stat-label">Delivery boys</div>
-        </div>
-        <div>
-          <div class="stat-num" id="ctr-time">30min</div>
-          <div class="stat-label">Avg mins delivery</div>
-        </div>
-      </div>
-    </div>
-    <div class="hero-visual">
-      <div class="map-blob">
-        <div class="map-grid"></div>
-        <svg class="route-line" viewBox="0 0 420 360">
-          <path d="M130 100 Q200 140 210 190" stroke="rgba(240,78,122,0.4)" stroke-width="2" fill="none"
-            stroke-dasharray="6 4" />
-          <path d="M280 230 Q250 210 210 190" stroke="rgba(78,240,160,0.5)" stroke-width="2" fill="none"
-            stroke-dasharray="6 4" />
-          <path d="M265 155 Q240 170 210 190" stroke="rgba(138,111,255,0.4)" stroke-width="2" fill="none"
-            stroke-dasharray="6 4" />
-        </svg>
-        <div class="map-pin pin-user">
-          <div class="pin-icon">🏠</div>
-          <div class="pin-label">You</div>
-        </div>
-        <div class="map-pin pin-item1">
-          <div class="pin-icon">⚽</div>
-          <div class="pin-label">0.4 km</div>
-        </div>
-        <div class="map-pin pin-item2">
-          <div class="pin-icon">🎮</div>
-          <div class="pin-label">1.1 km</div>
-        </div>
-        <div class="map-pin pin-delivery">
-          <div class="pin-icon">🛵</div>
-          <div class="pin-label">Raju · En Route</div>
-        </div>
-        <div class="distance-badge">⚡ Nearest: 15-20 km</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- DOWNLOAD STRIP -->
-  <section class="download-strip">
-    <button class="dl-btn" onclick="showComingSoon('footerBanner')">📲 Download the App</button>
-    <div class="coming-soon-banner" id="footerBanner">🚀 Coming Soon!</div>
-    <div class="dl-sub">iOS &amp; Android · Free to download · Available soon</div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer>
-    <div class="logo" style="font-size:1.1rem">Gear<span style="color:var(--accent)">Go</span></div>
-    <div>© 2026 GearGo · Rent smart, play more.</div>
-    <div style="display:flex;gap:18px">
-      <a href="terms.html" style="color:var(--muted);text-decoration:none">T&amp;C</a>
-      <a href="privacy.html" style="color:var(--muted);text-decoration:none">Privacy</a>
-      <a href="support.html" style="color:var(--muted);text-decoration:none">Support</a>
-    </div>
-  </footer>
-
-  <!-- ═══════════════════════════════════════════════════
+<!-- ══════════════════════════════════════
      SIGNUP MODAL
-═══════════════════════════════════════════════════ -->
-  <div class="modal-overlay" id="signupOverlay">
-    <div class="modal">
-      <button class="modal-close" onclick="closeSignup()">✕</button>
-      <div class="modal-eyebrow green">✦ STEP 1 — START HERE</div>
-      <div class="modal-title">Create Account</div>
-      <div class="modal-sub">Sign up to unlock rentals, track deliveries, and list your own items on GearGo.</div>
-      <div class="dup-bar" id="dupBar">
-        ⚠️ This email is already registered. <a onclick="closeSignup();setTimeout(openSignin,220)">Sign In instead →</a>
-      </div>
-      <div class="form-group">
-        <label>FULL NAME</label>
-        <input type="text" id="su-name" placeholder="Arjun Reddy" oninput="clearSuField('su-name')" />
-      </div>
-      <div class="form-group">
-        <label>PHONE NUMBER</label>
-        <input type="tel" id="su-phone" placeholder="+91 9999 000000" oninput="clearSuField('su-phone')" />
-      </div>
-      <div class="form-group">
-        <label>ADDRESS</label>
-        <input type="text" id="su-address" placeholder="Your full address" oninput="clearSuField('su-address')" />
-      </div>
-      <div class="form-group">
-        <label>EMAIL ADDRESS</label>
-        <input type="email" id="su-email" placeholder="arjun@example.com" oninput="onSuEmailInput()" />
-        <div class="field-msg" id="su-email-msg"></div>
-      </div>
-      <div class="form-group">
-        <label>CREATE PASSWORD</label>
-        <input type="password" id="su-pass" placeholder="Min. 6 characters" oninput="onPasswordStrength()" />
-        <div class="strength-wrap">
-          <div class="strength-track">
-            <div class="strength-fill" id="strengthFill"></div>
-          </div>
-          <div class="strength-label" id="strengthLabel" style="color:var(--muted)"></div>
-        </div>
-      </div>
-      <button class="modal-submit submit-green" onclick="handleSignup()">Create My Account 🚀</button>
-      <div class="modal-note">Already have an account? <a onclick="switchToSignin()">Sign In →</a></div>
+════════════════════════════════════════ -->
+<div class="modal-overlay" id="signupOverlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeSignup()">✕</button>
+    <div class="modal-eyebrow green">✦ STEP 1 — START HERE</div>
+    <div class="modal-title">Create Account</div>
+    <div class="modal-sub">Sign up to unlock rentals, track deliveries, and list your own items on GearGo.</div>
+    <div class="dup-bar" id="dupBar">
+      ⚠️ This email is already registered. <a onclick="closeSignup();setTimeout(openSignin,220)">Sign In instead →</a>
     </div>
+    <div class="form-group">
+      <label>FULL NAME</label>
+      <input type="text" id="su-name" placeholder="Arjun Reddy" oninput="clearSuField('su-name')"/>
+    </div>
+    <div class="form-group">
+      <label>PHONE NUMBER</label>
+      <input type="tel" id="su-phone" placeholder="+91 9999 000000" oninput="clearSuField('su-phone')"/>
+    </div>
+    <div class="form-group">
+      <label>ADDRESS</label>
+      <input type="text" id="su-address" placeholder="Your full address" oninput="clearSuField('su-address')"/>
+    </div>
+    <div class="form-group">
+      <label>EMAIL ADDRESS</label>
+      <input type="email" id="su-email" placeholder="arjun@example.com" oninput="onSuEmailInput()"/>
+      <div class="field-msg" id="su-email-msg"></div>
+    </div>
+    <div class="form-group">
+      <label>CREATE PASSWORD</label>
+      <input type="password" id="su-pass" placeholder="Min. 6 characters" oninput="onPasswordStrength()"/>
+      <div class="strength-wrap">
+        <div class="strength-track"><div class="strength-fill" id="strengthFill"></div></div>
+        <div class="strength-label" id="strengthLabel" style="color:var(--muted)"></div>
+      </div>
+    </div>
+    <button class="modal-submit submit-green" onclick="handleSignup()">Create My Account 🚀</button>
+    <div class="modal-note">Already have an account? <a onclick="switchToSignin()">Sign In →</a></div>
   </div>
+</div>
 
-  <!-- ═══════════════════════════════════════════════════
+<!-- ══════════════════════════════════════
      SIGNIN MODAL
-═══════════════════════════════════════════════════ -->
-  <div class="modal-overlay" id="signinOverlay">
-    <div class="modal signin-modal">
-      <button class="modal-close" onclick="closeSignin()">✕</button>
-      <div class="modal-eyebrow yellow">✦ WELCOME BACK</div>
-      <div class="modal-title">Sign In</div>
-      <div class="modal-sub">Access your rentals, live delivery tracking and saved items.</div>
+════════════════════════════════════════ -->
+<div class="modal-overlay" id="signinOverlay">
+  <div class="modal signin-modal">
+    <button class="modal-close" onclick="closeSignin()">✕</button>
+    <div class="modal-eyebrow yellow">✦ WELCOME BACK</div>
+    <div class="modal-title">Sign In</div>
+    <div class="modal-sub">Access your rentals, live delivery tracking and saved items.</div>
+    <div class="form-group">
+      <label>EMAIL ADDRESS</label>
+      <input type="email" id="si-email" placeholder="arjun@example.com" oninput="clearFieldState('si-email','si-email-msg')"/>
+      <div class="field-msg" id="si-email-msg"></div>
+    </div>
+    <div class="form-group">
+      <label>PASSWORD</label>
+      <input type="password" id="si-pass" placeholder="Enter your password" oninput="clearFieldState('si-pass','si-pass-msg')"/>
+      <div class="field-msg" id="si-pass-msg"></div>
+    </div>
+    <div style="text-align:right;margin-top:-6px;margin-bottom:14px;">
+      <a onclick="openForgotPassword()" style="font-size:0.78rem;color:var(--accent3);cursor:pointer;text-decoration:none;font-weight:600;">Forgot Password?</a>
+    </div>
+    <button class="modal-submit submit-yellow" onclick="handleSignin()">Sign In to GearGo →</button>
+
+    <div class="separator">or</div>
+    <button class="btn-google" onclick="handleGoogleAuth()">
+      <svg viewBox="0 0 24 24">
+        <path class="g-logo-p1" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+        <path class="g-logo-p2" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+        <path class="g-logo-p3" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+        <path class="g-logo-p4" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+      </svg>
+      <span>Continue with Google</span>
+    </button>
+    <div class="gauth-notice" id="gauthNotice">⚙️ Set your Google Client ID to enable Google Sign-In.</div>
+
+    <div class="modal-note">No account yet? <a onclick="switchToSignup()">Create one →</a></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     FORGOT PASSWORD MODAL (3 steps)
+════════════════════════════════════════ -->
+<div class="modal-overlay" id="fpOverlay">
+  <div class="modal fp-modal">
+    <button class="modal-close" onclick="closeFP()">✕</button>
+    <div class="step-indicator">
+      <div class="step-dot" id="fpDot1">1</div>
+      <div class="step-line" id="fpLine1"></div>
+      <div class="step-dot" id="fpDot2">2</div>
+      <div class="step-line" id="fpLine2"></div>
+      <div class="step-dot" id="fpDot3">3</div>
+    </div>
+
+    <!-- Step 1: Email/Phone -->
+    <div class="fp-step active" id="fpStep1">
+      <div class="modal-eyebrow pink">✦ FORGOT PASSWORD · STEP 1</div>
+      <div class="modal-title" style="font-size:1.4rem;">Find Your Account</div>
+      <div class="modal-sub">Enter your registered email address to receive a 6-digit reset code.</div>
       <div class="form-group">
-        <label>EMAIL ADDRESS</label>
-        <input type="email" id="si-email" placeholder="arjun@example.com"
-          oninput="clearFieldState('si-email','si-email-msg')" />
-        <div class="field-msg" id="si-email-msg"></div>
+        <label>REGISTERED EMAIL</label>
+        <input type="email" id="fp-email" placeholder="arjun@example.com" oninput="clearFieldState('fp-email','fp-email-msg')"/>
+        <div class="field-msg" id="fp-email-msg"></div>
+      </div>
+      <button class="modal-submit submit-pink" onclick="handleFPStep1()">Send Reset Code →</button>
+      <div class="modal-note">Remember your password? <a onclick="closeFP();setTimeout(openSignin,220)">Sign In →</a></div>
+    </div>
+
+    <!-- Step 2: Code -->
+    <div class="fp-step" id="fpStep2">
+      <div class="modal-eyebrow pink">✦ FORGOT PASSWORD · STEP 2</div>
+      <div class="modal-title" style="font-size:1.4rem;">Check Your Inbox</div>
+      <div class="modal-sub">A reset code has been sent to your registered contact.</div>
+      <div class="email-preview" id="fpEmailPreview" style="display:none;">
+        <div class="ep-to">To: <span id="fpEmailDisplay">—</span></div>
+        <div class="ep-body">Hi there! Here is your GearGo password reset code. It expires in 10 minutes.</div>
+        <div class="ep-code" id="fpCodeDisplay" style="display:none;">——</div>
+        <div class="ep-note" id="fpSimMsg">⚠️ Real service is active. Check your inbox/messages.</div>
       </div>
       <div class="form-group">
-        <label>PASSWORD</label>
-        <input type="password" id="si-pass" placeholder="Enter your password"
-          oninput="clearFieldState('si-pass','si-pass-msg')" />
-        <div class="field-msg" id="si-pass-msg"></div>
+        <label>ENTER 6-DIGIT CODE</label>
+        <input type="text" id="fp-code" placeholder="e.g. 482951" maxlength="6" oninput="this.value=this.value.replace(/\D/g,'');clearFieldState('fp-code','fp-code-msg')"/>
+        <div class="field-msg" id="fp-code-msg"></div>
       </div>
-      <div style="text-align:right; margin-top:-6px; margin-bottom:14px;">
-        <a onclick="openForgotPassword()"
-          style="font-size:0.78rem; color:var(--accent3); cursor:pointer; text-decoration:none; font-weight:600;">Forgot
-          Password?</a>
+      <button class="modal-submit submit-pink" onclick="handleFPStep2()">Verify Code →</button>
+      <div class="modal-note"><a onclick="goFPStep(1)" style="color:var(--muted)">← Back</a> &nbsp;·&nbsp; <a onclick="resendCode()" style="color:var(--accent3)">Resend code</a></div>
+    </div>
+
+    <!-- Step 3: New password -->
+    <div class="fp-step" id="fpStep3">
+      <div class="modal-eyebrow pink">✦ FORGOT PASSWORD · STEP 3</div>
+      <div class="modal-title" style="font-size:1.4rem;">Set New Password</div>
+      <div class="modal-sub">Create a strong new password for your account.</div>
+      <div class="form-group">
+        <label>NEW PASSWORD</label>
+        <input type="password" id="fp-newpass" placeholder="Min. 6 characters" oninput="onFPStrength()"/>
+        <div class="strength-wrap">
+          <div class="strength-track"><div class="strength-fill" id="fpStrengthFill"></div></div>
+          <div class="strength-label" id="fpStrengthLabel" style="color:var(--muted)"></div>
+        </div>
+        <div class="field-msg" id="fp-newpass-msg"></div>
       </div>
-      <button class="modal-submit submit-yellow" onclick="handleSignin()">Sign In to GearGo →</button>
-      <div class="separator">or</div>
-
-      <!-- ══════════════════════════════════════════════════
-         REAL GOOGLE SIGN-IN BUTTON
-         Clicking this triggers Google's official OAuth popup
-         which shows the user's actual browser-logged-in accounts.
-    ══════════════════════════════════════════════════ -->
-      <button class="btn-google" id="btnGoogleSignIn" onclick="handleGoogleAuth()">
-        <svg viewBox="0 0 24 24">
-          <path class="g-logo-p1"
-            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-          <path class="g-logo-p2"
-            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-          <path class="g-logo-p3"
-            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" />
-          <path class="g-logo-p4"
-            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-        </svg>
-        <span>Continue with Google</span>
-      </button>
-
-      <!-- Status indicating successful configuration -->
-      <div class="gauth-notice" id="gauthNotice">
-        ✅ <strong>Connection Successful:</strong> Real Google Auth is active.
+      <div class="form-group">
+        <label>CONFIRM NEW PASSWORD</label>
+        <input type="password" id="fp-confirmpass" placeholder="Re-enter new password" oninput="clearFieldState('fp-confirmpass','fp-confirmpass-msg')"/>
+        <div class="field-msg" id="fp-confirmpass-msg"></div>
       </div>
-
-      <div class="modal-note">No account yet? <a onclick="switchToSignup()">Create one →</a></div>
+      <button class="modal-submit submit-pink" onclick="handleFPStep3()">Reset Password & Sign In →</button>
     </div>
   </div>
+</div>
 
-  <!-- ═══════════════════════════════════════════════════
-     FORGOT PASSWORD MODAL
-═══════════════════════════════════════════════════ -->
-  <div class="modal-overlay" id="fpOverlay">
-    <div class="modal fp-modal">
-      <button class="modal-close" onclick="closeFP()">✕</button>
-      <div class="step-indicator">
-        <div class="step-dot" id="fpDot1">1</div>
-        <div class="step-line" id="fpLine1"></div>
-        <div class="step-dot" id="fpDot2">2</div>
-        <div class="step-line" id="fpLine2"></div>
-        <div class="step-dot" id="fpDot3">3</div>
-      </div>
-      <div class="fp-step active" id="fpStep1">
-        <div class="modal-eyebrow pink">✦ FORGOT PASSWORD · STEP 1</div>
-        <div class="modal-title" style="font-size:1.4rem;">Find Your Account</div>
-        <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 20px;">Enter your registered email or phone number
-          to receive a 6-digit reset code.</p>
-        <div style="position: relative; margin-bottom: 25px;">
-          <input type="text" id="fp-email" placeholder="Email or 10-digit Phone"
-            style="width: 100%; padding: 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: #fff; font-size: 1rem; outline: none; transition: 0.3s; text-align: center;">
-        </div>
-        <button class="modal-submit submit-pink" onclick="handleFPStep1()">Send Reset Code →</button>
-        <div class="modal-note">Remember your password? <a onclick="closeFP();setTimeout(openSignin,220)">Sign In →</a>
-        </div>
-      </div>
-      <div class="fp-step" id="fpStep2">
-        <div class="modal-eyebrow pink">✦ FORGOT PASSWORD · STEP 2</div>
-        <div class="modal-title" style="font-size:1.4rem;">Check Your Inbox</div>
-        <div class="modal-sub">A reset code has been sent to your registered contact.</div>
-        <div class="email-preview" id="fpEmailPreview" style="display: none;">
-          <div class="ep-to">To: <span id="fpEmailDisplay">—</span></div>
-          <div class="ep-body">Hi there! Here is your GearGo password reset code. It expires in 10 minutes.</div>
-          <div class="ep-code" id="fpCodeDisplay" style="display: none;">——</div>
-          <div class="ep-note" id="fpSimMsg">⚠️ Real service is active. Check your inbox/messages.</div>
-        </div>
-        <div class="form-group">
-          <label>ENTER 6-DIGIT CODE</label>
-          <input type="text" id="fp-code" placeholder="e.g. 482951" maxlength="6"
-            oninput="this.value=this.value.replace(/\D/g,''); clearFieldState('fp-code','fp-code-msg')" />
-          <div class="field-msg" id="fp-code-msg"></div>
-        </div>
-        <button class="modal-submit submit-pink" onclick="handleFPStep2()">Verify Code →</button>
-        <div class="modal-note"><a onclick="goFPStep(1)" style="color:var(--muted)">← Back</a> &nbsp;·&nbsp; <a
-            onclick="resendCode()" style="color:var(--accent3)">Resend code</a></div>
-      </div>
-      <div class="fp-step" id="fpStep3">
-        <div class="modal-eyebrow pink">✦ FORGOT PASSWORD · STEP 3</div>
-        <div class="modal-title" style="font-size:1.4rem;">Set New Password</div>
-        <div class="modal-sub">Create a strong new password for your account.</div>
-        <div class="form-group">
-          <label>NEW PASSWORD</label>
-          <input type="password" id="fp-newpass" placeholder="Min. 6 characters" oninput="onFPStrength()" />
-          <div class="strength-wrap">
-            <div class="strength-track">
-              <div class="strength-fill" id="fpStrengthFill"></div>
-            </div>
-            <div class="strength-label" id="fpStrengthLabel" style="color:var(--muted)"></div>
-          </div>
-          <div class="field-msg" id="fp-newpass-msg"></div>
-        </div>
-        <div class="form-group">
-          <label>CONFIRM NEW PASSWORD</label>
-          <input type="password" id="fp-confirmpass" placeholder="Re-enter new password"
-            oninput="clearFieldState('fp-confirmpass','fp-confirmpass-msg')" />
-          <div class="field-msg" id="fp-confirmpass-msg"></div>
-        </div>
-        <button class="modal-submit submit-pink" onclick="handleFPStep3()">Reset Password & Sign In →</button>
-      </div>
-    </div>
-  </div>
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
-  <!-- TOAST -->
-  <div class="toast" id="toast"></div>
+<script>
+/* ─────────────────────────────────────────────────
+   CONFIG
+───────────────────────────────────────────────── */
+const GOOGLE_CLIENT_ID = '440675514682-lng0e1v467junk79btos6fvdbbuht0jv.apps.googleusercontent.com';
 
-  <script>
-    // ════════════════════════════════════════════════════════
-    //  CONFIGURATION — REPLACE THIS WITH YOUR REAL CLIENT ID
-    //  Get it from: https://console.cloud.google.com/
-    //    → APIs & Services → Credentials → OAuth 2.0 Client IDs
-    //  Add your site's domain to "Authorized JavaScript origins"
-    // ════════════════════════════════════════════════════════
-    const GOOGLE_CLIENT_ID = '609499873823-9a5pqf9pqv3ka6v15s3qe3srrdakcein.apps.googleusercontent.com';
+/* ─────────────────────────────────────────────────
+   STORAGE
+───────────────────────────────────────────────── */
+const STORE_KEY = 'geargo_accounts_v2';
+function getAllAccounts() { try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch(e) { return {}; } }
+function saveAllAccounts(obj) { localStorage.setItem(STORE_KEY, JSON.stringify(obj)); }
+function getAccountByEmail(email) { return getAllAccounts()[email.toLowerCase().trim()] || null; }
+function upsertAccount(data) { const all = getAllAccounts(); all[data.email.toLowerCase().trim()] = data; saveAllAccounts(all); }
 
-    // ─── STORAGE ──────────────────────────────────────────────────
-    const STORE_KEY = 'geargo_accounts_v2';
-    function getAllAccounts() { try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch (e) { return {}; } }
-    function saveAllAccounts(obj) { localStorage.setItem(STORE_KEY, JSON.stringify(obj)); }
-    function getAccountByEmail(email) { return getAllAccounts()[email.toLowerCase().trim()] || null; }
-    function upsertAccount(data) { const all = getAllAccounts(); all[data.email.toLowerCase().trim()] = data; saveAllAccounts(all); }
+/* ─────────────────────────────────────────────────
+   PAGE LOAD — STATS COUNTER ANIMATION
+───────────────────────────────────────────────── */
+window.addEventListener('load', async () => {
+  if (GOOGLE_CLIENT_ID === '' || GOOGLE_CLIENT_ID.includes('YOUR_')) {
+    document.getElementById('gauthNotice').classList.add('show');
+  }
+  initGoogleAuth();
 
-    // ─── COMING SOON ──────────────────────────────────────────────
-    let bannerTimer = null;
-    function showComingSoon(id) {
-      document.querySelectorAll('.coming-soon-banner').forEach(b => b.classList.remove('show'));
-      clearTimeout(bannerTimer);
-      const b = document.getElementById(id);
-      b.classList.add('show');
-      bannerTimer = setTimeout(() => b.classList.remove('show'), 2000);
-    }
+  try {
+    const r = await fetch('/api/stats');
+    const s = await r.json();
+    setTimeout(() => {
+      animateCounter(document.getElementById('ctr-items'), s.itemsNearby || 300, '+', 1400);
+      animateCounter(document.getElementById('ctr-riders'), s.deliveryBoys || 3, '', 1200);
+      animateCounter(document.getElementById('ctr-time'), s.avgMins || 12, ' min', 1000);
+    }, 500);
+  } catch(e) {
+    setTimeout(() => {
+      animateCounter(document.getElementById('ctr-items'), 300, '+', 1400);
+      animateCounter(document.getElementById('ctr-riders'), 3, '', 1200);
+      animateCounter(document.getElementById('ctr-time'), 12, ' min', 1000);
+    }, 500);
+  }
+});
 
-    // ─── PAGE LOAD / STATS ────────────────────────────────────────
-    window.addEventListener('load', async () => {
-      // Check for signin parameter (from reset page)
-      const params = new URLSearchParams(window.location.search);
-      if (params.has('signin')) {
-        const email = params.get('signin');
-        openSignin();
-        document.getElementById('si-email').value = email;
-        showToast('✅ Password updated! Please sign in.');
-      }
+function animateCounter(el, target, suffix, dur) {
+  if (!el) return;
+  let v = 0; const step = target / (dur / 16);
+  const t = setInterval(() => {
+    v = Math.min(v + step, target);
+    el.textContent = Math.floor(v) + suffix;
+    if (v >= target) clearInterval(t);
+  }, 16);
+}
 
-      // Check if client ID is configured and show notice if not
-      if (GOOGLE_CLIENT_ID === '' || GOOGLE_CLIENT_ID.includes('YOUR_')) {
-        document.getElementById('gauthNotice').classList.add('show');
-      }
+/* ─────────────────────────────────────────────────
+   HAMBURGER MENU (from Page 1)
+───────────────────────────────────────────────── */
+let menuOpen = false;
+function toggleMenu() {
+  menuOpen = !menuOpen;
+  document.getElementById('hamburgerBtn').classList.toggle('open', menuOpen);
+  document.getElementById('heroNavDrawer').classList.toggle('open', menuOpen);
+  document.getElementById('drawerDivider').classList.toggle('show', menuOpen);
+}
+document.addEventListener('click', function(e) {
+  if (menuOpen && !e.target.closest('.hamburger') && !e.target.closest('.hero-nav-drawer')) {
+    menuOpen = false;
+    document.getElementById('hamburgerBtn').classList.remove('open');
+    document.getElementById('heroNavDrawer').classList.remove('open');
+    document.getElementById('drawerDivider').classList.remove('show');
+  }
+});
 
-      // Init Google Identity Services when SDK loads
-      initGoogleAuth();
+/* ─────────────────────────────────────────────────
+   COMING SOON
+───────────────────────────────────────────────── */
+let bannerTimer = null;
+function showComingSoon(id) {
+  document.querySelectorAll('.coming-soon-banner').forEach(b => b.classList.remove('show'));
+  clearTimeout(bannerTimer);
+  document.getElementById(id).classList.add('show');
+  bannerTimer = setTimeout(() => document.getElementById(id).classList.remove('show'), 2000);
+}
 
-      try {
-        const r = await fetch('/api/stats');
-        const s = await r.json();
-        setTimeout(() => {
-          animateCounter(document.getElementById('ctr-items'), s.itemsNearby || 30, '+', 1400);
-          animateCounter(document.getElementById('ctr-riders'), s.deliveryBoys || 6, '', 1200);
-          animateCounter(document.getElementById('ctr-time'), s.avgMins || 25, ' min', 1000);
-        }, 500);
-      } catch (e) {
-        setTimeout(() => {
-          animateCounter(document.getElementById('ctr-items'), 30, '+', 1400);
-          animateCounter(document.getElementById('ctr-riders'), 6, '', 1200);
-          animateCounter(document.getElementById('ctr-time'), 25, ' min', 1000);
-        }, 500);
-      }
-    });
+/* ─────────────────────────────────────────────────
+   FIELD STATE HELPERS
+───────────────────────────────────────────────── */
+function setFieldState(inputId, msgId, type, message) {
+  const inp = document.getElementById(inputId);
+  const msg = document.getElementById(msgId);
+  if (!inp) return;
+  inp.classList.remove('input-error','input-ok');
+  if (msg) msg.classList.remove('show','err','ok');
+  if (type === 'error') {
+    inp.classList.add('input-error');
+    if (msg) { msg.textContent = '✖ '+message; msg.classList.add('show','err'); }
+  } else if (type === 'ok') {
+    inp.classList.add('input-ok');
+    if (msg && message) { msg.textContent = '✔ '+message; msg.classList.add('show','ok'); }
+  }
+}
+function clearFieldState(inputId, msgId) {
+  const inp = document.getElementById(inputId);
+  if (inp) inp.classList.remove('input-error','input-ok');
+  const msg = document.getElementById(msgId);
+  if (msg) msg.classList.remove('show','err','ok');
+}
+function clearSuField(id) { clearFieldState(id, null); }
 
-    function animateCounter(el, target, suffix, dur) {
-      let v = 0; const step = target / (dur / 16);
-      const t = setInterval(() => {
-        v = Math.min(v + step, target);
-        el.textContent = Math.floor(v) + suffix;
-        if (v >= target) clearInterval(t);
-      }, 16);
-    }
+/* ─────────────────────────────────────────────────
+   PASSWORD STRENGTH
+───────────────────────────────────────────────── */
+function strengthScore(pw) {
+  let score = 0;
+  if (pw.length >= 6) score++;
+  if (pw.length >= 10) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  const levels = [
+    {pct:0,label:'',color:'transparent'},
+    {pct:20,label:'Very weak',color:'#f04e7a'},
+    {pct:40,label:'Weak',color:'#f0904e'},
+    {pct:60,label:'Fair',color:'#f0d040'},
+    {pct:80,label:'Strong',color:'#4ef0a0'},
+    {pct:100,label:'Very strong',color:'#4ef0a0'},
+  ];
+  return levels[Math.min(score, 5)];
+}
+function onPasswordStrength() {
+  const val = document.getElementById('su-pass').value;
+  const {pct,label,color} = strengthScore(val);
+  document.getElementById('strengthFill').style.width = pct+'%';
+  document.getElementById('strengthFill').style.background = color;
+  document.getElementById('strengthLabel').textContent = val.length ? label : '';
+  document.getElementById('strengthLabel').style.color = color;
+}
+function onFPStrength() {
+  const val = document.getElementById('fp-newpass').value;
+  const {pct,label,color} = strengthScore(val);
+  document.getElementById('fpStrengthFill').style.width = pct+'%';
+  document.getElementById('fpStrengthFill').style.background = color;
+  document.getElementById('fpStrengthLabel').textContent = val.length ? label : '';
+  document.getElementById('fpStrengthLabel').style.color = color;
+}
 
-    // ════════════════════════════════════════════════════════════════
-    //  REAL GOOGLE OAUTH — uses google.accounts.oauth2
-    //  This opens Google's NATIVE account chooser popup,
-    //  which reads the user's actual browser-signed-in Google accounts.
-    // ════════════════════════════════════════════════════════════════
+/* ─────────────────────────────────────────────────
+   SIGNUP
+───────────────────────────────────────────────── */
+function onSuEmailInput() {
+  const email = document.getElementById('su-email').value.trim().toLowerCase();
+  const dup = document.getElementById('dupBar');
+  if (email && getAccountByEmail(email)) {
+    dup.classList.add('show');
+    setFieldState('su-email','su-email-msg','error','Email already registered');
+  } else {
+    dup.classList.remove('show');
+    clearFieldState('su-email','su-email-msg');
+  }
+}
+function openSignup() {
+  document.getElementById('dupBar').classList.remove('show');
+  ['su-name','su-phone','su-address','su-email','su-pass'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+    clearFieldState(id, id+'-msg');
+  });
+  document.getElementById('strengthFill').style.width = '0';
+  document.getElementById('strengthLabel').textContent = '';
+  document.getElementById('signupOverlay').classList.add('open');
+}
+function closeSignup() { document.getElementById('signupOverlay').classList.remove('open'); }
+function handleSignup() {
+  const n    = document.getElementById('su-name').value.trim();
+  const ph   = document.getElementById('su-phone').value.trim();
+  const addr = document.getElementById('su-address').value.trim();
+  const e    = document.getElementById('su-email').value.trim();
+  const pw   = document.getElementById('su-pass').value;
+  if (!n||!ph||!addr||!e||!pw) { showToast('⚠️ Please fill in all fields', true); return; }
+  if (pw.length < 6) { showToast('⚠️ Password must be at least 6 characters', true); return; }
+  if (getAccountByEmail(e)) {
+    document.getElementById('dupBar').classList.add('show');
+    setFieldState('su-email','su-email-msg','error','Email already registered');
+    showToast('⚠️ That email is already linked to an account', true); return;
+  }
+  upsertAccount({name:n, phone:ph, address:addr, email:e.toLowerCase(), password:pw});
+  closeSignup();
+  showToast('✅ Account created! You can now Sign In.');
+  setTimeout(openSignin, 1000);
+}
 
-    let _googleClient = null;
-    let _googleWaitTimer = null;
+/* ─────────────────────────────────────────────────
+   SIGNIN
+───────────────────────────────────────────────── */
+function openSignin() {
+  clearFieldState('si-email','si-email-msg');
+  clearFieldState('si-pass','si-pass-msg');
+  document.getElementById('si-email').value = '';
+  document.getElementById('si-pass').value = '';
+  document.getElementById('signinOverlay').classList.add('open');
+}
+function closeSignin() { document.getElementById('signinOverlay').classList.remove('open'); }
+function switchToSignin() { closeSignup(); setTimeout(openSignin, 220); }
+function switchToSignup() { closeSignin(); setTimeout(openSignup, 220); }
 
-    function initGoogleAuth() {
-      // Wait for the GSI SDK to be ready
-      const tryInit = () => {
-        if (typeof google === 'undefined' || !google.accounts) {
-          setTimeout(tryInit, 200);
-          return;
-        }
+function handleSignin() {
+  const e  = document.getElementById('si-email').value.trim();
+  const pw = document.getElementById('si-pass').value;
+  clearFieldState('si-email','si-email-msg');
+  clearFieldState('si-pass','si-pass-msg');
+  if (!e||!pw) { showToast('⚠️ Enter your email and password', true); return; }
+  const acc = getAccountByEmail(e);
+  if (!acc) {
+    setFieldState('si-email','si-email-msg','error','No account found for this email');
+    showToast('❌ Email not registered — create an account first', true); return;
+  }
+  if (pw !== acc.password) {
+    setFieldState('si-email','si-email-msg','ok','Email looks good ✓');
+    setFieldState('si-pass','si-pass-msg','error','Wrong password — try again');
+    showToast('❌ Incorrect password', true); return;
+  }
+  localStorage.setItem('currentUser', JSON.stringify(acc));
+  closeSignin();
+  const overlay = document.getElementById('redirectOverlay');
+  document.getElementById('redirectMsg').innerHTML =
+    'Sign in successful!<br><span style="font-size:0.9rem;color:var(--accent2);">Verifying GPS connection...</span>';
+  overlay.classList.add('show');
+  const bar = document.getElementById('redirectBar');
+  bar.style.animation = 'none'; bar.offsetHeight;
+  bar.style.animation = 'fillBar 3s linear forwards';
+  setTimeout(() => { checkGPSAndRedirect(); }, 800);
+}
 
-        if (GOOGLE_CLIENT_ID === '' || GOOGLE_CLIENT_ID.includes('YOUR_')) return; // skip if not configured
+/* ─────────────────────────────────────────────────
+   GPS VERIFICATION (from Page 2)
+───────────────────────────────────────────────── */
+function checkGPSAndRedirect() {
+  const msg = document.getElementById('redirectMsg');
+  const bar = document.getElementById('redirectBar');
 
-        // Initialize Google Identity Services — Sign In With Google
-        google.accounts.id.initialize({
-          client_id: GOOGLE_CLIENT_ID,
-          callback: onGoogleSignInCallback,
-          // auto_select: false so it always shows account chooser
-          auto_select: false,
-          // cancel_on_tap_outside: true
-          cancel_on_tap_outside: true,
-        });
-      };
-      tryInit();
-    }
+  if (!navigator.geolocation) {
+    msg.innerHTML = '<span style="color:var(--accent3)">❌ GPS not supported.</span><br>Redirecting...';
+    setTimeout(() => { window.location.href = 'Search page.html'; }, 1500);
+    return;
+  }
 
-    /**
-     * handleGoogleAuth — triggered when user clicks "Continue with Google"
-     *
-     * Uses google.accounts.id.prompt() which opens Google's REAL native
-     * account chooser. The popup reads from the browser's active Google
-     * sessions — it shows exactly the accounts the user is logged into
-     * in their browser (Chrome, Firefox, etc.).
-     *
-     * If the user has multiple Google accounts, they all appear in the
-     * native Google popup just like on any real website.
-     */
-    function handleGoogleAuth() {
-      // Close sign-in modal first
-      closeSignin();
-
-      if (GOOGLE_CLIENT_ID === '' || GOOGLE_CLIENT_ID.includes('YOUR_GOOGLE')) {
-        setTimeout(() => {
-          openSignin();
-          document.getElementById('gauthNotice').classList.add('show');
-          showToast('⚙️ Set your Google Client ID to enable Google Sign-In', true);
-        }, 220);
-        return;
-      }
-
-      // Show our waiting overlay (behind Google's popup)
-      setTimeout(() => {
-        document.getElementById('googleWaitOverlay').classList.add('show');
-
-        // Trigger Google's native account picker popup
-        // This opens the real Google chooser showing browser-logged-in accounts
-        google.accounts.id.prompt((notification) => {
-          // notification.isNotDisplayed() — popup was blocked or no accounts
-          // notification.isSkippedMoment()  — user closed without selecting
-          // notification.isDismissedMoment() — user dismissed
-
-          if (notification.isNotDisplayed()) {
-            cancelGoogleWait();
-            const reason = notification.getNotDisplayedReason();
-            if (reason === 'suppressed_by_user') {
-              showToast('ℹ️ One Tap suppressed. Use the popup button.', true);
-              // Fall back to the redirect-based flow
-              triggerGoogleRedirectFlow();
-            } else {
-              showToast('⚠️ Google sign-in not available: ' + reason, true);
-              openSignin();
-            }
-          } else if (notification.isSkippedMoment() || notification.isDismissedMoment()) {
-            // User closed the Google popup without signing in
-            cancelGoogleWait();
-            setTimeout(openSignin, 150);
-          }
-          // If user selected an account, onGoogleSignInCallback fires automatically
-        });
-
-        // Safety timeout — if Google popup takes too long
-        _googleWaitTimer = setTimeout(() => {
-          if (document.getElementById('googleWaitOverlay').classList.contains('show')) {
-            cancelGoogleWait();
-            showToast('⚠️ Google sign-in timed out. Please try again.', true);
-            openSignin();
-          }
-        }, 60000);
-      }, 220);
-    }
-
-    /**
-     * Fallback: redirect-based Google OAuth flow.
-     * Used when One Tap is suppressed (e.g. user dismissed it before).
-     * This navigates to Google's consent page and comes back via redirect.
-     */
-    function triggerGoogleRedirectFlow() {
-      if (GOOGLE_CLIENT_ID === '' || GOOGLE_CLIENT_ID.includes('YOUR_GOOGLE')) return;
-
-      // Use oauth2 token client for popup flow as alternative
-      try {
-        const tokenClient = google.accounts.oauth2.initTokenClient({
-          client_id: GOOGLE_CLIENT_ID,
-          scope: 'openid email profile',
-          callback: (tokenResponse) => {
-            if (tokenResponse.error) {
-              showToast('❌ Google sign-in failed: ' + tokenResponse.error, true);
-              openSignin();
-              return;
-            }
-            // Fetch user info with the access token
-            fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-              headers: { Authorization: 'Bearer ' + tokenResponse.access_token }
-            })
-              .then(r => r.json())
-              .then(profile => onGoogleProfileReceived(profile))
-              .catch(() => {
-                showToast('❌ Could not fetch Google profile', true);
-                openSignin();
-              });
-          },
-        });
-        document.getElementById('googleWaitOverlay').classList.add('show');
-        tokenClient.requestAccessToken({ prompt: 'select_account' }); // 'select_account' forces account chooser
-      } catch (e) {
-        showToast('❌ Google OAuth error: ' + e.message, true);
-        openSignin();
-      }
-    }
-
-    /**
-     * Callback from google.accounts.id.initialize — receives the JWT credential
-     * after the user picks their account in Google's native popup.
-     * The JWT contains the user's real name, email, and profile picture.
-     */
-    function onGoogleSignInCallback(response) {
-      // Hide our waiting overlay
-      cancelGoogleWait();
-
-      try {
-        // Decode the JWT — contains real user info from their Google account
-        const payload = parseJwt(response.credential);
-        const profile = {
-          name: payload.name,
-          email: payload.email,
-          picture: payload.picture, // Google profile photo URL
-          sub: payload.sub,     // Google user ID
-        };
-        onGoogleProfileReceived(profile);
-      } catch (e) {
-        showToast('❌ Could not read Google profile', true);
-        openSignin();
-      }
-    }
-
-    /**
-     * Called after we have the real Google user profile.
-     * Registers or logs in the user and redirects.
-     */
-    function onGoogleProfileReceived(profile) {
-      const googleUser = {
-        name: profile.name,
-        email: profile.email,
-        phone: '(Verified via Google)',
-        address: 'Address linked to Google Account',
-        password: 'google_oauth_managed',
-        picture: profile.picture || null,
-        isGoogle: true,
-        googleId: profile.sub || null,
-      };
-
-      // Register if new, otherwise fetch existing
-      const existing = getAccountByEmail(googleUser.email);
-      if (!existing) upsertAccount(googleUser);
-      localStorage.setItem('currentUser', JSON.stringify(existing || googleUser));
-
-      // Show redirect overlay
-      const overlay = document.getElementById('redirectOverlay');
-      const firstName = (profile.name || 'User').split(' ')[0];
-      document.getElementById('redirectMsg').innerHTML =
-        'Welcome, ' + firstName + '!<br><span style="font-size:0.9rem; color:var(--accent2);">Verifying GPS connection...</span>';
-      overlay.classList.add('show');
-
-      const bar = document.getElementById('redirectBar');
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      msg.innerHTML = '<span style="color:var(--accent2)">✅ GPS Location Active</span><br>Opening Search page...';
       bar.style.animation = 'none';
-      bar.offsetHeight; // reflow
-      bar.style.animation = 'fillBar 3s linear forwards'; // Slower bar for GPS check
+      bar.style.width = '100%';
+      bar.style.background = 'var(--accent2)';
+      setTimeout(() => { window.location.href = 'Search page.html'; }, 1000);
+    },
+    (err) => {
+      let reason = "Please turn on GPS";
+      if (err.code === 1) reason = "Location permission denied";
+      else if (err.code === 2) reason = "GPS signal lost or OFF";
+      else if (err.code === 3) reason = "GPS check timed out";
+      msg.innerHTML = `
+        <div style="margin-top:10px;text-align:center;">
+          <span style="color:var(--accent3);font-weight:800;font-size:1.2rem;">📍 GPS REQUIRED</span><br>
+          <span style="color:#fff;font-size:0.85rem;">${reason}</span><br>
+          <button onclick="checkGPSAndRedirect()" class="btn btn-primary" style="margin-top:15px;padding:8px 20px;">Retry GPS Check</button>
+        </div>`;
+      bar.style.animationPlayState = 'paused';
+      bar.style.background = 'var(--accent3)';
+    },
+    { enableHighAccuracy: true, timeout: 6000, maximumAge: 0 }
+  );
+}
 
-      // Instead of immediate redirect, check GPS
-      setTimeout(() => { checkGPSAndRedirect(); }, 800);
-    }
+/* ─────────────────────────────────────────────────
+   GOOGLE OAUTH (from Page 2)
+───────────────────────────────────────────────── */
+let _googleWaitTimer = null;
 
-    function cancelGoogleWait() {
-      clearTimeout(_googleWaitTimer);
-      document.getElementById('googleWaitOverlay').classList.remove('show');
-    }
+function initGoogleAuth() {
+  const tryInit = () => {
+    if (typeof google === 'undefined' || !google.accounts) { setTimeout(tryInit, 200); return; }
+    if (GOOGLE_CLIENT_ID === '' || GOOGLE_CLIENT_ID.includes('YOUR_')) return;
+    google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: onGoogleSignInCallback,
+      auto_select: false,
+      cancel_on_tap_outside: true,
+    });
+  };
+  tryInit();
+}
 
-    // Close wait overlay on backdrop click
-    document.getElementById('googleWaitOverlay').addEventListener('click', function (e) {
-      if (e.target === this) {
+function handleGoogleAuth() {
+  closeSignin();
+  if (GOOGLE_CLIENT_ID === '' || GOOGLE_CLIENT_ID.includes('YOUR_GOOGLE')) {
+    setTimeout(() => {
+      openSignin();
+      document.getElementById('gauthNotice').classList.add('show');
+      showToast('⚙️ Set your Google Client ID to enable Google Sign-In', true);
+    }, 220);
+    return;
+  }
+  setTimeout(() => {
+    document.getElementById('googleWaitOverlay').classList.add('show');
+    google.accounts.id.prompt((notification) => {
+      if (notification.isNotDisplayed()) {
         cancelGoogleWait();
-        openSignin();
+        const reason = notification.getNotDisplayedReason();
+        if (reason === 'suppressed_by_user') {
+          triggerGoogleRedirectFlow();
+        } else {
+          showToast('⚠️ Google sign-in not available: ' + reason, true);
+          openSignin();
+        }
+      } else if (notification.isSkippedMoment() || notification.isDismissedMoment()) {
+        cancelGoogleWait();
+        setTimeout(openSignin, 150);
       }
     });
-
-    // ─── JWT PARSER ───────────────────────────────────────────────
-    function parseJwt(token) {
-      var base64Url = token.split('.')[1];
-      var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(c =>
-        '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-      ).join(''));
-      return JSON.parse(jsonPayload);
-    }
-
-    // ─── FIELD STATE HELPERS ──────────────────────────────────────
-    function setFieldState(inputId, msgId, type, message) {
-      const inp = document.getElementById(inputId);
-      const msg = document.getElementById(msgId);
-      inp.classList.remove('input-error', 'input-ok');
-      msg.classList.remove('show', 'err', 'ok');
-      if (type === 'error') {
-        inp.classList.add('input-error');
-        msg.textContent = '✖ ' + message;
-        msg.classList.add('show', 'err');
-      } else if (type === 'ok') {
-        inp.classList.add('input-ok');
-        if (message) { msg.textContent = '✔ ' + message; msg.classList.add('show', 'ok'); }
+    _googleWaitTimer = setTimeout(() => {
+      if (document.getElementById('googleWaitOverlay').classList.contains('show')) {
+        cancelGoogleWait();
+        showToast('⚠️ Google sign-in timed out. Please try again.', true);
+        openSignin();
       }
-    }
-    function clearFieldState(inputId, msgId) {
-      document.getElementById(inputId).classList.remove('input-error', 'input-ok');
-      const m = document.getElementById(msgId);
-      if (m) m.classList.remove('show', 'err', 'ok');
-    }
-    function clearSuField(id) { clearFieldState(id, null); }
+    }, 60000);
+  }, 220);
+}
 
-    // ─── PASSWORD STRENGTH ────────────────────────────────────────
-    function onPasswordStrength() {
-      const val = document.getElementById('su-pass').value;
-      const { pct, label, color } = strengthScore(val);
-      document.getElementById('strengthFill').style.width = pct + '%';
-      document.getElementById('strengthFill').style.background = color;
-      document.getElementById('strengthLabel').textContent = val.length ? label : '';
-      document.getElementById('strengthLabel').style.color = color;
-    }
-    function onFPStrength() {
-      const val = document.getElementById('fp-newpass').value;
-      const { pct, label, color } = strengthScore(val);
-      document.getElementById('fpStrengthFill').style.width = pct + '%';
-      document.getElementById('fpStrengthFill').style.background = color;
-      document.getElementById('fpStrengthLabel').textContent = val.length ? label : '';
-      document.getElementById('fpStrengthLabel').style.color = color;
-    }
-    function strengthScore(pw) {
-      let score = 0;
-      if (pw.length >= 6) score++;
-      if (pw.length >= 10) score++;
-      if (/[A-Z]/.test(pw)) score++;
-      if (/[0-9]/.test(pw)) score++;
-      if (/[^A-Za-z0-9]/.test(pw)) score++;
-      const levels = [
-        { pct: 0, label: '', color: 'transparent' },
-        { pct: 20, label: 'Very weak', color: '#f04e7a' },
-        { pct: 40, label: 'Weak', color: '#f0904e' },
-        { pct: 60, label: 'Fair', color: '#f0d040' },
-        { pct: 80, label: 'Strong', color: '#4ef0a0' },
-        { pct: 100, label: 'Very strong', color: '#4ef0a0' },
-      ];
-      return levels[Math.min(score, 5)];
-    }
+function triggerGoogleRedirectFlow() {
+  if (GOOGLE_CLIENT_ID === '' || GOOGLE_CLIENT_ID.includes('YOUR_GOOGLE')) return;
+  try {
+    const tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: GOOGLE_CLIENT_ID,
+      scope: 'openid email profile',
+      callback: (tokenResponse) => {
+        if (tokenResponse.error) { showToast('❌ Google sign-in failed: ' + tokenResponse.error, true); openSignin(); return; }
+        fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: 'Bearer ' + tokenResponse.access_token }
+        }).then(r => r.json()).then(profile => onGoogleProfileReceived(profile))
+          .catch(() => { showToast('❌ Could not fetch Google profile', true); openSignin(); });
+      },
+    });
+    document.getElementById('googleWaitOverlay').classList.add('show');
+    tokenClient.requestAccessToken({ prompt: 'select_account' });
+  } catch(e) { showToast('❌ Google OAuth error: ' + e.message, true); openSignin(); }
+}
 
-    // ─── SIGNUP ───────────────────────────────────────────────────
-    function onSuEmailInput() {
-      const email = document.getElementById('su-email').value.trim().toLowerCase();
-      const dup = document.getElementById('dupBar');
-      if (email && getAccountByEmail(email)) {
-        dup.classList.add('show');
-        setFieldState('su-email', 'su-email-msg', 'error', 'Email already registered');
+function onGoogleSignInCallback(response) {
+  cancelGoogleWait();
+  try {
+    const payload = parseJwt(response.credential);
+    onGoogleProfileReceived({ name: payload.name, email: payload.email, picture: payload.picture, sub: payload.sub });
+  } catch(e) { showToast('❌ Could not read Google profile', true); openSignin(); }
+}
+
+function onGoogleProfileReceived(profile) {
+  const googleUser = {
+    name: profile.name, email: profile.email,
+    phone: '(Verified via Google)', address: 'Address linked to Google Account',
+    password: 'google_oauth_managed', picture: profile.picture || null,
+    isGoogle: true, googleId: profile.sub || null,
+  };
+  const existing = getAccountByEmail(googleUser.email);
+  if (!existing) upsertAccount(googleUser);
+  localStorage.setItem('currentUser', JSON.stringify(existing || googleUser));
+
+  const overlay = document.getElementById('redirectOverlay');
+  const firstName = (profile.name || 'User').split(' ')[0];
+  document.getElementById('redirectMsg').innerHTML =
+    'Welcome, ' + firstName + '!<br><span style="font-size:0.9rem;color:var(--accent2);">Verifying GPS connection...</span>';
+  overlay.classList.add('show');
+  const bar = document.getElementById('redirectBar');
+  bar.style.animation = 'none'; bar.offsetHeight;
+  bar.style.animation = 'fillBar 3s linear forwards';
+  setTimeout(() => { checkGPSAndRedirect(); }, 800);
+}
+
+function cancelGoogleWait() {
+  clearTimeout(_googleWaitTimer);
+  document.getElementById('googleWaitOverlay').classList.remove('show');
+}
+document.getElementById('googleWaitOverlay').addEventListener('click', function(e) {
+  if (e.target === this) { cancelGoogleWait(); openSignin(); }
+});
+
+function parseJwt(token) {
+  var base64Url = token.split('.')[1];
+  var base64 = base64Url.replace(/-/g,'+').replace(/_/g,'/');
+  var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(c =>
+    '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+  ).join(''));
+  return JSON.parse(jsonPayload);
+}
+
+/* ─────────────────────────────────────────────────
+   FORGOT PASSWORD — 3-step flow (Page 2 server OTP)
+───────────────────────────────────────────────── */
+let _fpEmail = '', _fpCode = '';
+
+function openForgotPassword() {
+  closeSignin();
+  setTimeout(() => {
+    _fpEmail = ''; _fpCode = '';
+    ['fp-email','fp-code','fp-newpass','fp-confirmpass'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.value = '';
+      clearFieldState(id, id+'-msg');
+    });
+    document.getElementById('fpStrengthFill').style.width = '0';
+    document.getElementById('fpStrengthLabel').textContent = '';
+    goFPStep(1);
+    document.getElementById('fpOverlay').classList.add('open');
+  }, 220);
+}
+function closeFP() { document.getElementById('fpOverlay').classList.remove('open'); }
+
+function goFPStep(n) {
+  [1,2,3].forEach(i => {
+    document.getElementById('fpStep'+i).classList.toggle('active', i===n);
+    const dot = document.getElementById('fpDot'+i);
+    const line = document.getElementById('fpLine'+i);
+    dot.classList.toggle('active', i===n);
+    dot.classList.toggle('done', i<n);
+    if (line) line.classList.toggle('done', i<n);
+  });
+}
+
+async function handleFPStep1() {
+  const e = document.getElementById('fp-email').value.trim();
+  clearFieldState('fp-email','fp-email-msg');
+  if (!e) { showToast('⚠️ Enter your registered email', true); return; }
+
+  _fpEmail = e.toLowerCase().trim();
+  showToast('⏳ Sending reset code...');
+
+  try {
+    if (window.location.protocol === 'file:') {
+      throw new Error('Please run the server (npm start) and open http://localhost:3005 to use this feature.');
+    }
+    const res = await fetch('http://localhost:3005/api/auth-flow/dispatch-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: _fpEmail })
+    });
+    if (!res.ok) {
+      if (!res.headers.get('X-Backend')) {
+        throw new Error('You are hitting the wrong server. Please open http://localhost:3005 instead.');
+      }
+      const errData = await res.json().catch(() => ({ message: 'Server error ' + res.status }));
+      throw new Error(errData.message || 'Server error');
+    }
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById('fpEmailDisplay').textContent = _fpEmail;
+      document.getElementById('fp-code').value = '';
+      clearFieldState('fp-code','fp-code-msg');
+      const preview = document.getElementById('fpEmailPreview');
+      preview.style.display = 'block';
+      if (data.simulated) {
+        document.getElementById('fpCodeDisplay').style.display = 'block';
+        document.getElementById('fpCodeDisplay').textContent = data.otp;
+        document.getElementById('fpSimMsg').textContent = '⚠️ Email credentials not set in server. Code shown above.';
+        showToast('📧 Code generated (Simulated)');
       } else {
-        dup.classList.remove('show');
-        clearFieldState('su-email', 'su-email-msg');
+        document.getElementById('fpCodeDisplay').style.display = 'none';
+        document.getElementById('fpSimMsg').textContent = '✅ Reset code sent to your email. Check your inbox.';
+        showToast('📧 Reset code sent to your email!');
       }
+      goFPStep(2);
+    } else {
+      showToast('❌ ' + (data.message || 'Failed to send OTP'), true);
     }
-    function openSignup() {
-      document.getElementById('dupBar').classList.remove('show');
-      ['su-name', 'su-phone', 'su-address', 'su-email', 'su-pass'].forEach(id => {
-        document.getElementById(id).value = '';
-        clearFieldState(id, id + '-msg');
-      });
-      document.getElementById('strengthFill').style.width = '0';
-      document.getElementById('strengthLabel').textContent = '';
-      document.getElementById('signupOverlay').classList.add('open');
+  } catch(err) {
+    showToast('❌ ' + err.message, true);
+    console.error('OTP Error:', err);
+  }
+}
+
+function resendCode() { handleFPStep1(); }
+
+async function handleFPStep2() {
+  const entered = document.getElementById('fp-code').value.trim();
+  clearFieldState('fp-code','fp-code-msg');
+  if (!entered || entered.length < 6) {
+    setFieldState('fp-code','fp-code-msg','error','Enter the full 6-digit code');
+    showToast('⚠️ Please enter the 6-digit code', true); return;
+  }
+  showToast('⏳ Verifying code...');
+  try {
+    const res = await fetch('http://localhost:3005/api/auth-flow/confirm-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: _fpEmail, otp: entered })
+    });
+    if (!res.ok || !res.headers.get('X-Backend')) {
+      throw new Error('You are hitting the wrong server. Please open http://localhost:3005 instead.');
     }
-    function closeSignup() { document.getElementById('signupOverlay').classList.remove('open'); }
-    function handleSignup() {
-      const n = document.getElementById('su-name').value.trim();
-      const ph = document.getElementById('su-phone').value.trim();
-      const addr = document.getElementById('su-address').value.trim();
-      const e = document.getElementById('su-email').value.trim();
-      const pw = document.getElementById('su-pass').value;
-      if (!n || !ph || !addr || !e || !pw) { showToast('⚠️ Please fill in all fields', true); return; }
-      if (pw.length < 6) { showToast('⚠️ Password must be at least 6 characters', true); return; }
-      if (getAccountByEmail(e)) {
-        document.getElementById('dupBar').classList.add('show');
-        setFieldState('su-email', 'su-email-msg', 'error', 'Email already registered');
-        showToast('⚠️ That email is already linked to an account', true);
-        return;
-      }
-      upsertAccount({ name: n, phone: ph, address: addr, email: e.toLowerCase(), password: pw });
-      closeSignup();
-      showToast('✅ Account created! You can now Sign In.');
-      setTimeout(openSignin, 1000);
-    }
-
-    // ─── SIGNIN ───────────────────────────────────────────────────
-    function openSignin() {
-      clearFieldState('si-email', 'si-email-msg');
-      clearFieldState('si-pass', 'si-pass-msg');
-      document.getElementById('si-email').value = '';
-      document.getElementById('si-pass').value = '';
-      document.getElementById('signinOverlay').classList.add('open');
-    }
-    function closeSignin() { document.getElementById('signinOverlay').classList.remove('open'); }
-    function switchToSignin() { closeSignup(); setTimeout(openSignin, 220); }
-    function switchToSignup() { closeSignin(); setTimeout(openSignup, 220); }
-
-    function handleSignin() {
-      const e = document.getElementById('si-email').value.trim();
-      const pw = document.getElementById('si-pass').value;
-      clearFieldState('si-email', 'si-email-msg');
-      clearFieldState('si-pass', 'si-pass-msg');
-      if (!e || !pw) { showToast('⚠️ Enter your email and password', true); return; }
-      const acc = getAccountByEmail(e);
-      if (!acc) {
-        setFieldState('si-email', 'si-email-msg', 'error', 'No account found for this email');
-        showToast('❌ Email not registered — create an account first', true);
-        return;
-      }
-      if (pw !== acc.password) {
-        setFieldState('si-email', 'si-email-msg', 'ok', 'Email looks good ✓');
-        setFieldState('si-pass', 'si-pass-msg', 'error', 'Wrong password — try again');
-        showToast('❌ Incorrect password', true);
-        return;
-      }
-      localStorage.setItem('currentUser', JSON.stringify(acc));
-      closeSignin();
-      const overlay = document.getElementById('redirectOverlay');
-      document.getElementById('redirectMsg').innerHTML =
-        'Sign in successful!<br><span style="font-size:0.9rem; color:var(--accent2);">Verifying GPS connection...</span>';
-      overlay.classList.add('show');
-      const bar = document.getElementById('redirectBar');
-      bar.style.animation = 'none';
-      bar.offsetHeight;
-      bar.style.animation = 'fillBar 3s linear forwards';
-
-      setTimeout(() => { checkGPSAndRedirect(); }, 800);
-    }
-
-    // ─── GPS VERIFICATION ─────────────────────────────────────────
-    function checkGPSAndRedirect() {
-      const msg = document.getElementById('redirectMsg');
-      const bar = document.getElementById('redirectBar');
-
-      if (!navigator.geolocation) {
-        msg.innerHTML = '<span style="color:var(--accent3)">❌ GPS not supported.</span><br>Redirecting...';
-        setTimeout(() => { window.location.href = 'search.html'; }, 1500);
-        return;
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          // GPS ON - Success
-          msg.innerHTML = '<span style="color:var(--accent2)">✅ GPS Location Active</span><br>Opening Search page...';
-          bar.style.animation = 'none';
-          bar.style.width = '100%';
-          bar.style.background = 'var(--accent2)';
-          setTimeout(() => { window.location.href = 'search.html'; }, 1000);
-        },
-        (err) => {
-          // GPS OFF or Denied
-          console.error("GPS Error:", err);
-          let reason = "Please turn on GPS";
-          if (err.code === 1) reason = "Location permission denied";
-          else if (err.code === 2) reason = "GPS signal lost or OFF";
-          else if (err.code === 3) reason = "GPS check timed out";
-
-          msg.innerHTML = `
-            <div style="margin-top:10px;">
-              <span style="color:var(--accent3); font-weight:800; font-size:1.2rem;">📍 GPS REQUIRED</span><br>
-              <span style="color:#fff; font-size:0.85rem;">${reason}</span><br>
-              <button onclick="checkGPSAndRedirect()" class="btn btn-primary" style="margin-top:15px; padding:8px 20px;">Retry GPS Check</button>
-            </div>
-          `;
-          bar.style.animationPlayState = 'paused';
-          bar.style.background = 'var(--accent3)';
-        },
-        { enableHighAccuracy: true, timeout: 6000, maximumAge: 0 }
-      );
-    }
-
-    // ─── FORGOT PASSWORD ──────────────────────────────────────────
-    let _fpEmail = '', _fpCode = '';
-
-    function openForgotPassword() {
-      closeSignin();
+    const data = await res.json();
+    if (data.success) {
+      setFieldState('fp-code','fp-code-msg','ok','Code verified!');
       setTimeout(() => {
-        _fpEmail = ''; _fpCode = '';
-        document.getElementById('fp-email').value = '';
-        document.getElementById('fp-code').value = '';
         document.getElementById('fp-newpass').value = '';
         document.getElementById('fp-confirmpass').value = '';
-        ['fp-email', 'fp-code', 'fp-newpass', 'fp-confirmpass'].forEach(id => clearFieldState(id, id + '-msg'));
         document.getElementById('fpStrengthFill').style.width = '0';
         document.getElementById('fpStrengthLabel').textContent = '';
-        goFPStep(1);
-        document.getElementById('fpOverlay').classList.add('open');
-      }, 220);
+        clearFieldState('fp-newpass','fp-newpass-msg');
+        clearFieldState('fp-confirmpass','fp-confirmpass-msg');
+        goFPStep(3);
+      }, 500);
+    } else {
+      setFieldState('fp-code','fp-code-msg','error', data.message || 'Incorrect code');
+      showToast('❌ ' + (data.message || 'Verification failed'), true);
     }
-    function closeFP() { document.getElementById('fpOverlay').classList.remove('open'); }
-    function goFPStep(n) {
-      [1, 2, 3].forEach(i => {
-        document.getElementById('fpStep' + i).classList.toggle('active', i === n);
-        const dot = document.getElementById('fpDot' + i);
-        const line = document.getElementById('fpLine' + i);
-        dot.classList.toggle('active', i === n);
-        dot.classList.toggle('done', i < n);
-        if (line) line.classList.toggle('done', i < n);
-      });
+  } catch(err) {
+    showToast('❌ ' + err.message, true);
+    console.error('Verify Error:', err);
+  }
+}
+
+function handleFPStep3() {
+  const np = document.getElementById('fp-newpass').value;
+  const cp = document.getElementById('fp-confirmpass').value;
+  clearFieldState('fp-newpass','fp-newpass-msg');
+  clearFieldState('fp-confirmpass','fp-confirmpass-msg');
+  if (!np||!cp) { showToast('⚠️ Fill in both password fields', true); return; }
+  if (np.length < 6) {
+    setFieldState('fp-newpass','fp-newpass-msg','error','Password must be at least 6 characters');
+    showToast('⚠️ Password too short', true); return;
+  }
+  if (np !== cp) {
+    setFieldState('fp-confirmpass','fp-confirmpass-msg','error','Passwords do not match');
+    showToast('❌ Passwords do not match', true); return;
+  }
+  const all = getAllAccounts();
+  if (all[_fpEmail]) { all[_fpEmail].password = np; saveAllAccounts(all); }
+  closeFP();
+  showToast('✅ Password reset! Signing you in…');
+  setTimeout(() => {
+    document.getElementById('si-email').value = _fpEmail;
+    document.getElementById('si-pass').value = np;
+    clearFieldState('si-email','si-email-msg');
+    clearFieldState('si-pass','si-pass-msg');
+    document.getElementById('signinOverlay').classList.add('open');
+  }, 800);
+}
+
+/* Close modals on backdrop click */
+['signupOverlay','signinOverlay','fpOverlay'].forEach(id => {
+  document.getElementById(id).addEventListener('click', e => {
+    if (e.target === document.getElementById(id)) {
+      if (id==='signupOverlay') closeSignup();
+      else if (id==='signinOverlay') closeSignin();
+      else closeFP();
     }
-    async function handleFPStep1() {
-      const e = document.getElementById('fp-email').value;
-      if (!e) {
-        showToast('Please enter Email or Phone Number');
-        return;
-      }
+  });
+});
 
-      _fpEmail = e.toLowerCase().trim();
-      showToast('⏳ Sending reset code...');
-
-      try {
-        if (window.location.protocol === 'file:') {
-          throw new Error('Please run the server (npm start) to use this feature.');
-        }
-
-        const res = await fetch('/api/auth-flow/dispatch-otp', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: _fpEmail })
-        });
-
-        if (!res.ok) {
-          if (!res.headers.get('X-Backend')) {
-            throw new Error('You are hitting the wrong server. Please use the correct URL.');
-          }
-          const errData = await res.json().catch(() => ({ message: 'Server responded with error ' + res.status }));
-          throw new Error(errData.message || 'Server error');
-        }
-
-        const data = await res.json();
-
-        if (data.success) {
-          document.getElementById('fpEmailDisplay').textContent = _fpEmail;
-          document.getElementById('fp-code').value = '';
-          clearFieldState('fp-code', 'fp-code-msg');
-
-          if (data.simulated) {
-            document.getElementById('fpEmailPreview').style.display = 'block';
-            document.getElementById('fpCodeDisplay').style.display = 'block';
-            document.getElementById('fpCodeDisplay').textContent = data.otp;
-            document.getElementById('fpSimMsg').innerHTML = `⚠️ Email not set. <br><a href="${data.link}" style="color:var(--accent); text-decoration:underline;">Click here to use the Reset Link</a>`;
-            showToast('📧 Link generated (Simulated)');
-          } else {
-            document.getElementById('fpEmailPreview').style.display = 'block';
-            document.getElementById('fpCodeDisplay').style.display = 'none';
-            document.getElementById('fpSimMsg').textContent = '✅ A reset link has been sent to your email. You can click the link in your email or enter the OTP code below.';
-            showToast('📧 Reset link sent to your email!');
-          }
-
-          goFPStep(2);
-        } else {
-          showToast('❌ ' + (data.message || 'Failed to send OTP'), true);
-        }
-      } catch (err) {
-        showToast('❌ ' + err.message, true);
-        console.error('OTP Error:', err);
-      }
-    }
-
-    function resendCode() {
-      handleFPStep1();
-    }
-
-    async function handleFPStep2() {
-      const entered = document.getElementById('fp-code').value.trim();
-      clearFieldState('fp-code', 'fp-code-msg');
-      if (!entered || entered.length < 6) {
-        setFieldState('fp-code', 'fp-code-msg', 'error', 'Enter the full 6-digit code');
-        showToast('⚠️ Please enter the 6-digit code', true);
-        return;
-      }
-
-      showToast('⏳ Verifying code...');
-
-      try {
-        const res = await fetch('/api/auth-flow/confirm-otp', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: _fpEmail, otp: entered })
-        });
-
-        if (!res.ok || !res.headers.get('X-Backend')) {
-          throw new Error('You are hitting the wrong server. Please use the correct URL.');
-        }
-
-        const data = await res.json();
-
-        if (data.success) {
-          setFieldState('fp-code', 'fp-code-msg', 'ok', 'Code verified!');
-          setTimeout(() => {
-            document.getElementById('fp-newpass').value = '';
-            document.getElementById('fp-confirmpass').value = '';
-            document.getElementById('fpStrengthFill').style.width = '0';
-            document.getElementById('fpStrengthLabel').textContent = '';
-            clearFieldState('fp-newpass', 'fp-newpass-msg');
-            clearFieldState('fp-confirmpass', 'fp-confirmpass-msg');
-            goFPStep(3);
-          }, 500);
-        } else {
-          setFieldState('fp-code', 'fp-code-msg', 'error', data.message || 'Incorrect code');
-          showToast('❌ ' + (data.message || 'Verification failed'), true);
-        }
-      } catch (err) {
-        showToast('❌ ' + err.message, true);
-        console.error('Verify Error:', err);
-      }
-    }
-    function handleFPStep3() {
-      const np = document.getElementById('fp-newpass').value;
-      const cp = document.getElementById('fp-confirmpass').value;
-      clearFieldState('fp-newpass', 'fp-newpass-msg');
-      clearFieldState('fp-confirmpass', 'fp-confirmpass-msg');
-      if (!np || !cp) { showToast('⚠️ Fill in both password fields', true); return; }
-      if (np.length < 6) {
-        setFieldState('fp-newpass', 'fp-newpass-msg', 'error', 'Password must be at least 6 characters');
-        showToast('⚠️ Password too short', true);
-        return;
-      }
-      if (np !== cp) {
-        setFieldState('fp-confirmpass', 'fp-confirmpass-msg', 'error', 'Passwords do not match');
-        showToast('❌ Passwords do not match', true);
-        return;
-      }
-      const all = getAllAccounts();
-      if (all[_fpEmail]) { all[_fpEmail].password = np; saveAllAccounts(all); }
-      closeFP();
-      showToast('✅ Password reset! Signing you in…');
-      setTimeout(() => {
-        document.getElementById('si-email').value = _fpEmail;
-        document.getElementById('si-pass').value = np;
-        clearFieldState('si-email', 'si-email-msg');
-        clearFieldState('si-pass', 'si-pass-msg');
-        document.getElementById('signinOverlay').classList.add('open');
-      }, 800);
-    }
-
-    // Close modals on overlay click
-    ['signupOverlay', 'signinOverlay', 'fpOverlay'].forEach(id => {
-      document.getElementById(id).addEventListener('click', e => {
-        if (e.target === document.getElementById(id)) {
-          if (id === 'signupOverlay') closeSignup();
-          else if (id === 'signinOverlay') closeSignin();
-          else closeFP();
-        }
-      });
-    });
-
-    // ─── SYNCED STATS (Cross-Browser) ────────────────────────────
-    async function initStats() {
-      const isLocalHTML = window.location.protocol === 'file:';
-      let riders = 3; // Default/Fallback
-      
-      if (!isLocalHTML) {
-        try {
-          const res = await fetch('/api/delivery-boys');
-          if (res.ok) {
-            const data = await res.json();
-            if (Array.isArray(data)) riders = data.length;
-          }
-        } catch (e) { console.warn('Stats sync failed, using fallback.'); }
-      }
-
-      const stats = [
-        { id: 'ctr-items', target: 300, suffix: '+' },
-        { id: 'ctr-riders', target: riders, suffix: '' },
-        { id: 'ctr-time', target: 12, suffix: ' min' }
-      ];
-
-      stats.forEach(s => {
-        const el = document.getElementById(s.id);
-        if (!el) return;
-        
-        let current = 0;
-        const duration = 1500;
-        const steps = 50;
-        const increment = s.target / steps;
-
-        const timer = setInterval(() => {
-          current += increment;
-          if (current >= s.target) {
-            el.textContent = s.target + s.suffix;
-            clearInterval(timer);
-          } else {
-            el.textContent = Math.floor(current) + s.suffix;
-          }
-        }, duration / steps);
-      });
-    }
-
-    // Run on load
-    initStats();
-
-    // ─── TOAST ────────────────────────────────────────────────────
-    function showToast(msg, warn) {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.className = 'toast' + (warn ? ' warn' : '');
-      t.classList.add('show');
-      clearTimeout(t._t);
-      t._t = setTimeout(() => t.classList.remove('show'), 3400);
-    }
-  </script>
+/* ─────────────────────────────────────────────────
+   TOAST
+───────────────────────────────────────────────── */
+function showToast(msg, warn) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (warn ? ' warn' : '');
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 3400);
+}
+</script>
 </body>
-
 </html>
