@@ -1910,7 +1910,10 @@
     </main>
 
     <script>
-        const API = '';  // same-origin; empty = relative URLs
+        // Smart API base: handles file:// (direct open), localhost dev, and Vercel production
+        const API = window.location.protocol === 'file:'
+            ? 'http://localhost:3000'
+            : '';  // relative URLs work for both localhost server and Vercel
 
         // Clock
         function updateClock() {

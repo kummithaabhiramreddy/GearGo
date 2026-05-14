@@ -32,6 +32,10 @@
       "dest": "/public/reviews.html"
     },
     {
+      "src": "/admin",
+      "dest": "/public/admin.html"
+    },
+    {
       "src": "/delivery-partner",
       "dest": "/public/delivery-partner.html"
     },
