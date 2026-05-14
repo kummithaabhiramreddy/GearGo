@@ -1450,7 +1450,6 @@
                                 <th>Order ID</th>
                                 <th>Customer</th>
                                 <th>Gear / Category</th>
-                                <th>Partner Shop</th>
                                 <th>Duration</th>
                                 <th>Amount</th>
                                 <th>Status</th>
@@ -1551,6 +1550,52 @@
                         <button class="btn btn-ghost" style="padding:5px 12px;font-size:12px;">3</button>
                         <button class="btn btn-ghost" style="padding:5px 12px;font-size:12px;">Next →</button>
                     </div>
+                </div>
+            </div>
+
+            <!-- FULL PARTNERS SECTION -->
+            <div class="card page-section" id="section-partners-full" style="display:none;margin-bottom:20px;">
+                <div class="card-header">
+                    <div class="card-title">All Delivery Partners</div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>ID</th><th>Name</th><th>Mobile</th><th>Vehicle</th><th>City</th><th>Status</th><th>Action</th></tr></thead>
+                        <tbody id="fullPartnersTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- FULL GEAR INVENTORY SECTION -->
+            <div class="card page-section" id="section-gear-full" style="display:none;margin-bottom:20px;">
+                <div class="card-header"><div class="card-title">Gear Inventory</div></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>ID</th><th>Item</th><th>Category</th><th>Price / Day</th><th>Store ID</th></tr></thead>
+                        <tbody id="fullGearTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- FULL REVIEWS SECTION -->
+            <div class="card page-section" id="section-reviews-full" style="display:none;margin-bottom:20px;">
+                <div class="card-header"><div class="card-title">All Reviews</div></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>ID</th><th>Item ID</th><th>User ID</th><th>Rating</th><th>Review</th></tr></thead>
+                        <tbody id="fullReviewsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- FULL USERS SECTION -->
+            <div class="card page-section" id="section-users-full" style="display:none;margin-bottom:20px;">
+                <div class="card-header"><div class="card-title">Registered Users & Customers</div></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>ID</th><th>Name</th><th>Phone</th><th>Email</th><th>Address</th></tr></thead>
+                        <tbody id="fullUsersTable"></tbody>
+                    </table>
                 </div>
             </div>
 
@@ -1951,7 +1996,7 @@
 
                 // Use summary for reliable KPI numbers
                 if (summary) {
-                    document.getElementById('rev').textContent = '\u20B9' + (summary.rentals.revenue || 0).toLocaleString('en-IN');
+                    document.getElementById('rev').textContent = '\u20B9' + (summary.rentals.revenue || 0).toLocaleString();
                     document.getElementById('rentals').textContent = summary.rentals.total;
                     document.getElementById('kpi-partners').textContent = summary.delivery.total;
                     document.getElementById('kpi-rating').textContent = summary.reviews.avg_rating + '\u2605';
@@ -1971,9 +2016,66 @@
                 populateCategoryChart(items, bookings);
                 populateActivityFeed(bookings);
                 populatePendingApprovals(delivery);
+                
+                // Populate the new full sections
+                populateFullPartners(delivery);
+                populateFullGear(items);
+                populateFullReviews(reviews);
+                fetchAndPopulateUsers();
             } catch (e) {
                 console.error('Dashboard load error:', e);
             }
+        }
+        
+        async function fetchAndPopulateUsers() {
+            try {
+                const res = await fetch(API + '/api/users');
+                if (!res.ok) return;
+                const users = await res.json();
+                const tbody = document.getElementById('fullUsersTable');
+                if (!tbody) return;
+                tbody.innerHTML = '';
+                if (!users.length) { tbody.innerHTML = '<tr><td colspan="5">No users</td></tr>'; return; }
+                users.forEach(u => {
+                    tbody.innerHTML += `<tr><td>#${u.id || ''}</td><td>${u.name || '—'}</td><td>${u.phone || '—'}</td><td>${u.email || '—'}</td><td>${u.address || '—'}</td></tr>`;
+                });
+            } catch(e) {}
+        }
+
+        function populateFullPartners(delivery) {
+            const tbody = document.getElementById('fullPartnersTable');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!delivery.length) { tbody.innerHTML = '<tr><td colspan="7">No partners</td></tr>'; return; }
+            delivery.forEach(d => {
+                const name = `${d.first_name || ''} ${d.last_name || ''}`.trim() || d.name || '—';
+                const status = d.status === 'active' ? '<span class="badge badge-green">Active</span>' : (d.status === 'rejected' ? '<span class="badge badge-red">Rejected</span>' : '<span class="badge badge-yellow">Pending</span>');
+                tbody.innerHTML += `<tr><td>#${d.id}</td><td>${name}</td><td>${d.mobile || '—'}</td><td>${d.vehicle_type || '—'}</td><td>${d.city || '—'}</td><td>${status}</td>
+                <td>
+                    <button class="btn btn-ghost" style="padding:4px 8px;font-size:11px;" onclick="approvePartner(${d.id}, true, this)">Approve</button>
+                    <button class="btn btn-ghost" style="padding:4px 8px;font-size:11px;color:red;" onclick="approvePartner(${d.id}, false, this)">Reject</button>
+                </td></tr>`;
+            });
+        }
+
+        function populateFullGear(items) {
+            const tbody = document.getElementById('fullGearTable');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!items.length) { tbody.innerHTML = '<tr><td colspan="5">No items</td></tr>'; return; }
+            items.forEach(i => {
+                tbody.innerHTML += `<tr><td>#${i.id}</td><td>${i.name || i.item_name || '—'}</td><td>${i.category || '—'}</td><td>₹${i.price_per_day || i.price || '—'}</td><td>${i.store_id || '—'}</td></tr>`;
+            });
+        }
+
+        function populateFullReviews(reviews) {
+            const tbody = document.getElementById('fullReviewsTable');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!reviews.length) { tbody.innerHTML = '<tr><td colspan="5">No reviews</td></tr>'; return; }
+            reviews.forEach(r => {
+                tbody.innerHTML += `<tr><td>#${r.id}</td><td>${r.item_id || '—'}</td><td>${r.user_id || '—'}</td><td>${r.rating}★</td><td>${r.review_text || r.comment || '—'}</td></tr>`;
+            });
         }
 
         // KPI Cards
@@ -1982,7 +2084,7 @@
             const active = bookings.filter(b => (b.status || '').toLowerCase() === 'confirmed' || (b.status || '').toLowerCase() === 'pending').length;
             const avgRat = reviews.length ? (reviews.reduce((s, r) => s + (parseFloat(r.rating) || 0), 0) / reviews.length).toFixed(1) : '—';
 
-            document.getElementById('rev').textContent = '₹' + totalRev.toLocaleString('en-IN');
+            document.getElementById('rev').textContent = '₹' + totalRev.toLocaleString();
             document.getElementById('rentals').textContent = active;
             document.getElementById('kpi-partners').textContent = delivery.length;
             document.getElementById('kpi-rating').textContent = avgRat;
@@ -2013,12 +2115,11 @@
                 const badgeLabel = status === 'confirmed' ? '● Active' : status === 'cancelled' ? '✕ Cancelled' : status === 'completed' ? '↩ Completed' : '⏳ Pending';
                 tbody.innerHTML += `
                 <tr>
-                    <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--accent);">#GG-${b.id}</span></td>
+                    <td style="color:var(--accent);">#GG-${b.id}</td>
                     <td>${b.name || '—'}</td>
                     <td>${b.item || '—'}</td>
-                    <td>${b.address ? b.address.split(',')[0] : '—'}</td>
                     <td>${b.days || '—'} day${b.days > 1 ? 's' : ''}</td>
-                    <td style="font-family:var(--font-mono);color:var(--text);">₹${parseFloat(b.price || 0).toLocaleString('en-IN')}</td>
+                    <td>₹${parseFloat(b.price || 0).toLocaleString()}</td>
                     <td><span class="badge ${badgeClass}">${badgeLabel}</span></td>
                     <td>
                         <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="manageBooking(${b.id})">Manage</button>
@@ -2182,25 +2283,40 @@
             if (sectionId === 'dashboard') {
                 const kpis = document.getElementById('section-dashboard-kpis');
                 if (kpis) kpis.style.display = 'grid';
-                
                 const charts = document.getElementById('section-dashboard-charts');
                 if (charts) charts.style.display = 'grid';
-                
                 const rentals = document.getElementById('section-rentals');
                 if (rentals) rentals.style.display = 'block';
-                
                 const partners = document.getElementById('section-partners-grid');
                 if (partners) partners.style.display = 'grid';
             } else if (sectionId === 'rentals') {
                 const kpis = document.getElementById('section-dashboard-kpis');
-                if (kpis) kpis.style.display = 'grid'; // Keep KPIs for context
-                
+                if (kpis) kpis.style.display = 'grid';
                 const rentals = document.getElementById('section-rentals');
                 if (rentals) rentals.style.display = 'block';
-            } else if (sectionId === 'partners' || sectionId === 'gear-inventory' || sectionId === 'reviews' || sectionId === 'geo-heatmap') {
+            } else if (sectionId === 'partners') {
                 const kpis = document.getElementById('section-dashboard-kpis');
                 if (kpis) kpis.style.display = 'grid';
-                
+                const partners = document.getElementById('section-partners-full');
+                if (partners) partners.style.display = 'block';
+            } else if (sectionId === 'gear-inventory') {
+                const kpis = document.getElementById('section-dashboard-kpis');
+                if (kpis) kpis.style.display = 'grid';
+                const gear = document.getElementById('section-gear-full');
+                if (gear) gear.style.display = 'block';
+            } else if (sectionId === 'reviews') {
+                const kpis = document.getElementById('section-dashboard-kpis');
+                if (kpis) kpis.style.display = 'grid';
+                const reviews = document.getElementById('section-reviews-full');
+                if (reviews) reviews.style.display = 'block';
+            } else if (sectionId === 'users') {
+                const kpis = document.getElementById('section-dashboard-kpis');
+                if (kpis) kpis.style.display = 'grid';
+                const users = document.getElementById('section-users-full');
+                if (users) users.style.display = 'block';
+            } else if (sectionId === 'geo-heatmap') {
+                const kpis = document.getElementById('section-dashboard-kpis');
+                if (kpis) kpis.style.display = 'grid';
                 const partners = document.getElementById('section-partners-grid');
                 if (partners) partners.style.display = 'grid';
             } else {
