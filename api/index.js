@@ -169,11 +169,12 @@ app.get('/api/reviews', async (_req, res) => {
 });
 
 app.post('/api/reviews', async (req, res) => {
-    const { name, city, category, title, body, rating } = req.body;
+    const { name, city, category, title, body, rating, tags, created_at } = req.body;
     try {
+        const tagsString = Array.isArray(tags) ? tags.join(',') : tags;
         const { rows } = await pool.query(
-            'INSERT INTO reviews (name, city, category, title, body, rating) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
-            [name, city, category, title, body, rating]
+            'INSERT INTO reviews (name, city, category, title, body, rating, tags, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id',
+            [name, city, category, title, body, rating, tagsString, created_at || new Date().toISOString()]
         );
         res.json({ success: true, id: rows[0].id });
     } catch (err) { res.status(500).json({ error: err.message }); }

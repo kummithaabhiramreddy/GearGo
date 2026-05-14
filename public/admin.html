@@ -1604,8 +1604,8 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Item ID</th>
-                            <th>User ID</th>
+                            <th>Category</th>
+                            <th>User Name</th>
                             <th>Rating</th>
                             <th>Review text</th>
                             <th>Submission Info</th>
@@ -1993,8 +1993,8 @@
             tbody.innerHTML = '';
             if (!reviews.length) { tbody.innerHTML = '<tr><td colspan="6">No reviews</td></tr>'; return; }
             reviews.forEach(r => {
-                const fullForm = `Rating: ${r.rating}★ | User: ${r.user_id} | Item: ${r.item_id} | Comment: ${r.review_text || r.comment || 'N/A'}`;
-                tbody.innerHTML += `<tr><td>#${r.id}</td><td>${r.item_id || '—'}</td><td>${r.user_id || '—'}</td><td>${r.rating}★</td><td>${r.review_text || r.comment || '—'}</td><td><div style="font-size:10px;color:var(--text3);">${fullForm}</div></td></tr>`;
+                const fullForm = `Rating: ${r.rating}★ | Name: ${r.name || 'Anonymous'} | City: ${r.city || '—'} | Category: ${r.category || '—'}`;
+                tbody.innerHTML += `<tr><td>#${r.id}</td><td>${r.category || '—'}</td><td>${r.name || 'Anonymous'}</td><td>${r.rating}★</td><td>${r.body || r.title || '—'}</td><td><div style="font-size:10px;color:var(--text3);">${fullForm}</div></td></tr>`;
             });
         }
 
