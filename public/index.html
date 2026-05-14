@@ -1,2199 +1,2361 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GearGo â€“ Rent Anything Near You</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap"
-    rel="stylesheet" />
-
-  <!-- Google Identity Services SDK â€” Real Google OAuth -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
-
-  <style>
-    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-     ALL STYLES FROM PAGE 1
-  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
-    :root {
-      --bg: #0a0a0f;
-      --surface: #13131a;
-      --card: #1a1a26;
-      --border: #2a2a3d;
-      --accent: #f0e040;
-      --accent2: #4ef0a0;
-      --accent3: #f04e7a;
-      --text: #f0f0f8;
-      --muted: #888899;
-      --radius: 16px;
-      --radius-sm: 10px;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
-      font-size: 14px;
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 9999;
-    }
-
-    /* NAV */
-    nav {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 30px;
-      background: rgba(10, 10, 15, 0.88);
-      backdrop-filter: blur(16px);
-      border-bottom: none;
-    }
-
-    .logo {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 1.3rem;
-      letter-spacing: -0.03em;
-      cursor: pointer;
-    }
-
-    .logo span {
-      color: var(--accent);
-    }
-
-    .nav-right {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .btn {
-      padding: 8px 18px;
-      border-radius: 50px;
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 0.8rem;
-      cursor: pointer;
-      border: none;
-      transition: all .2s;
-    }
-
-    .btn-ghost {
-      background: transparent;
-      border: 1.5px solid var(--border);
-      color: var(--text);
-    }
-
-    .btn-ghost:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #0a0a0f;
-    }
-
-    .btn-primary:hover {
-      background: #ffe800;
-      transform: scale(1.04);
-    }
-
-    /* HAMBURGER */
-    .hamburger {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
-      background: var(--surface);
-      border: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      cursor: pointer;
-      transition: background .2s;
-      flex-shrink: 0;
-    }
-
-    .hamburger:hover {
-      background: rgba(240, 224, 64, 0.07);
-    }
-
-    .hamburger span {
-      display: block;
-      width: 18px;
-      height: 2px;
-      background: var(--text);
-      border-radius: 2px;
-      transition: background .2s, transform .3s, opacity .3s;
-      transform-origin: center;
-    }
-
-    .hamburger.open span:nth-child(1) {
-      transform: translateY(7px) rotate(45deg);
-    }
-
-    .hamburger.open span:nth-child(2) {
-      opacity: 0;
-      transform: scaleX(0);
-    }
-
-    .hamburger.open span:nth-child(3) {
-      transform: translateY(-7px) rotate(-45deg);
-    }
-
-    .hamburger.open span {
-      background: var(--accent);
-    }
-
-    /* HERO-LEVEL NAV DRAWER */
-    .hero-nav-drawer {
-      overflow: hidden;
-      max-height: 0;
-      opacity: 0;
-      transition: max-height .38s cubic-bezier(.4, 0, .2, 1), opacity .28s ease;
-      margin-bottom: 0;
-    }
-
-    .hero-nav-drawer.open {
-      max-height: 320px;
-      opacity: 1;
-      margin-bottom: 0;
-    }
-
-    .hero-nav-inner {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      padding: 0 0 20px 0;
-    }
-
-    .hero-nav-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 18px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 50px;
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 0.8rem;
-      color: var(--muted);
-      cursor: pointer;
-      text-decoration: none;
-      transition: all .2s cubic-bezier(.34, 1.56, .64, 1);
-      white-space: nowrap;
-    }
-
-    .hero-nav-link:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: rgba(240, 224, 64, 0.07);
-      transform: translateY(-2px);
-    }
-
-    .link-icon {
-      font-size: 0.95rem;
-    }
-
-    .drawer-divider {
-      height: 2px;
-      background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
-      border-radius: 2px;
-      margin-bottom: 18px;
-      width: 0;
-      transition: width .4s ease;
-    }
-
-    .drawer-divider.show {
-      width: 60px;
-    }
-
-    /* HERO */
-    .hero {
-      position: relative;
-      padding: 70px 30px 50px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 50px;
-      align-items: center;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    .hero-left {
-      min-width: 0;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(17, 102, 135, 0.12);
-      border: 1px solid rgba(240, 224, 64, 0.3);
-      color: var(--accent);
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      padding: 5px 12px;
-      border-radius: 50px;
-      margin-bottom: 18px;
-      animation: fadeUp .6s ease both;
-    }
-
-    .dot-live {
-      width: 7px;
-      height: 7px;
-      background: var(--accent2);
-      border-radius: 50%;
-      animation: pulse 1.4s infinite;
-    }
-
-    @keyframes pulse {
-
-      0%,
-      100% {
-        opacity: 1
-      }
-
-      50% {
-        opacity: .3
-      }
-    }
-
-    h1 {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: clamp(2rem, 3.5vw, 3.2rem);
-      line-height: 1.08;
-      letter-spacing: -0.04em;
-      animation: fadeUp .7s .1s ease both;
-    }
-
-    h1 em {
-      font-style: normal;
-      color: var(--accent);
-    }
-
-    .hero-sub {
-      margin-top: 16px;
-      color: var(--muted);
-      font-size: 0.95rem;
-      line-height: 1.6;
-      max-width: 400px;
-      animation: fadeUp .7s .2s ease both;
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 12px;
-      margin-top: 28px;
-      animation: fadeUp .7s .3s ease both;
-    }
-
-    .hero-stats {
-      display: flex;
-      gap: 28px;
-      margin-top: 36px;
-      animation: fadeUp .7s .4s ease both;
-    }
-
-    .stat-num {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 1.5rem;
-      color: var(--accent2);
-    }
-
-    .stat-label {
-      font-size: 0.75rem;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-
-    /* MAP */
-    .hero-visual {
-      position: relative;
-      display: flex;
-      justify-content: center;
-      animation: fadeUp .8s .2s ease both;
-    }
-
-    .map-blob {
-      width: 360px;
-      height: 310px;
-      background: radial-gradient(ellipse at 40% 50%, rgba(78, 240, 160, 0.12) 0%, rgba(240, 78, 122, 0.06) 50%, transparent 70%);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .map-grid {
-      position: absolute;
-      inset: 0;
-      background-image: linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-      background-size: 40px 40px;
-    }
-
-    .map-pin {
-      position: absolute;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      animation: pinBounce 2s ease infinite;
-    }
-
-    @keyframes pinBounce {
-
-      0%,
-      100% {
-        transform: translate(-50%, -50%) translateY(0)
-      }
-
-      50% {
-        transform: translate(-50%, -50%) translateY(-6px)
-      }
-    }
-
-    .map-pin .pin-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 50% 50% 50% 0;
-      transform: rotate(-45deg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1rem;
-    }
-
-    .map-pin .pin-label {
-      margin-top: 6px;
-      font-size: 0.72rem;
-      font-weight: 600;
-      background: var(--card);
-      border: 1px solid var(--border);
-      padding: 3px 8px;
-      border-radius: 20px;
-      white-space: nowrap;
-    }
-
-    .pin-user {
-      top: 50%;
-      left: 45%;
-    }
-
-    .pin-user .pin-icon {
-      background: var(--accent);
-    }
-
-    .pin-item1 {
-      top: 25%;
-      left: 25%;
-      animation-delay: .3s;
-    }
-
-    .pin-item1 .pin-icon {
-      background: var(--accent3);
-    }
-
-    .pin-item2 {
-      top: 60%;
-      left: 68%;
-      animation-delay: .6s;
-    }
-
-    .pin-item2 .pin-icon {
-      background: var(--accent2);
-    }
-
-    .pin-delivery {
-      top: 38%;
-      left: 62%;
-      animation-delay: .9s;
-    }
-
-    .pin-delivery .pin-icon {
-      background: #8a6fff;
-    }
-
-    .route-line {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-    }
-
-    .distance-badge {
-      position: absolute;
-      top: 14px;
-      right: 14px;
-      background: rgba(78, 240, 160, 0.15);
-      border: 1px solid rgba(78, 240, 160, 0.4);
-      color: var(--accent2);
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 6px 12px;
-      border-radius: 50px;
-    }
-
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px)
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0)
-      }
-    }
-
-    /* COMING SOON BANNER */
-    .coming-soon-banner {
-      display: block;
-      margin-top: 18px;
-      padding: 14px 32px;
-      background: rgba(240, 224, 64, 0.10);
-      border: 0.5px solid rgba(200, 20, 128, 0.35);
-      border-radius: 100px;
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 1rem;
-      color: var(--accent);
-      letter-spacing: 0.04em;
-      opacity: 0;
-      transform: translateY(10px) scale(0.96);
-      pointer-events: none;
-      transition: opacity .35s cubic-bezier(.34, 1.56, .64, 1), transform .35s cubic-bezier(.34, 1.56, .64, 1);
-    }
-
-    .coming-soon-banner.show {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-      pointer-events: auto;
-    }
-
-    /* DOWNLOAD */
-    .download-strip {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 0 30px 50px;
-      text-align: center;
-    }
-
-    .dl-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      padding: 18px 52px;
-      background: var(--accent);
-      color: #0a0a0f;
-      border: none;
-      border-radius: 50px;
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 1.05rem;
-      cursor: pointer;
-      transition: all .25s;
-    }
-
-    .dl-btn:hover {
-      background: #e2c417;
-      transform: scale(1.05);
-      box-shadow: 0 0 40px rgba(240, 224, 64, 0.25);
-    }
-
-    .dl-sub {
-      color: var(--muted);
-      font-size: 0.75rem;
-      margin-top: 10px;
-    }
-
-    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-     AUTH MODAL BASE
-  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.82);
-      z-index: 500;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(8px);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .3s;
-    }
-
-    .modal-overlay.open {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    .modal {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 32px;
-      max-width: 460px;
-      width: 90%;
-      position: relative;
-      transform: translateY(24px) scale(0.97);
-      transition: transform .35s cubic-bezier(.34, 1.56, .64, 1);
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .modal-overlay.open .modal {
-      transform: translateY(0) scale(1);
-    }
-
-    .modal-eyebrow {
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      margin-bottom: 8px;
-    }
-
-    .modal-eyebrow.green {
-      color: var(--accent2);
-    }
-
-    .modal-eyebrow.yellow {
-      color: var(--accent);
-    }
-
-    .modal-eyebrow.pink {
-      color: var(--accent3);
-    }
-
-    .modal-eyebrow.purple {
-      color: #8a6fff;
-    }
-
-    .modal-title {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 1.5rem;
-      letter-spacing: -0.03em;
-      margin-bottom: 6px;
-    }
-
-    .modal-sub {
-      color: var(--muted);
-      font-size: 0.82rem;
-      margin-bottom: 26px;
-      line-height: 1.5;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-bottom: 14px;
-      position: relative;
-    }
-
-    .form-group label {
-      font-size: 0.74rem;
-      font-weight: 700;
-      color: var(--muted);
-      letter-spacing: 0.06em;
-    }
-
-    .form-group input {
-      background: var(--surface);
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 13px 16px;
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.92rem;
-      outline: none;
-      transition: border-color .2s;
-    }
-
-    .form-group input:focus {
-      border-color: var(--accent2);
-    }
-
-    .signin-modal .form-group input:focus {
-      border-color: var(--accent);
-    }
-
-    .fp-modal .form-group input:focus {
-      border-color: var(--accent3);
-    }
-
-    .form-group input.input-error {
-      border-color: var(--accent3) !important;
-    }
-
-    .form-group input.input-ok {
-      border-color: var(--accent2) !important;
-    }
-
-    .field-msg {
-      font-size: 0.74rem;
-      font-weight: 600;
-      margin-top: 4px;
-      display: none;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .field-msg.show {
-      display: flex;
-    }
-
-    .field-msg.err {
-      color: var(--accent3);
-    }
-
-    .field-msg.ok {
-      color: var(--accent2);
-    }
-
-    .modal-submit {
-      width: 100%;
-      padding: 15px;
-      border-radius: var(--radius-sm);
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 0.95rem;
-      cursor: pointer;
-      border: none;
-      transition: all .2s;
-      margin-top: 4px;
-    }
-
-    .submit-green {
-      background: var(--accent2);
-      color: #0a0a0f;
-    }
-
-    .submit-green:hover {
-      background: #3de090;
-      transform: translateY(-2px);
-    }
-
-    .submit-yellow {
-      background: var(--accent);
-      color: #0a0a0f;
-    }
-
-    .submit-yellow:hover {
-      background: #ffe800;
-      transform: translateY(-2px);
-    }
-
-    .submit-pink {
-      background: var(--accent3);
-      color: #fff;
-    }
-
-    .submit-pink:hover {
-      background: #e03060;
-      transform: translateY(-2px);
-    }
-
-    .modal-note {
-      font-size: 0.75rem;
-      color: var(--muted);
-      text-align: center;
-      margin-top: 14px;
-    }
-
-    .modal-note a {
-      color: var(--accent);
-      cursor: pointer;
-      text-decoration: none;
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all .2s;
-    }
-
-    .modal-close:hover {
-      border-color: var(--accent3);
-      color: var(--accent3);
-    }
-
-    /* Duplicate email bar */
-    .dup-bar {
-      display: none;
-      background: rgba(240, 78, 122, 0.08);
-      border: 1px solid rgba(240, 78, 122, 0.3);
-      border-radius: var(--radius-sm);
-      padding: 10px 14px;
-      font-size: 0.8rem;
-      color: var(--accent3);
-      margin-bottom: 16px;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .dup-bar.show {
-      display: flex;
-    }
-
-    .dup-bar a {
-      color: var(--accent);
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    /* Password strength bar */
-    .strength-wrap {
-      margin-top: 6px;
-    }
-
-    .strength-track {
-      height: 4px;
-      background: var(--border);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .strength-fill {
-      height: 100%;
-      border-radius: 2px;
-      width: 0;
-      transition: width .3s, background .3s;
-    }
-
-    .strength-label {
-      font-size: 0.72rem;
-      margin-top: 4px;
-      font-weight: 600;
-    }
-
-    /* Forgot password steps */
-    .fp-step {
-      display: none;
-    }
-
-    .fp-step.active {
-      display: block;
-    }
-
-    .step-indicator {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 20px;
-    }
-
-    .step-dot {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.72rem;
-      font-weight: 700;
-      border: 2px solid var(--border);
-      color: var(--muted);
-      transition: all .3s;
-      flex-shrink: 0;
-    }
-
-    .step-dot.done {
-      background: var(--accent2);
-      border-color: var(--accent2);
-      color: #0a0a0f;
-    }
-
-    .step-dot.active {
-      border-color: var(--accent3);
-      color: var(--accent3);
-    }
-
-    .step-line {
-      flex: 1;
-      height: 2px;
-      background: var(--border);
-      border-radius: 1px;
-      transition: background .3s;
-    }
-
-    .step-line.done {
-      background: var(--accent2);
-    }
-
-    /* Simulated email preview */
-    .email-preview {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 16px;
-      margin: 16px 0;
-      font-size: 0.82rem;
-    }
-
-    .email-preview .ep-to {
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-
-    .email-preview .ep-to span {
-      color: var(--accent2);
-      font-weight: 600;
-    }
-
-    .email-preview .ep-body {
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    .email-preview .ep-code {
-      font-family: monospace;
-      font-size: 1.3rem;
-      font-weight: 800;
-      color: var(--accent3);
-      letter-spacing: 0.18em;
-      text-align: center;
-      margin: 10px 0;
-      padding: 10px;
-      background: rgba(240, 78, 122, 0.08);
-      border-radius: 8px;
-      border: 1px dashed rgba(240, 78, 122, 0.3);
-    }
-
-    .ep-note {
-      font-size: 0.74rem;
-      color: var(--muted);
-      margin-top: 8px;
-      font-style: italic;
-    }
-
-    /* SEPARATOR / GOOGLE */
-    .separator {
-      display: flex;
-      align-items: center;
-      text-align: center;
-      margin: 24px 0;
-      color: var(--muted);
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-
-    .separator::before,
-    .separator::after {
-      content: '';
-      flex: 1;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .separator:not(:empty)::before {
-      margin-right: 1.5em;
-    }
-
-    .separator:not(:empty)::after {
-      margin-left: 1.5em;
-    }
-
-    .btn-google {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      width: 100%;
-      padding: 14px;
-      border-radius: var(--radius-sm);
-      background: #ffffff;
-      color: #1f1f1f;
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 700;
-      font-size: 0.92rem;
-      border: 1px solid #dadce0;
-      cursor: pointer;
-      transition: all .25s;
-      margin-top: 10px;
-    }
-
-    .btn-google:hover {
-      background: #f8f9fa;
-      transform: translateY(-1px);
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      border-color: #d2e3fc;
-    }
-
-    .btn-google svg {
-      width: 20px;
-      height: 20px;
-    }
-
-    .g-logo-p1 {
-      fill: #4285f4
-    }
-
-    .g-logo-p2 {
-      fill: #34a853
-    }
-
-    .g-logo-p3 {
-      fill: #fbbc05
-    }
-
-    .g-logo-p4 {
-      fill: #ea4335
-    }
-
-    .gauth-notice {
-      background: rgba(240, 224, 64, 0.07);
-      border: 1px solid rgba(240, 224, 64, 0.25);
-      border-radius: var(--radius-sm);
-      padding: 12px 16px;
-      font-size: 0.78rem;
-      color: var(--accent);
-      line-height: 1.6;
-      margin-top: 12px;
-      display: none;
-    }
-
-    .gauth-notice.show {
-      display: block;
-    }
-
-    /* GOOGLE WAIT OVERLAY */
-    #googleWaitOverlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.75);
-      z-index: 10000;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(10px);
-    }
-
-    #googleWaitOverlay.show {
-      display: flex;
-    }
-
-    .gw-card {
-      background: #202124;
-      border-radius: 24px;
-      padding: 40px 48px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
-      animation: gwPop .4s cubic-bezier(.34, 1.56, .64, 1);
-      max-width: 360px;
-      width: 90%;
-    }
-
-    @keyframes gwPop {
-      from {
-        opacity: 0;
-        transform: scale(0.92) translateY(20px)
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1) translateY(0)
-      }
-    }
-
-    .gw-spinner {
-      width: 44px;
-      height: 44px;
-      border: 3px solid rgba(138, 180, 248, 0.18);
-      border-top-color: #8ab4f8;
-      border-radius: 50%;
-      animation: spin .8s linear infinite;
-    }
-
-    .gw-title {
-      font-size: 1rem;
-      font-weight: 400;
-      color: #e8eaed;
-      text-align: center;
-    }
-
-    .gw-sub {
-      font-size: 0.8rem;
-      color: #9aa0a6;
-      text-align: center;
-      line-height: 1.5;
-    }
-
-    .gw-cancel {
-      background: transparent;
-      border: 1px solid rgba(138, 180, 248, 0.3);
-      color: #8ab4f8;
-      border-radius: 50px;
-      padding: 9px 28px;
-      font-size: 0.85rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background .2s;
-    }
-
-    .gw-cancel:hover {
-      background: rgba(138, 180, 248, 0.1);
-    }
-
-    /* REDIRECT OVERLAY */
-    .redirect-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(10, 10, 15, 0.96);
-      z-index: 1000;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
-    }
-
-    .redirect-overlay.show {
-      display: flex;
-    }
-
-    .redirect-logo {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 2rem;
-      color: var(--text);
-    }
-
-    .redirect-logo span {
-      color: var(--accent);
-    }
-
-    .redirect-msg {
-      color: var(--muted);
-      font-size: 1rem;
-      text-align: center;
-      line-height: 1.5;
-    }
-
-    .redirect-spinner {
-      width: 48px;
-      height: 48px;
-      border: 3px solid var(--border);
-      border-top-color: var(--accent2);
-      border-radius: 50%;
-      animation: spin .8s linear infinite;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .redirect-bar-track {
-      width: 240px;
-      height: 4px;
-      background: var(--border);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .redirect-bar-fill {
-      height: 100%;
-      background: var(--accent2);
-      border-radius: 2px;
-      width: 0;
-    }
-
-    @keyframes fillBar {
-      to {
-        width: 100%;
-      }
-    }
-
-    /* TOAST */
-    .toast {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: var(--surface);
-      border: 1px solid var(--accent2);
-      border-radius: 50px;
-      padding: 14px 28px;
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: var(--accent2);
-      z-index: 600;
-      transition: transform .4s cubic-bezier(.34, 1.56, .64, 1);
-      white-space: nowrap;
-    }
-
-    .toast.show {
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .toast.warn {
-      border-color: var(--accent3);
-      color: var(--accent3);
-    }
-
-    /* FOOTER */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 12px 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      color: var(--muted);
-      font-size: 0.75rem;
-    }
-
-    @media(max-width:900px) {
-      .hero {
-        grid-template-columns: 1fr;
-        padding: 40px 20px 30px;
-      }
-
-      .hero-visual {
-        display: none;
-      }
-
-      nav {
-        padding: 12px 20px;
-      }
-
-      .download-strip {
-        padding-left: 20px;
-        padding-right: 20px;
-      }
-
-      footer {
-        flex-direction: column;
-        gap: 12px;
-        text-align: center;
-        padding: 20px;
-      }
-
-      .modal {
-        padding: 24px 20px;
-      }
-    }
-
-    @media(max-width:480px) {
-      body {
-        font-size: 13px;
-      }
-
-      h1 {
-        font-size: 1.6rem !important;
-      }
-
-      .hero-sub {
-        font-size: 0.88rem;
-        margin-top: 12px;
-      }
-
-      .hero-actions {
-        flex-direction: column;
-        gap: 10px;
-      }
-
-      .hero-actions .btn {
-        width: 100%;
-        text-align: center;
-      }
-
-      .hero-stats {
-        gap: 16px;
-        flex-wrap: wrap;
-      }
-
-      .stat-num {
-        font-size: 1.3rem;
-      }
-
-      .logo {
-        font-size: 1.1rem;
-      }
-
-      .btn {
-        padding: 8px 14px;
-        font-size: 0.75rem;
-      }
-
-      .hero-nav-link {
-        font-size: 0.75rem;
-        padding: 8px 14px;
-      }
-
-      .gw-card {
-        padding: 28px 24px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GearGo — Admin Control Center</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg: #0a0c0f;
+            --surface: #111418;
+            --surface2: #181c22;
+            --surface3: #1e232b;
+            --border: rgba(255, 255, 255, 0.07);
+            --border2: rgba(255, 255, 255, 0.12);
+            --accent: #f97316;
+            --accent2: #fb923c;
+            --accent-glow: rgba(249, 115, 22, 0.18);
+            --green: #22c55e;
+            --green-glow: rgba(34, 197, 94, 0.15);
+            --red: #ef4444;
+            --blue: #3b82f6;
+            --yellow: #eab308;
+            --purple: #a855f7;
+            --text: #f1f5f9;
+            --text2: #94a3b8;
+            --text3: #475569;
+            --font-head: 'Syne', sans-serif;
+            --font-mono: 'DM Mono', monospace;
+            --font-body: 'Instrument Sans', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font-body);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            padding: 28px 24px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo-mark {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--accent);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .logo-text {
+            font-family: var(--font-head);
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: var(--text);
+        }
+
+        .logo-badge {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--text3);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-left: 46px;
+        }
+
+        .sidebar-nav {
+            padding: 16px 12px;
+            flex: 1;
+        }
+
+        .nav-group-label {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text3);
+            padding: 12px 12px 6px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: var(--text2);
+            font-size: 13.5px;
+            font-weight: 500;
+            margin-bottom: 2px;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: var(--surface2);
+            color: var(--text);
+        }
+
+        .nav-item.active {
+            background: var(--accent-glow);
+            color: var(--accent);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+        }
+
+        .nav-item .icon {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            background: var(--accent);
+            color: white;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            padding: 1px 6px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .sidebar-footer {
+            padding: 16px 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .admin-profile:hover {
+            background: var(--surface2);
+        }
+
+        .avatar {
+            width: 34px;
+            height: 34px;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .admin-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .admin-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .admin-role {
+            font-size: 11px;
+            color: var(--text3);
+            font-family: var(--font-mono);
+        }
+
+        /* MAIN */
+        .main {
+            margin-left: 240px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* TOPBAR */
+        .topbar {
+            height: 64px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 32px;
+            gap: 16px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .topbar-title {
+            font-family: var(--font-head);
+            font-size: 17px;
+            font-weight: 700;
+            flex: 1;
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--green);
+            background: var(--green-glow);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+
+        .live-dot {
+            width: 7px;
+            height: 7px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse-dot 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: scale(0.8);
+            }
+        }
+
+        .topbar-btn {
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            color: var(--text2);
+            padding: 7px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: var(--font-body);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s;
+        }
+
+        .topbar-btn:hover {
+            background: var(--surface3);
+            color: var(--text);
+        }
+
+        .topbar-time {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--text3);
+        }
+
+        /* CONTENT */
+        .content {
+            padding: 28px 32px;
+            flex: 1;
+        }
+
+        /* SECTION HEADER */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-family: var(--font-head);
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .section-sub {
+            font-size: 12px;
+            color: var(--text3);
+            font-family: var(--font-mono);
+            margin-top: 2px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: var(--font-body);
+            font-weight: 500;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent2);
+            transform: translateY(-1px);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid var(--border2);
+            color: var(--text2);
+        }
+
+        .btn-ghost:hover {
+            background: var(--surface2);
+            color: var(--text);
+        }
+
+        /* KPI GRID */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .kpi-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px 22px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.2s, transform 0.2s;
+            cursor: default;
+        }
+
+        .kpi-card:hover {
+            border-color: var(--border2);
+            transform: translateY(-2px);
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            border-radius: 14px 14px 0 0;
+        }
+
+        .kpi-card.orange::before {
+            background: var(--accent);
+        }
+
+        .kpi-card.green::before {
+            background: var(--green);
+        }
+
+        .kpi-card.blue::before {
+            background: var(--blue);
+        }
+
+        .kpi-card.purple::before {
+            background: var(--purple);
+        }
+
+        .kpi-label {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text3);
+            margin-bottom: 10px;
+        }
+
+        .kpi-value {
+            font-family: var(--font-head);
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text);
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .kpi-change {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+        }
+
+        .kpi-change.up {
+            color: var(--green);
+        }
+
+        .kpi-change.down {
+            color: var(--red);
+        }
+
+        .kpi-icon {
+            position: absolute;
+            right: 18px;
+            top: 18px;
+            font-size: 28px;
+            opacity: 0.15;
+        }
+
+        /* GRID LAYOUTS */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* CARDS */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 22px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+
+        .card-title {
+            font-family: var(--font-head);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        /* REVENUE CHART */
+        .chart-area {
+            height: 160px;
+            position: relative;
+        }
+
+        .chart-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* TABLE */
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        thead th {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: var(--text3);
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.12s;
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: var(--surface2);
+        }
+
+        tbody td {
+            padding: 12px 14px;
+            color: var(--text2);
+            vertical-align: middle;
+        }
+
+        tbody td:first-child {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        /* BADGES */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 9px;
+            border-radius: 20px;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-green {
+            background: rgba(34, 197, 94, 0.12);
+            color: var(--green);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .badge-red {
+            background: rgba(239, 68, 68, 0.12);
+            color: var(--red);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .badge-orange {
+            background: rgba(249, 115, 22, 0.12);
+            color: var(--accent);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+        }
+
+        .badge-blue {
+            background: rgba(59, 130, 246, 0.12);
+            color: var(--blue);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .badge-yellow {
+            background: rgba(234, 179, 8, 0.12);
+            color: var(--yellow);
+            border: 1px solid rgba(234, 179, 8, 0.2);
+        }
+
+        .badge-purple {
+            background: rgba(168, 85, 247, 0.12);
+            color: var(--purple);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+        }
+
+        /* STARS */
+        .stars {
+            color: var(--yellow);
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        /* PARTNER CARDS */
+        .partner-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .partner-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            background: var(--surface2);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            transition: border-color 0.15s;
+            cursor: pointer;
+        }
+
+        .partner-item:hover {
+            border-color: var(--border2);
+        }
+
+        .partner-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .partner-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .partner-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 2px;
+        }
+
+        .partner-meta {
+            font-size: 11px;
+            color: var(--text3);
+            font-family: var(--font-mono);
+        }
+
+        .partner-rev {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        /* ACTIVITY FEED */
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+
+        .activity-text {
+            font-size: 13px;
+            color: var(--text2);
+            line-height: 1.5;
+        }
+
+        .activity-text strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .activity-time {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--text3);
+            margin-top: 2px;
+        }
+
+        /* PROGRESS BARS */
+        .progress-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 12px;
+            color: var(--text2);
+        }
+
+        .progress-label span:last-child {
+            font-family: var(--font-mono);
+            color: var(--text3);
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: var(--surface3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+
+        /* REVIEWS */
+        .review-card {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 10px;
+            transition: border-color 0.15s;
+        }
+
+        .review-card:hover {
+            border-color: var(--border2);
+        }
+
+        .review-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .review-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .review-name {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .review-gear {
+            font-size: 11px;
+            color: var(--text3);
+            font-family: var(--font-mono);
+        }
+
+        .review-body {
+            font-size: 12.5px;
+            color: var(--text2);
+            line-height: 1.55;
+        }
+
+        .review-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+
+        .review-date {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--text3);
+        }
+
+        /* QUICK STATS MINI */
+        .mini-stat {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .mini-stat:last-child {
+            border-bottom: none;
+        }
+
+        .mini-stat-label {
+            font-size: 12px;
+            color: var(--text2);
+        }
+
+        .mini-stat-val {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        /* NOTIFICATION BELL */
+        .notif-btn {
+            position: relative;
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            color: var(--text2);
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.15s;
+        }
+
+        .notif-btn:hover {
+            background: var(--surface3);
+            color: var(--text);
+        }
+
+        .notif-dot {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 7px;
+            height: 7px;
+            background: var(--red);
+            border-radius: 50%;
+            border: 1.5px solid var(--surface);
+        }
+
+        /* MAP PLACEHOLDER */
+        .map-placeholder {
+            background: var(--surface2);
+            border-radius: 10px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 8px;
+            color: var(--text3);
+            font-family: var(--font-mono);
+            font-size: 12px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .map-dots {
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(249, 115, 22, 0.6) 1px, transparent 1px);
+            background-size: 32px 32px;
+            opacity: 0.2;
+        }
+
+        .map-pin {
+            font-size: 28px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* GEAR CATEGORY BARS */
+        .cat-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .cat-label {
+            font-size: 12px;
+            color: var(--text2);
+            width: 90px;
+            flex-shrink: 0;
+        }
+
+        .cat-track {
+            flex: 1;
+            height: 8px;
+            background: var(--surface3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .cat-fill {
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .cat-val {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--text3);
+            width: 36px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        /* TOGGLE NAV */
+        .tab-nav {
+            display: flex;
+            gap: 4px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 4px;
+        }
+
+        .tab-btn {
+            padding: 6px 14px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 12px;
+            font-family: var(--font-mono);
+            color: var(--text3);
+            border: none;
+            background: transparent;
+            transition: all 0.15s;
+        }
+
+        .tab-btn.active {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border2);
+        }
+
+        /* REVENUE NUMBER HIGHLIGHT */
+        .rev-highlight {
+            background: linear-gradient(135deg, var(--accent), var(--yellow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ALERT BANNER */
+        .alert-banner {
+            background: rgba(249, 115, 22, 0.08);
+            border: 1px solid rgba(249, 115, 22, 0.25);
+            border-radius: 10px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .alert-icon {
+            font-size: 16px;
+        }
+
+        .alert-text {
+            color: var(--text2);
+            flex: 1;
+        }
+
+        .alert-text strong {
+            color: var(--accent);
+        }
+
+        .alert-close {
+            color: var(--text3);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 2px;
+        }
+
+        .alert-close:hover {
+            color: var(--text);
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .kpi-card {
+            animation: fadeUp 0.4s ease both;
+        }
+
+        .kpi-card:nth-child(1) {
+            animation-delay: 0.05s;
+        }
+
+        .kpi-card:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .kpi-card:nth-child(3) {
+            animation-delay: 0.15s;
+        }
+
+        .kpi-card:nth-child(4) {
+            animation-delay: 0.2s;
+        }
+
+        .card {
+            animation: fadeUp 0.45s ease both;
+            animation-delay: 0.25s;
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--surface3);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--border2);
+        }
+
+        /* SEARCH */
+        .search-box {
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            border-radius: 8px;
+            padding: 7px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text3);
+            font-size: 13px;
+            min-width: 200px;
+            cursor: text;
+            transition: border-color 0.15s;
+        }
+
+        .search-box:focus-within {
+            border-color: var(--accent);
+        }
+
+        .search-box input {
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--text);
+            font-size: 13px;
+            font-family: var(--font-body);
+            width: 100%;
+        }
+
+        .search-box input::placeholder {
+            color: var(--text3);
+        }
+
+        /* DONUT CHART */
+        .donut-wrap {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .donut-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text2);
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* Dashboard Mockup Grid */
+        .dash-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr 320px;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .health-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .health-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .health-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--text3);
+        }
+
+        .health-val {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .action-card {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-card:hover {
+            border-color: var(--accent);
+            background: var(--surface);
+            transform: translateY(-2px);
+        }
+
+        .horizontal-scroll {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            scrollbar-width: thin;
+        }
+
+        .horizontal-scroll::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .horizontal-scroll::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+
+        .approval-mini {
+            flex: 0 0 240px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+        }
+    </style>
 </head>
 
 <body>
 
-  <!-- REDIRECT OVERLAY -->
-  <div class="redirect-overlay" id="redirectOverlay">
-    <div class="redirect-logo">Gear<span>Go</span></div>
-    <div class="redirect-spinner"></div>
-    <div class="redirect-msg" id="redirectMsg">Sign in successful â€” loading Search pageâ€¦</div>
-    <div class="redirect-bar-track">
-      <div class="redirect-bar-fill" id="redirectBar"></div>
-    </div>
-  </div>
-
-  <!-- GOOGLE WAITING OVERLAY -->
-  <div id="googleWaitOverlay">
-    <div class="gw-card">
-      <svg viewBox="0 0 74 24" xmlns="http://www.w3.org/2000/svg" style="width:74px;height:24px">
-        <path
-          d="M9.24 8.19v2.46h5.88c-.18 1.38-.64 2.34-1.44 3.06-.85.77-2.17 1.62-4.44 1.62-3.54 0-6.3-2.85-6.3-6.39 0-3.54 2.76-6.39 6.3-6.39 1.92 0 3.31.75 4.34 1.71l1.74-1.74C13.84 1.27 11.87.33 9.24.33c-4.95 0-9.12 4.02-9.12 8.97s4.17 8.97 9.12 8.97c2.67 0 4.69-.87 6.26-2.51 1.62-1.62 2.13-3.9 2.13-5.73 0-.57-.06-1.11-.15-1.56H9.24v.72z"
-          fill="#4285F4" />
-        <path
-          d="M25 6.19c-3.21 0-5.83 2.44-5.83 5.81 0 3.34 2.62 5.81 5.83 5.81s5.83-2.46 5.83-5.81c0-3.37-2.62-5.81-5.83-5.81zm0 9.33c-1.76 0-3.28-1.45-3.28-3.52 0-2.09 1.52-3.52 3.28-3.52s3.28 1.43 3.28 3.52c0 2.07-1.52 3.52-3.28 3.52z"
-          fill="#EA4335" />
-        <path
-          d="M53.58 7.49h-.09c-.57-.68-1.67-1.3-3.06-1.3C47.53 6.19 45 8.72 45 12c0 3.26 2.53 5.81 5.43 5.81 1.39 0 2.49-.62 3.06-1.32h.09v.83c0 2.22-1.19 3.41-3.1 3.41-1.56 0-2.53-1.12-2.93-2.07l-2.22.92c.64 1.54 2.33 3.43 5.15 3.43 2.99 0 5.52-1.76 5.52-6.05V6.49h-2.42v1zm-2.93 8.03c-1.76 0-3.1-1.5-3.1-3.52 0-2.05 1.34-3.52 3.1-3.52 1.74 0 3.1 1.49 3.1 3.54 0 2.03-1.36 3.5-3.1 3.5z"
-          fill="#4285F4" />
-        <path
-          d="M38 6.19c-3.21 0-5.83 2.44-5.83 5.81 0 3.34 2.62 5.81 5.83 5.81s5.83-2.46 5.83-5.81c0-3.37-2.62-5.81-5.83-5.81zm0 9.33c-1.76 0-3.28-1.45-3.28-3.52 0-2.09 1.52-3.52 3.28-3.52s3.28 1.43 3.28 3.52c0 2.07-1.52 3.52-3.28 3.52z"
-          fill="#FBBC05" />
-        <path d="M58 .33h2.55v17.17H58z" fill="#34A853" />
-        <path
-          d="M63.69 14.06c-.64 1.71-2.07 3.75-4.86 3.75-2.93 0-5.37-2.3-5.37-5.81 0-3.45 2.42-5.81 5.1-5.81 2.71 0 4.04 1.62 4.46 2.51l.28.68-6.91 2.86c.53 1.04 1.35 1.57 2.51 1.57 1.16 0 1.97-.57 2.55-1.44l2.24 1.69zm-6.96-2.38l4.62-1.92c-.26-.64-.98-1.09-1.86-1.09-1.12 0-2.68.98-2.76 3.01z"
-          fill="#EA4335" />
-      </svg>
-      <div class="gw-spinner"></div>
-      <div class="gw-title">Sign in with Google</div>
-      <div class="gw-sub">A Google account chooser popup has opened.<br>Please select your account there.</div>
-      <button class="gw-cancel" onclick="cancelGoogleWait()">Cancel</button>
-    </div>
-  </div>
-
-  <!-- Hidden Google One Tap container -->
-  <div id="g_id_onload" data-client_id="440675514682-lng0e1v467junk79btos6fvdbbuht0jv.apps.googleusercontent.com"
-    data-callback="onGoogleSignInCallback" data-auto_prompt="false"></div>
-
-  <!-- NAV (Page 1 style â€” hamburger) -->
-  <nav>
-    <div class="logo" onclick="window.location.href='index.html'">Gear<span>Go</span></div>
-    <div class="nav-right">
-      <div id="navAuthBtns" style="display:flex;gap:12px;align-items:center;">
-        <button class="btn btn-ghost" onclick="openSignin()">Sign In</button>
-        <button class="btn btn-primary" onclick="openSignup()">Create AC</button>
-      </div>
-      <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()" aria-label="Open navigation menu">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </nav>
-
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-left">
-      <!-- Hamburger drawer (Page 1 style) -->
-      <div class="hero-nav-drawer" id="heroNavDrawer">
-        <div class="hero-nav-inner">
-          <a class="hero-nav-link" onclick="window.location.href='index.html'"><span class="link-icon">ðŸ </span>
-            Home</a>
-          <a class="hero-nav-link" onclick="window.location.href='reviews.html'"><span class="link-icon">â­</span>
-            Reviews</a>
-          <a class="hero-nav-link" onclick="window.location.href='dashboard.html'"><span class="link-icon">ðŸ“Š</span>
-            Dashboard</a>
-          <a class="hero-nav-link" onclick="window.location.href='delivery-partner.html'"><span
-              class="link-icon">ðŸ›µ</span> Delivery Boy Register</a>
-        </div>
-      </div>
-      <div class="drawer-divider" id="drawerDivider"></div>
-
-      <div class="hero-badge"><span class="dot-live"></span> Live near you</div>
-      <h1>Rent <em>anything</em> within minutes.</h1>
-      <p class="hero-sub">Sports gear, games, bikes, camping kits â€” borrow from neighbours. A delivery boy picks it up
-        and drops it at your door.</p>
-      <div class="hero-actions">
-        <button class="btn btn-primary" id="heroGetStarted" onclick="openSignup()">Get Started ðŸ“</button>
-        <button class="btn btn-ghost" onclick="showComingSoon('heroBanner')">Download App</button>
-      </div>
-      <div class="coming-soon-banner" id="heroBanner">ðŸš€ Coming Soon!</div>
-      <div class="hero-stats">
-        <div>
-          <div class="stat-num" id="ctr-items">0</div>
-          <div class="stat-label">Items nearby</div>
-        </div>
-        <div>
-          <div class="stat-num" id="ctr-riders">0</div>
-          <div class="stat-label">Delivery boys</div>
-        </div>
-        <div>
-          <div class="stat-num" id="ctr-time">0</div>
-          <div class="stat-label">Avg mins delivery</div>
-        </div>
-      </div>
-
-      <!-- Mobile map -->
-      <div class="map-blob" style="margin-top:30px;width:100%;max-width:400px;height:320px;">
-        <div class="map-grid"></div>
-        <svg class="route-line" viewBox="0 0 420 360">
-          <path d="M130 100 Q200 140 210 190" stroke="rgba(240,78,122,0.4)" stroke-width="2" fill="none"
-            stroke-dasharray="6 4" />
-          <path d="M280 230 Q250 210 210 190" stroke="rgba(78,240,160,0.5)" stroke-width="2" fill="none"
-            stroke-dasharray="6 4" />
-          <path d="M265 155 Q240 170 210 190" stroke="rgba(138,111,255,0.4)" stroke-width="2" fill="none"
-            stroke-dasharray="6 4" />
-        </svg>
-        <div class="map-pin pin-user">
-          <div class="pin-icon">ðŸ </div>
-          <div class="pin-label">You</div>
-        </div>
-        <div class="map-pin pin-item1">
-          <div class="pin-icon">âš½</div>
-          <div class="pin-label">0.4 km</div>
-        </div>
-        <div class="map-pin pin-item2">
-          <div class="pin-icon">ðŸŽ®</div>
-          <div class="pin-label">1.1 km</div>
-        </div>
-        <div class="map-pin pin-delivery">
-          <div class="pin-icon">ðŸ›µ</div>
-          <div class="pin-label">Raju Â· En Route</div>
-        </div>
-        <div class="distance-badge">âš¡ Nearest: 15-20 km</div>
-      </div>
-    </div>
-
-    <!-- Desktop map -->
-    <div class="hero-visual">
-      <div class="map-blob">
-        <div class="map-grid"></div>
-        <svg class="route-line" viewBox="0 0 420 360">
-          <path d="M130 100 Q200 140 210 190" stroke="rgba(240,78,122,0.4)" stroke-width="2" fill="none"
-            stroke-dasharray="6 4" />
-          <path d="M280 230 Q250 210 210 190" stroke="rgba(78,240,160,0.5)" stroke-width="2" fill="none"
-            stroke-dasharray="6 4" />
-          <path d="M265 155 Q240 170 210 190" stroke="rgba(138,111,255,0.4)" stroke-width="2" fill="none"
-            stroke-dasharray="6 4" />
-        </svg>
-        <div class="map-pin pin-user">
-          <div class="pin-icon">ðŸ </div>
-          <div class="pin-label">You</div>
-        </div>
-        <div class="map-pin pin-item1">
-          <div class="pin-icon">âš½</div>
-          <div class="pin-label">0.4 km</div>
-        </div>
-        <div class="map-pin pin-item2">
-          <div class="pin-icon">ðŸŽ®</div>
-          <div class="pin-label">1.1 km</div>
-        </div>
-        <div class="map-pin pin-delivery">
-          <div class="pin-icon">ðŸ›µ</div>
-          <div class="pin-label">Raju Â· En Route</div>
-        </div>
-        <div class="distance-badge">âš¡ Nearest: 15-20 km</div>
-      </div>
-    </div>
-  </section>
-  <br><br>
-
-  <!-- DOWNLOAD STRIP -->
-  <section class="download-strip">
-    <button class="dl-btn" onclick="showComingSoon('footerBanner')">ðŸ“² Download the App</button>
-    <div class="coming-soon-banner" id="footerBanner">ðŸš€ Coming Soon!</div>
-    <div class="dl-sub">iOS &amp; Android Â· Free to download Â· Available soon</div>
-  </section>
-  <br><br>
-
-  <footer>
-    <div class="logo" style="font-size:1.1rem">Gear<span style="color:var(--accent)">Go</span></div>
-    <div style="display:flex;gap:18px">
-      <a href="terms.html" style="color:var(--muted);text-decoration:none">T&amp;C</a>
-      <a href="privacy.html" style="color:var(--muted);text-decoration:none">Privacy</a>
-      <a href="support.html" style="color:var(--muted);text-decoration:none">Support</a>
-    </div>
-    <div>Â© 2026 GearGo Â· Rent smart, play more.</div>
-  </footer>
-
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-     SIGNUP MODAL
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-  <div class="modal-overlay" id="signupOverlay">
-    <div class="modal">
-      <button class="modal-close" onclick="closeSignup()">âœ•</button>
-      <div class="modal-eyebrow green">âœ¦ STEP 1 â€” START HERE</div>
-      <div class="modal-title">Create Account</div>
-      <div class="modal-sub">Sign up to unlock rentals, track deliveries, and list your own items on GearGo.</div>
-      <div class="dup-bar" id="dupBar">
-        âš ï¸ This email is already registered. <a onclick="closeSignup();setTimeout(openSignin,220)">Sign In instead â†’</a>
-      </div>
-      <div class="form-group">
-        <label>FULL NAME</label>
-        <input type="text" id="su-name" placeholder="Arjun Reddy" oninput="clearSuField('su-name')" />
-      </div>
-      <div class="form-group">
-        <label>PHONE NUMBER</label>
-        <input type="tel" id="su-phone" placeholder="+91 9999 000000" oninput="clearSuField('su-phone')" />
-      </div>
-      <div class="form-group">
-        <label>ADDRESS</label>
-        <input type="text" id="su-address" placeholder="Your full address" oninput="clearSuField('su-address')" />
-      </div>
-      <div class="form-group">
-        <label>EMAIL ADDRESS</label>
-        <input type="email" id="su-email" placeholder="arjun@example.com" oninput="onSuEmailInput()" />
-        <div class="field-msg" id="su-email-msg"></div>
-      </div>
-      <div class="form-group">
-        <label>CREATE PASSWORD</label>
-        <input type="password" id="su-pass" placeholder="Min. 6 characters" oninput="onPasswordStrength()" />
-        <div class="strength-wrap">
-          <div class="strength-track">
-            <div class="strength-fill" id="strengthFill"></div>
-          </div>
-          <div class="strength-label" id="strengthLabel" style="color:var(--muted)"></div>
-        </div>
-      </div>
-      <button class="modal-submit submit-green" onclick="handleSignup()">Create My Account ðŸš€</button>
-      <div class="modal-note">Already have an account? <a onclick="switchToSignin()">Sign In â†’</a></div>
-    </div>
-  </div>
-
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-     SIGNIN MODAL
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-  <div class="modal-overlay" id="signinOverlay">
-    <div class="modal signin-modal">
-      <button class="modal-close" onclick="closeSignin()">âœ•</button>
-      <div class="modal-eyebrow yellow">âœ¦ WELCOME BACK</div>
-      <div class="modal-title">Sign In</div>
-      <div class="modal-sub">Access your rentals, live delivery tracking and saved items.</div>
-      <div class="form-group">
-        <label>EMAIL ADDRESS</label>
-        <input type="email" id="si-email" placeholder="arjun@example.com"
-          oninput="clearFieldState('si-email','si-email-msg')" />
-        <div class="field-msg" id="si-email-msg"></div>
-      </div>
-      <div class="form-group">
-        <label>PASSWORD</label>
-        <input type="password" id="si-pass" placeholder="Enter your password"
-          oninput="clearFieldState('si-pass','si-pass-msg')" />
-        <div class="field-msg" id="si-pass-msg"></div>
-      </div>
-      <div style="text-align:right;margin-top:-6px;margin-bottom:14px;">
-        <a onclick="openForgotPassword()"
-          style="font-size:0.78rem;color:var(--accent3);cursor:pointer;text-decoration:none;font-weight:600;">Forgot
-          Password?</a>
-      </div>
-      <button class="modal-submit submit-yellow" onclick="handleSignin()">Sign In to GearGo â†’</button>
-
-      <div class="separator">or</div>
-      <button class="btn-google" onclick="handleGoogleAuth()">
-        <svg viewBox="0 0 24 24">
-          <path class="g-logo-p1"
-            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-          <path class="g-logo-p2"
-            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-          <path class="g-logo-p3"
-            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" />
-          <path class="g-logo-p4"
-            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-        </svg>
-        <span>Continue with Google</span>
-      </button>
-      <div class="gauth-notice" id="gauthNotice">âš™ï¸ Set your Google Client ID to enable Google Sign-In.</div>
-
-      <div class="modal-note">No account yet? <a onclick="switchToSignup()">Create one â†’</a></div>
-    </div>
-  </div>
-
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-     FORGOT PASSWORD MODAL (3 steps)
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-  <div class="modal-overlay" id="fpOverlay">
-    <div class="modal fp-modal">
-      <button class="modal-close" onclick="closeFP()">âœ•</button>
-      <div class="step-indicator">
-        <div class="step-dot" id="fpDot1">1</div>
-        <div class="step-line" id="fpLine1"></div>
-        <div class="step-dot" id="fpDot2">2</div>
-        <div class="step-line" id="fpLine2"></div>
-        <div class="step-dot" id="fpDot3">3</div>
-      </div>
-
-      <!-- Step 1: Email/Phone -->
-      <div class="fp-step active" id="fpStep1">
-        <div class="modal-eyebrow pink">âœ¦ FORGOT PASSWORD Â· STEP 1</div>
-        <div class="modal-title" style="font-size:1.4rem;">Find Your Account</div>
-        <div class="modal-sub">Enter your registered email address to receive a 6-digit reset code.</div>
-        <div class="form-group">
-          <label>REGISTERED EMAIL</label>
-          <input type="email" id="fp-email" placeholder="arjun@example.com"
-            oninput="clearFieldState('fp-email','fp-email-msg')" />
-          <div class="field-msg" id="fp-email-msg"></div>
-        </div>
-        <button class="modal-submit submit-pink" onclick="handleFPStep1()">Send Reset Code â†’</button>
-        <div class="modal-note">Remember your password? <a onclick="closeFP();setTimeout(openSignin,220)">Sign In â†’</a>
-        </div>
-      </div>
-
-      <!-- Step 2: Code -->
-      <div class="fp-step" id="fpStep2">
-        <div class="modal-eyebrow pink">âœ¦ FORGOT PASSWORD Â· STEP 2</div>
-        <div class="modal-title" style="font-size:1.4rem;">Check Your Inbox</div>
-        <div class="modal-sub">A reset code has been sent to your registered contact.</div>
-        <div class="email-preview" id="fpEmailPreview" style="display:none;">
-          <div class="ep-to">To: <span id="fpEmailDisplay">â€”</span></div>
-          <div class="ep-body">Hi there! Here is your GearGo password reset code. It expires in 10 minutes.</div>
-          <div class="ep-code" id="fpCodeDisplay" style="display:none;">â€”â€”</div>
-          <div class="ep-note" id="fpSimMsg">âš ï¸ Real service is active. Check your inbox/messages.</div>
-        </div>
-        <div class="form-group">
-          <label>ENTER 6-DIGIT CODE</label>
-          <input type="text" id="fp-code" placeholder="e.g. 482951" maxlength="6"
-            oninput="this.value=this.value.replace(/\D/g,'');clearFieldState('fp-code','fp-code-msg')" />
-          <div class="field-msg" id="fp-code-msg"></div>
-        </div>
-        <button class="modal-submit submit-pink" onclick="handleFPStep2()">Verify Code â†’</button>
-        <div class="modal-note"><a onclick="goFPStep(1)" style="color:var(--muted)">â† Back</a> &nbsp;Â·&nbsp; <a
-            onclick="resendCode()" style="color:var(--accent3)">Resend code</a></div>
-      </div>
-
-      <!-- Step 3: New password -->
-      <div class="fp-step" id="fpStep3">
-        <div class="modal-eyebrow pink">âœ¦ FORGOT PASSWORD Â· STEP 3</div>
-        <div class="modal-title" style="font-size:1.4rem;">Set New Password</div>
-        <div class="modal-sub">Create a strong new password for your account.</div>
-        <div class="form-group">
-          <label>NEW PASSWORD</label>
-          <input type="password" id="fp-newpass" placeholder="Min. 6 characters" oninput="onFPStrength()" />
-          <div class="strength-wrap">
-            <div class="strength-track">
-              <div class="strength-fill" id="fpStrengthFill"></div>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-mark">
+                <div class="logo-icon">⚙️</div>
+                <div class="logo-text">GearGo</div>
             </div>
-            <div class="strength-label" id="fpStrengthLabel" style="color:var(--muted)"></div>
-          </div>
-          <div class="field-msg" id="fp-newpass-msg"></div>
+            <div class="logo-badge">Admin Console v2.1</div>
         </div>
-        <div class="form-group">
-          <label>CONFIRM NEW PASSWORD</label>
-          <input type="password" id="fp-confirmpass" placeholder="Re-enter new password"
-            oninput="clearFieldState('fp-confirmpass','fp-confirmpass-msg')" />
-          <div class="field-msg" id="fp-confirmpass-msg"></div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-group-label">Overview</div>
+            <div class="nav-item active" data-section="dashboard" onclick="setPage(this)">
+                <span class="icon">📊</span> Dashboard
+            </div>
+            <div class="nav-item" data-section="revenue" onclick="setPage(this)">
+                <span class="icon">💰</span> Revenue
+                <span class="nav-badge">LIVE</span>
+            </div>
+            <div class="nav-item" data-section="analytics" onclick="setPage(this)">
+                <span class="icon">📈</span> Analytics
+            </div>
+
+            <div class="nav-group-label">Operations</div>
+            <div class="nav-item" data-section="rentals" onclick="setPage(this)">
+                <span class="icon">🏷️</span> Rentals
+                <span class="nav-badge" id="nav-rentals-badge">—</span>
+            </div>
+            <div class="nav-item" data-section="partners" onclick="setPage(this)">
+                <span class="icon">🤝</span> Partners
+            </div>
+            <div class="nav-item" data-section="gear-inventory" onclick="setPage(this)">
+                <span class="icon">⚙️</span> Gear Inventory
+            </div>
+            <div class="nav-item" data-section="users" onclick="setPage(this)">
+                <span class="icon">👥</span> Users
+            </div>
+
+            <div class="nav-group-label">Insights</div>
+            <div class="nav-item" data-section="reviews" onclick="setPage(this)">
+                <span class="icon">⭐</span> Reviews
+            </div>
+            <div class="nav-item" data-section="geo-heatmap" onclick="setPage(this)">
+                <span class="icon">📍</span> Geo Heatmap
+            </div>
+            <div class="nav-item" onclick="window.location.href='/db-explorer'">
+                <span class="icon">🗄️</span> DB Explorer
+            </div>
+            <div class="nav-item" onclick="setPage(this)">
+                <span class="icon">🔔</span> Alerts
+                <span class="nav-badge" style="background:var(--red)">3</span>
+            </div>
+
+            <div class="nav-group-label">Settings</div>
+            <div class="nav-item" onclick="setPage(this)">
+                <span class="icon">⚙️</span> Configuration
+            </div>
+            <div class="nav-item" onclick="setPage(this)">
+                <span class="icon">🔐</span> Access Control
+            </div>
+            <div class="nav-item" onclick="setPage(this)">
+                <span class="icon">📤</span> Export Data
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="admin-profile">
+                <div class="avatar">SA</div>
+                <div class="admin-info">
+                    <div class="admin-name">Super Admin</div>
+                    <div class="admin-role">Root Access</div>
+                </div>
+                <span style="color:var(--text3);font-size:14px;">⋯</span>
+            </div>
         </div>
-        <button class="modal-submit submit-pink" onclick="handleFPStep3()">Reset Password & Sign In â†’</button>
-      </div>
-    </div>
-  </div>
+    </aside>
 
-  <!-- TOAST -->
-  <div class="toast" id="toast"></div>
+    <!-- MAIN CONTENT -->
+    <main class="main">
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar-title">Dashboard Overview</div>
 
-  <script>
-    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-       CONFIG
-    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-    const GOOGLE_CLIENT_ID = '440675514682-lng0e1v467junk79btos6fvdbbuht0jv.apps.googleusercontent.com';
+            <div class="search-box">
+                <span>🔍</span>
+                <input type="text" id="adminSearch" oninput="handleSearch(this.value)"
+                    placeholder="Search rentals, users, gear...">
+            </div>
 
-    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-       STORAGE
-    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-    const STORE_KEY = 'geargo_accounts_v2';
-    function getAllAccounts() { try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch (e) { return {}; } }
-    function saveAllAccounts(obj) { localStorage.setItem(STORE_KEY, JSON.stringify(obj)); }
-    function getAccountByEmail(email) { return getAllAccounts()[email.toLowerCase().trim()] || null; }
-    function upsertAccount(data) { const all = getAllAccounts(); all[data.email.toLowerCase().trim()] = data; saveAllAccounts(all); }
+            <div class="tab-nav">
+                <button class="tab-btn active" onclick="switchPeriod(this,'Today')">Today</button>
+                <button class="tab-btn" onclick="switchPeriod(this,'Week')">Week</button>
+                <button class="tab-btn" onclick="switchPeriod(this,'Month')">Month</button>
+                <button class="tab-btn" onclick="switchPeriod(this,'Year')">Year</button>
+            </div>
 
-    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-       PAGE LOAD â€” STATS COUNTER ANIMATION
-    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-    window.addEventListener('load', async () => {
-      if (GOOGLE_CLIENT_ID === '' || GOOGLE_CLIENT_ID.includes('YOUR_')) {
-        document.getElementById('gauthNotice').classList.add('show');
-      }
-      initGoogleAuth();
+            <div class="live-indicator">
+                <div class="live-dot"></div>
+                LIVE
+            </div>
 
-      try {
-        const r = await fetch('/api/stats');
-        const s = await r.json();
-        setTimeout(() => {
-          animateCounter(document.getElementById('ctr-items'), s.itemsNearby || 300, '+', 1400);
-          animateCounter(document.getElementById('ctr-riders'), s.deliveryBoys || 3, '', 1200);
-          animateCounter(document.getElementById('ctr-time'), s.avgMins || 12, ' min', 1000);
-        }, 500);
-      } catch (e) {
-        setTimeout(() => {
-          animateCounter(document.getElementById('ctr-items'), 300, '+', 1400);
-          animateCounter(document.getElementById('ctr-riders'), 3, '', 1200);
-          animateCounter(document.getElementById('ctr-time'), 12, ' min', 1000);
-        }, 500);
-      }
-    });
+            <div class="notif-btn" title="Notifications">🔔<div class="notif-dot"></div>
+            </div>
 
-    function animateCounter(el, target, suffix, dur) {
-      if (!el) return;
-      let v = 0; const step = target / (dur / 16);
-      const t = setInterval(() => {
-        v = Math.min(v + step, target);
-        el.textContent = Math.floor(v) + suffix;
-        if (v >= target) clearInterval(t);
-      }, 16);
-    }
+            <button class="topbar-btn">
+                <span>⬇️</span> Export
+            </button>
 
-    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-       HAMBURGER MENU (from Page 1)
-    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-    let menuOpen = false;
-    function toggleMenu() {
-      menuOpen = !menuOpen;
-      document.getElementById('hamburgerBtn').classList.toggle('open', menuOpen);
-      document.getElementById('heroNavDrawer').classList.toggle('open', menuOpen);
-      document.getElementById('drawerDivider').classList.toggle('show', menuOpen);
-    }
-    document.addEventListener('click', function (e) {
-      if (menuOpen && !e.target.closest('.hamburger') && !e.target.closest('.hero-nav-drawer')) {
-        menuOpen = false;
-        document.getElementById('hamburgerBtn').classList.remove('open');
-        document.getElementById('heroNavDrawer').classList.remove('open');
-        document.getElementById('drawerDivider').classList.remove('show');
-      }
-    });
+            <div class="topbar-time" id="clock">—</div>
+        </header>
 
-    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-       COMING SOON
-    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-    let bannerTimer = null;
-    function showComingSoon(id) {
-      document.querySelectorAll('.coming-soon-banner').forEach(b => b.classList.remove('show'));
-      clearTimeout(bannerTimer);
-      document.getElementById(id).classList.add('show');
-      bannerTimer = setTimeout(() => document.getElementById(id).classList.remove('show'), 2000);
-    }
+        <!-- CONTENT -->
+        <div class="content">
 
-    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-       FIELD STATE HELPERS
-    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-    function setFieldState(inputId, msgId, type, message) {
-      const inp = document.getElementById(inputId);
-      const msg = document.getElementById(msgId);
-      if (!inp) return;
-      inp.classList.remove('input-error', 'input-ok');
-      if (msg) msg.classList.remove('show', 'err', 'ok');
-      if (type === 'error') {
-        inp.classList.add('input-error');
-        if (msg) { msg.textContent = 'âœ– ' + message; msg.classList.add('show', 'err'); }
-      } else if (type === 'ok') {
-        inp.classList.add('input-ok');
-        if (msg && message) { msg.textContent = 'âœ” ' + message; msg.classList.add('show', 'ok'); }
-      }
-    }
-    function clearFieldState(inputId, msgId) {
-      const inp = document.getElementById(inputId);
-      if (inp) inp.classList.remove('input-error', 'input-ok');
-      const msg = document.getElementById(msgId);
-      if (msg) msg.classList.remove('show', 'err', 'ok');
-    }
-    function clearSuField(id) { clearFieldState(id, null); }
+            <!-- ALERT -->
+            <div class="alert-banner" id="alertBanner">
+                <span class="alert-icon">⚡</span>
+                <div class="alert-text" id="alertText">Loading live data...</div>
+                <span class="alert-close" onclick="document.getElementById('alertBanner').style.display='none'">✕</span>
+            </div>
 
-    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-       PASSWORD STRENGTH
-    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-    function strengthScore(pw) {
-      let score = 0;
-      if (pw.length >= 6) score++;
-      if (pw.length >= 10) score++;
-      if (/[A-Z]/.test(pw)) score++;
-      if (/[0-9]/.test(pw)) score++;
-      if (/[^A-Za-z0-9]/.test(pw)) score++;
-      const levels = [
-        { pct: 0, label: '', color: 'transparent' },
-        { pct: 20, label: 'Very weak', color: '#f04e7a' },
-        { pct: 40, label: 'Weak', color: '#f0904e' },
-        { pct: 60, label: 'Fair', color: '#f0d040' },
-        { pct: 80, label: 'Strong', color: '#4ef0a0' },
-        { pct: 100, label: 'Very strong', color: '#4ef0a0' },
-      ];
-      return levels[Math.min(score, 5)];
-    }
-    function onPasswordStrength() {
-      const val = document.getElementById('su-pass').value;
-      const { pct, label, color } = strengthScore(val);
-      document.getElementById('strengthFill').style.width = pct + '%';
-      document.getElementById('strengthFill').style.background = color;
-      document.getElementById('strengthLabel').textContent = val.length ? label : '';
-      document.getElementById('strengthLabel').style.color = color;
-    }
-    function onFPStrength() {
-      const val = document.getElementById('fp-newpass').value;
-      const { pct, label, color } = strengthScore(val);
-      document.getElementById('fpStrengthFill').style.width = pct + '%';
-      document.getElementById('fpStrengthFill').style.background = color;
-      document.getElementById('fpStrengthLabel').textContent = val.length ? label : '';
-      document.getElementById('fpStrengthLabel').style.color = color;
-    }
+            <!-- NEW DASHBOARD LAYOUT -->
+            <div class="dash-layout page-section" id="section-dashboard-mockup">
 
-    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-       SIGNUP
-    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-    function onSuEmailInput() {
-      const email = document.getElementById('su-email').value.trim().toLowerCase();
-      const dup = document.getElementById('dupBar');
-      if (email && getAccountByEmail(email)) {
-        dup.classList.add('show');
-        setFieldState('su-email', 'su-email-msg', 'error', 'Email already registered');
-      } else {
-        dup.classList.remove('show');
-        clearFieldState('su-email', 'su-email-msg');
-      }
-    }
-    function openSignup() {
-      document.getElementById('dupBar').classList.remove('show');
-      ['su-name', 'su-phone', 'su-address', 'su-email', 'su-pass'].forEach(id => {
-        const el = document.getElementById(id); if (el) el.value = '';
-        clearFieldState(id, id + '-msg');
-      });
-      document.getElementById('strengthFill').style.width = '0';
-      document.getElementById('strengthLabel').textContent = '';
-      document.getElementById('signupOverlay').classList.add('open');
-    }
-    function closeSignup() { document.getElementById('signupOverlay').classList.remove('open'); }
-    function handleSignup() {
-      const n = document.getElementById('su-name').value.trim();
-      const ph = document.getElementById('su-phone').value.trim();
-      const addr = document.getElementById('su-address').value.trim();
-      const e = document.getElementById('su-email').value.trim();
-      const pw = document.getElementById('su-pass').value;
-      if (!n || !ph || !addr || !e || !pw) { showToast('âš ï¸ Please fill in all fields', true); return; }
-      if (pw.length < 6) { showToast('âš ï¸ Password must be at least 6 characters', true); return; }
-      if (getAccountByEmail(e)) {
-        document.getElementById('dupBar').classList.add('show');
-        setFieldState('su-email', 'su-email-msg', 'error', 'Email already registered');
-        showToast('âš ï¸ That email is already linked to an account', true); return;
-      }
-      upsertAccount({ name: n, phone: ph, address: addr, email: e.toLowerCase(), password: pw });
-      closeSignup();
-      showToast('âœ… Account created! You can now Sign In.');
-      setTimeout(openSignin, 1000);
-    }
+                <!-- COLUMN 1: Platform Health -->
+                <div class="health-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <h2 style="margin:0; font-size:18px;">Platform Health</h2>
+                        <span
+                            style="background:rgba(34,197,94,0.1); color:var(--green); font-size:10px; padding:4px 8px; border-radius:20px; border:1px solid rgba(34,197,94,0.2);">All
+                            Systems Normal</span>
+                    </div>
 
-    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-       SIGNIN
-    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-    function openSignin() {
-      clearFieldState('si-email', 'si-email-msg');
-      clearFieldState('si-pass', 'si-pass-msg');
-      document.getElementById('si-email').value = '';
-      document.getElementById('si-pass').value = '';
-      document.getElementById('signinOverlay').classList.add('open');
-    }
-    function closeSignin() { document.getElementById('signinOverlay').classList.remove('open'); }
-    function switchToSignin() { closeSignup(); setTimeout(openSignin, 220); }
-    function switchToSignup() { closeSignin(); setTimeout(openSignup, 220); }
+                    <div class="health-item">
+                        <div class="health-label"><span>🟢</span> API Uptime</div>
+                        <div class="health-val" style="color:var(--green)">99.97%</div>
+                    </div>
+                    <div class="health-item">
+                        <div class="health-label"><span>⚡</span> Avg Response</div>
+                        <div class="health-val">182ms</div>
+                    </div>
+                    <div class="health-item">
+                        <div class="health-label"><span>👥</span> Active Users Now</div>
+                        <div class="health-val">1,284</div>
+                    </div>
+                    <div class="health-item">
+                        <div class="health-label"><span>📋</span> App Sessions Today</div>
+                        <div class="health-val">8,441</div>
+                    </div>
+                    <div class="health-item">
+                        <div class="health-label"><span>💳</span> Payment Success</div>
+                        <div class="health-val" style="color:var(--green)">98.4%</div>
+                    </div>
+                    <div class="health-item">
+                        <div class="health-label"><span>🔃</span> Pending Payouts</div>
+                        <div class="health-val" style="color:var(--yellow)">₹34,800</div>
+                    </div>
+                    <div class="health-item">
+                        <div class="health-label"><span>🛡️</span> Fraud Flags</div>
+                        <div class="health-val" style="color:var(--red)">2 flagged</div>
+                    </div>
+                    <div class="health-item">
+                        <div class="health-label"><span>📦</span> Gear Utilization</div>
+                        <div class="health-val">74%</div>
+                    </div>
+                </div>
 
-    function handleSignin() {
-      const e = document.getElementById('si-email').value.trim();
-      const pw = document.getElementById('si-pass').value;
-      clearFieldState('si-email', 'si-email-msg');
-      clearFieldState('si-pass', 'si-pass-msg');
-      if (!e || !pw) { showToast('âš ï¸ Enter your email and password', true); return; }
-      const acc = getAccountByEmail(e);
-      if (!acc) {
-        setFieldState('si-email', 'si-email-msg', 'error', 'No account found for this email');
-        showToast('âŒ Email not registered â€” create an account first', true); return;
-      }
-      if (pw !== acc.password) {
-        setFieldState('si-email', 'si-email-msg', 'ok', 'Email looks good âœ“');
-        setFieldState('si-pass', 'si-pass-msg', 'error', 'Wrong password â€” try again');
-        showToast('âŒ Incorrect password', true); return;
-      }
-      localStorage.setItem('currentUser', JSON.stringify(acc));
-      closeSignin();
-      const overlay = document.getElementById('redirectOverlay');
-      document.getElementById('redirectMsg').innerHTML =
-        'Sign in successful!<br><span style="font-size:0.9rem;color:var(--accent2);">Verifying GPS connection...</span>';
-      overlay.classList.add('show');
-      const bar = document.getElementById('redirectBar');
-      bar.style.animation = 'none'; bar.offsetHeight;
-      bar.style.animation = 'fillBar 3s linear forwards';
-      setTimeout(() => { checkGPSAndRedirect(); }, 800);
-    }
+                <!-- COLUMN 2: Hotspots -->
+                <div class="health-card" style="padding:0; overflow:hidden; position:relative;">
+                    <div style="padding:24px; padding-bottom:10px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <h2 style="margin:0; font-size:18px;">Rental Hotspots</h2>
+                            <span
+                                style="background:rgba(249,115,22,0.1); color:var(--orange); font-size:10px; padding:4px 8px; border-radius:20px; border:1px solid rgba(249,115,22,0.2);">Live</span>
+                        </div>
+                        <div style="font-size:12px; color:var(--text3); margin-top:4px;">Active city clusters</div>
+                    </div>
 
-    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-       GPS VERIFICATION (from Page 2)
-    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-    function checkGPSAndRedirect() {
-      const msg = document.getElementById('redirectMsg');
-      const bar = document.getElementById('redirectBar');
+                    <div
+                        style="flex:1; background:var(--surface2); display:flex; align-items:center; justify-content:center; position:relative; min-height:200px;">
+                        <div style="text-align:center;">
+                            <span style="font-size:40px; filter: drop-shadow(0 0 10px var(--accent));">📍</span>
+                            <div style="font-size:12px; color:var(--text3); margin-top:10px;">Interactive Map</div>
+                            <div style="font-size:10px; color:var(--text3); opacity:0.5;">Hyderabad · Vizag · Pune ·
+                                Bengaluru</div>
+                        </div>
+                        <button class="btn btn-ghost"
+                            onclick="document.querySelector('[data-section=\'geo-heatmap\']').click()"
+                            style="position:absolute; bottom:20px; left:50%; transform:translateX(-50%); font-size:11px; background:rgba(255,255,255,0.05); backdrop-filter:blur(5px);">Open
+                            Full Map</button>
+                    </div>
 
-      if (!navigator.geolocation) {
-        msg.innerHTML = '<span style="color:var(--accent3)">âŒ GPS not supported.</span><br>Redirecting...';
-        setTimeout(() => { window.location.href = 'search.html'; }, 1500);
-        return;
-      }
+                    <div style="padding:20px; display:flex; flex-wrap:wrap; gap:8px; justify-content:center;">
+                        <span
+                            style="padding:6px 12px; background:rgba(249,115,22,0.1); color:var(--orange); border-radius:20px; font-size:11px; border:1px solid rgba(249,115,22,0.2);">Hyd:
+                            312</span>
+                        <span
+                            style="padding:6px 12px; background:rgba(59,130,246,0.1); color:var(--blue); border-radius:20px; font-size:11px; border:1px solid rgba(59,130,246,0.2);">Vizag:
+                            94</span>
+                        <span
+                            style="padding:6px 12px; background:rgba(168,85,247,0.1); color:var(--purple); border-radius:20px; font-size:11px; border:1px solid rgba(168,85,247,0.2);">Pune:
+                            78</span>
+                        <span
+                            style="padding:6px 12px; background:rgba(34,197,94,0.1); color:var(--green); border-radius:20px; font-size:11px; border:1px solid rgba(34,197,94,0.2);">BLR:
+                            65</span>
+                        <span
+                            style="padding:6px 12px; background:rgba(234,179,8,0.1); color:var(--yellow); border-radius:20px; font-size:11px; border:1px solid rgba(234,179,8,0.2);">Chennai:
+                            40</span>
+                    </div>
+                </div>
 
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          msg.innerHTML = '<span style="color:var(--accent2)">âœ… GPS Location Active</span><br>Opening Search page...';
-          bar.style.animation = 'none';
-          bar.style.width = '100%';
-          bar.style.background = 'var(--accent2)';
-          setTimeout(() => { window.location.href = 'search.html'; }, 1000);
-        },
-        (err) => {
-          let reason = "Please turn on GPS";
-          if (err.code === 1) reason = "Location permission denied";
-          else if (err.code === 2) reason = "GPS signal lost or OFF";
-          else if (err.code === 3) reason = "GPS check timed out";
-          msg.innerHTML = `
-        <div style="margin-top:10px;text-align:center;">
-          <span style="color:var(--accent3);font-weight:800;font-size:1.2rem;">ðŸ“ GPS REQUIRED</span><br>
-          <span style="color:#fff;font-size:0.85rem;">${reason}</span><br>
-          <button onclick="checkGPSAndRedirect()" class="btn btn-primary" style="margin-top:15px;padding:8px 20px;">Retry GPS Check</button>
-        </div>`;
-          bar.style.animationPlayState = 'paused';
-          bar.style.background = 'var(--accent3)';
-        },
-        { enableHighAccuracy: true, timeout: 6000, maximumAge: 0 }
-      );
-    }
+                <!-- COLUMN 3: Quick Actions -->
+                <div class="health-card">
+                    <h2 style="margin:0 0 15px 0; font-size:18px;">Quick Actions</h2>
+                    <div class="quick-grid">
+                        <div class="action-card" onclick="window.location.href='/delivery-partner'">
+                            <span style="font-size:24px; color:var(--accent);">➕</span>
+                            <span style="font-size:11px; font-weight:600;">Add Partner</span>
+                        </div>
+                        <div class="action-card" onclick="document.querySelector('[data-section=\'gear-inventory\']').click()">
+                            <span style="font-size:24px; color:var(--accent);">📦</span>
+                            <span style="font-size:11px; font-weight:600;">Add Gear</span>
+                        </div>
+                        <div class="action-card" onclick="document.querySelector('[data-section=\'users\']').click()">
+                            <span style="font-size:24px; color:var(--accent);">👤</span>
+                            <span style="font-size:11px; font-weight:600;">Add User</span>
+                        </div>
+                        <div class="action-card" onclick="document.querySelector('[data-section=\'analytics\']').click()">
+                            <span style="font-size:24px; color:var(--accent);">📊</span>
+                            <span style="font-size:11px; font-weight:600;">Run Report</span>
+                        </div>
+                        <div class="action-card" onclick="document.querySelector('[data-section=\'revenue\']').click()">
+                            <span style="font-size:24px; color:var(--accent);">💸</span>
+                            <span style="font-size:11px; font-weight:600;">Bulk Payout</span>
+                        </div>
+                        <div class="action-card" onclick="alert('Notification system not connected yet')">
+                            <span style="font-size:24px; color:var(--accent);">🔔</span>
+                            <span style="font-size:11px; font-weight:600;">Push Alert</span>
+                        </div>
+                    </div>
 
-    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-       GOOGLE OAUTH (from Page 2)
-    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-    let _googleWaitTimer = null;
+                    <div style="margin-top:20px; border-top:1px solid var(--border); padding-top:20px;">
+                        <div
+                            style="font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text3); margin-bottom:12px;">
+                            Pending Approvals</div>
+                        <div class="horizontal-scroll" id="pendingApprovalsList">
+                            <div style="font-size:12px; color:var(--text3); padding:10px;">No pending approvals.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    function initGoogleAuth() {
-      const tryInit = () => {
-        if (typeof google === 'undefined' || !google.accounts) { setTimeout(tryInit, 200); return; }
-        if (GOOGLE_CLIENT_ID === '' || GOOGLE_CLIENT_ID.includes('YOUR_')) return;
-        google.accounts.id.initialize({
-          client_id: GOOGLE_CLIENT_ID,
-          callback: onGoogleSignInCallback,
-          auto_select: false,
-          cancel_on_tap_outside: true,
-        });
-      };
-      tryInit();
-    }
+            <!-- ROW 2: KPIs (Horizontal) -->
+            <div class="kpi-grid page-section" id="section-dashboard-kpis" style="margin-bottom:20px;">
+                <div class="kpi-card orange">
+                    <div class="kpi-icon">💰</div>
+                    <div class="kpi-label">Total Revenue</div>
+                    <div class="kpi-value rev-highlight" id="rev">₹0</div>
+                </div>
+                <div class="kpi-card green">
+                    <div class="kpi-icon">📦</div>
+                    <div class="kpi-label">Active Rentals</div>
+                    <div class="kpi-value" id="rentals">0</div>
+                </div>
+                <div class="kpi-card blue">
+                    <div class="kpi-icon">🤝</div>
+                    <div class="kpi-label">Partners</div>
+                    <div class="kpi-value" id="kpi-partners">0</div>
+                </div>
+                <div class="kpi-card purple">
+                    <div class="kpi-icon">⭐</div>
+                    <div class="kpi-label">Avg. Rating</div>
+                    <div class="kpi-value" id="kpi-rating">0★</div>
+                </div>
+            </div>
 
-    function handleGoogleAuth() {
-      closeSignin();
-      if (GOOGLE_CLIENT_ID === '' || GOOGLE_CLIENT_ID.includes('YOUR_GOOGLE')) {
-        setTimeout(() => {
-          openSignin();
-          document.getElementById('gauthNotice').classList.add('show');
-          showToast('âš™ï¸ Set your Google Client ID to enable Google Sign-In', true);
-        }, 220);
-        return;
-      }
-      setTimeout(() => {
-        document.getElementById('googleWaitOverlay').classList.add('show');
-        google.accounts.id.prompt((notification) => {
-          if (notification.isNotDisplayed()) {
-            cancelGoogleWait();
-            const reason = notification.getNotDisplayedReason();
-            if (reason === 'suppressed_by_user') {
-              triggerGoogleRedirectFlow();
-            } else {
-              showToast('âš ï¸ Google sign-in not available: ' + reason, true);
-              openSignin();
+            <!-- ACTIVITY FEED (Horizontal) -->
+            <div class="card page-section" style="margin-bottom:20px;">
+                <div class="card-header">
+                    <div class="card-title">Live Activity Feed</div>
+                </div>
+                <div class="horizontal-scroll" id="activityFeed" style="padding:15px;">
+                    <div style="padding:12px;color:var(--text3);font-size:12px;">No activity yet</div>
+                </div>
+            </div>
+
+            <!-- ROW 3: Active Rentals Table -->
+            <div class="card page-section" id="section-rentals" style="margin-bottom:20px;">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Active & Recent Rentals</div>
+                        <div class="section-sub">All open orders · Click row to manage</div>
+                    </div>
+                    <div style="display:flex;gap:8px;">
+                        <button class="btn btn-ghost" style="font-size:12px;" onclick="setPage(null, 'rentals')">🔽 All
+                            Rentals</button>
+                        <button class="btn btn-primary" style="font-size:12px;"
+                            onclick="window.location.href='/search'">+ New Rental</button>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table id="rentalsTableMain">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Gear / Category</th>
+                                <th>Duration</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Agreement</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rentalsBody"></tbody>
+                    </table>
+                </div>
+                </tbody>
+                </table>
+            </div>
+            <div
+                style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:14px;border-top:1px solid var(--border);">
+                <div style="font-family:var(--font-mono);font-size:11px;color:var(--text3);" id="rentals-count-label">
+                    Loading bookings...</div>
+                <div style="display:flex;gap:6px;">
+                    <button class="btn btn-ghost" style="padding:5px 12px;font-size:12px;">← Prev</button>
+                    <button class="btn btn-ghost"
+                        style="padding:5px 12px;font-size:12px;background:var(--accent-glow);color:var(--accent);border-color:rgba(249,115,22,0.3);">1</button>
+                    <button class="btn btn-ghost" style="padding:5px 12px;font-size:12px;">2</button>
+                    <button class="btn btn-ghost" style="padding:5px 12px;font-size:12px;">3</button>
+                    <button class="btn btn-ghost" style="padding:5px 12px;font-size:12px;">Next →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- FULL PARTNERS SECTION -->
+        <div class="card page-section" id="section-partners-full" style="display:none;margin-bottom:20px;">
+            <div class="card-header">
+                <div class="card-title">All Delivery Partners</div>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Mobile</th>
+                            <th>Vehicle</th>
+                            <th>City</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fullPartnersTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- FULL GEAR INVENTORY SECTION -->
+        <div class="card page-section" id="section-gear-full" style="display:none;margin-bottom:20px;">
+            <div class="card-header">
+                <div class="card-title">Gear Inventory</div>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Item</th>
+                            <th>Category</th>
+                            <th>Price / Day</th>
+                            <th>Store ID</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fullGearTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- FULL REVIEWS SECTION -->
+        <div class="card page-section" id="section-reviews-full" style="display:none;margin-bottom:20px;">
+            <div class="card-header">
+                <div class="card-title">All Customer Reviews</div>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Category</th>
+                            <th>User Name</th>
+                            <th>Rating</th>
+                            <th>Review text</th>
+                            <th>Submission Info</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fullReviewsTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- FULL USERS SECTION -->
+        <div class="card page-section" id="section-users-full" style="display:none;margin-bottom:20px;">
+            <div class="card-header">
+                <div class="card-title">Registered Users & Customers</div>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Address</th>
+                            <th>Registered On</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fullUsersTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- FULL REVENUE SECTION -->
+        <div class="card page-section" id="section-revenue-full" style="display:none;margin-bottom:20px;">
+            <div class="card-header">
+                <div class="card-title">Revenue by Customer</div>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Customer Name</th>
+                            <th>Total Bookings</th>
+                            <th>Total Revenue Paid</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fullRevenueTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- FULL ANALYTICS SECTION -->
+        <div class="card page-section" id="section-analytics-full" style="display:none;margin-bottom:20px;">
+            <div class="card-header">
+                <div class="card-title">Platform Analytics</div>
+            </div>
+            <div style="padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div><canvas id="bookingsChart" height="250"></canvas></div>
+                <div><canvas id="revenueChart" height="250"></canvas></div>
+            </div>
+        </div>
+
+        <!-- ROW 4: Partners + Revenue Breakdown + Reviews -->
+        <div class="page-section" id="section-partners-grid"
+            style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:20px;">
+
+            <!-- Partners -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Top Partners</div>
+                        <div class="section-sub">By revenue generated</div>
+                    </div>
+                    <button class="btn btn-ghost" style="padding:5px 10px;font-size:11px;">View All</button>
+                </div>
+                <div class="partner-list" id="partnerList">
+                    <div style="padding:12px;color:var(--text3);font-size:12px;">Loading partners...</div>
+                </div>
+            </div>
+
+            <!-- Revenue by Category -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Gear by Category</div>
+                        <div class="section-sub" id="cat-total-rev">Loading...</div>
+                    </div>
+                </div>
+
+                <div class="donut-wrap" style="justify-content:center;margin-bottom:18px;">
+                    <svg width="110" height="110" viewBox="0 0 110 110" id="categoryDonut">
+                        <circle cx="55" cy="55" r="40" fill="none" stroke="#1e232b" stroke-width="20" />
+                        <!-- Dynamic segments will be inserted here by populateCategoryChart -->
+                        <text x="55" y="55" text-anchor="middle" font-size="8" fill="#475569"
+                            font-family="DM Mono, monospace" id="donut-center-text">Loading...</text>
+                    </svg>
+                    <div class="donut-legend">
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background:var(--accent)"></div>Cycling<span
+                                class="legend-val">35%</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background:var(--blue)"></div>Camping<span
+                                class="legend-val">25%</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background:var(--purple)"></div>Water<span
+                                class="legend-val">20%</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background:var(--green)"></div>Tech Gear<span
+                                class="legend-val">15%</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background:var(--yellow)"></div>Other<span
+                                class="legend-val">5%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="catBars">
+                    <div style="color:var(--text3);font-size:12px;padding:12px 0;">Loading...</div>
+                </div>
+            </div>
+
+            <!-- Reviews -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Recent Reviews</div>
+                        <div class="section-sub" id="reviews-avg">Loading...</div>
+                    </div>
+                    <button class="btn btn-ghost" style="padding:5px 10px;font-size:11px;">All Reviews</button>
+                </div>
+
+                <div id="reviewsList">
+                    <div style="padding:12px;color:var(--text3);font-size:12px;">Loading reviews...</div>
+                </div>
+            </div>
+
+            <!-- FOOTER -->
+            <div
+                style="text-align:center;padding:28px 0 8px;font-family:var(--font-mono);font-size:10px;color:var(--text3);letter-spacing:1px;">
+                GEARGO ADMIN v2.1 · © 2025 GEARGO PVT LTD · ALL SYSTEMS OPERATIONAL
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API = ''; 
+
+
+        // Clock
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').textContent = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // ── LIVE DATA LOADER ──────────────────────────────────────────
+        async function loadDashboard() {
+            try {
+                const [bookingsRes, deliveryRes, reviewsRes, itemsRes, summaryRes] = await Promise.all([
+                    fetch(API + '/api/view-bookings'),
+                    fetch(API + '/api/delivery-boys'),
+                    fetch(API + '/api/reviews'),
+                    fetch(API + '/api/items'),
+                    fetch(API + '/api/admin-summary'),
+                ]);
+                const bookings = bookingsRes.ok ? await bookingsRes.json() : [];
+                const delivery = deliveryRes.ok ? await deliveryRes.json() : [];
+                const reviews = reviewsRes.ok ? await reviewsRes.json() : [];
+                const items = itemsRes.ok ? await itemsRes.json() : [];
+                const summary = summaryRes.ok ? await summaryRes.json() : null;
+
+                window.allBookings = bookings;
+
+                // Use summary for reliable KPI numbers
+                if (summary) {
+                    document.getElementById('rev').textContent = '\u20B9' + (summary.rentals.revenue || 0).toLocaleString();
+                    document.getElementById('rentals').textContent = summary.rentals.total;
+                    document.getElementById('kpi-partners').textContent = summary.delivery.total;
+                    document.getElementById('kpi-rating').textContent = summary.reviews.avg_rating + '\u2605';
+                    const nb = document.getElementById('nav-rentals-badge');
+                    if (nb) nb.textContent = summary.rentals.total;
+                    const sub = document.getElementById('kpi-rentals-sub');
+                    if (sub) sub.textContent = '\u25B2 ' + summary.rentals.pending + ' pending';
+                    updateAlertBanner({ pending: summary.rentals.pending }, { pending: summary.delivery.pending });
+                } else {
+                    updateKPIs(bookings, delivery, reviews, items);
+                    updateAlertBanner(bookings, delivery);
+                }
+
+                populateRentalsTable(bookings);
+                populateDeliveryPartners(delivery);
+                populateReviews(reviews);
+                populateCategoryChart(items, bookings);
+                populateActivityFeed(bookings);
+                populatePendingApprovals(delivery);
+
+                // Populate the new full sections
+                populateFullPartners(delivery);
+                populateFullGear(items);
+                populateFullReviews(reviews);
+                fetchAndPopulateUsers();
+                populateRevenueAndAnalytics(bookings);
+            } catch (e) {
+                console.error('Dashboard load error:', e);
             }
-          } else if (notification.isSkippedMoment() || notification.isDismissedMoment()) {
-            cancelGoogleWait();
-            setTimeout(openSignin, 150);
-          }
-        });
-        _googleWaitTimer = setTimeout(() => {
-          if (document.getElementById('googleWaitOverlay').classList.contains('show')) {
-            cancelGoogleWait();
-            showToast('âš ï¸ Google sign-in timed out. Please try again.', true);
-            openSignin();
-          }
-        }, 60000);
-      }, 220);
-    }
-
-    function triggerGoogleRedirectFlow() {
-      if (GOOGLE_CLIENT_ID === '' || GOOGLE_CLIENT_ID.includes('YOUR_GOOGLE')) return;
-      try {
-        const tokenClient = google.accounts.oauth2.initTokenClient({
-          client_id: GOOGLE_CLIENT_ID,
-          scope: 'openid email profile',
-          callback: (tokenResponse) => {
-            if (tokenResponse.error) { showToast('âŒ Google sign-in failed: ' + tokenResponse.error, true); openSignin(); return; }
-            fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-              headers: { Authorization: 'Bearer ' + tokenResponse.access_token }
-            }).then(r => r.json()).then(profile => onGoogleProfileReceived(profile))
-              .catch(() => { showToast('âŒ Could not fetch Google profile', true); openSignin(); });
-          },
-        });
-        document.getElementById('googleWaitOverlay').classList.add('show');
-        tokenClient.requestAccessToken({ prompt: 'select_account' });
-      } catch (e) { showToast('âŒ Google OAuth error: ' + e.message, true); openSignin(); }
-    }
-
-    function onGoogleSignInCallback(response) {
-      cancelGoogleWait();
-      try {
-        const payload = parseJwt(response.credential);
-        onGoogleProfileReceived({ name: payload.name, email: payload.email, picture: payload.picture, sub: payload.sub });
-      } catch (e) { showToast('âŒ Could not read Google profile', true); openSignin(); }
-    }
-
-    function onGoogleProfileReceived(profile) {
-      const googleUser = {
-        name: profile.name, email: profile.email,
-        phone: '(Verified via Google)', address: 'Address linked to Google Account',
-        password: 'google_oauth_managed', picture: profile.picture || null,
-        isGoogle: true, googleId: profile.sub || null,
-      };
-      const existing = getAccountByEmail(googleUser.email);
-      if (!existing) upsertAccount(googleUser);
-      localStorage.setItem('currentUser', JSON.stringify(existing || googleUser));
-
-      const overlay = document.getElementById('redirectOverlay');
-      const firstName = (profile.name || 'User').split(' ')[0];
-      document.getElementById('redirectMsg').innerHTML =
-        'Welcome, ' + firstName + '!<br><span style="font-size:0.9rem;color:var(--accent2);">Verifying GPS connection...</span>';
-      overlay.classList.add('show');
-      const bar = document.getElementById('redirectBar');
-      bar.style.animation = 'none'; bar.offsetHeight;
-      bar.style.animation = 'fillBar 3s linear forwards';
-      setTimeout(() => { checkGPSAndRedirect(); }, 800);
-    }
-
-    function cancelGoogleWait() {
-      clearTimeout(_googleWaitTimer);
-      document.getElementById('googleWaitOverlay').classList.remove('show');
-    }
-    document.getElementById('googleWaitOverlay').addEventListener('click', function (e) {
-      if (e.target === this) { cancelGoogleWait(); openSignin(); }
-    });
-
-    function parseJwt(token) {
-      var base64Url = token.split('.')[1];
-      var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(c =>
-        '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-      ).join(''));
-      return JSON.parse(jsonPayload);
-    }
-
-    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-       FORGOT PASSWORD â€” 3-step flow (Page 2 server OTP)
-    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-    let _fpEmail = '', _fpCode = '';
-
-    function openForgotPassword() {
-      closeSignin();
-      setTimeout(() => {
-        _fpEmail = ''; _fpCode = '';
-        ['fp-email', 'fp-code', 'fp-newpass', 'fp-confirmpass'].forEach(id => {
-          const el = document.getElementById(id); if (el) el.value = '';
-          clearFieldState(id, id + '-msg');
-        });
-        document.getElementById('fpStrengthFill').style.width = '0';
-        document.getElementById('fpStrengthLabel').textContent = '';
-        goFPStep(1);
-        document.getElementById('fpOverlay').classList.add('open');
-      }, 220);
-    }
-    function closeFP() { document.getElementById('fpOverlay').classList.remove('open'); }
-
-    function goFPStep(n) {
-      [1, 2, 3].forEach(i => {
-        document.getElementById('fpStep' + i).classList.toggle('active', i === n);
-        const dot = document.getElementById('fpDot' + i);
-        const line = document.getElementById('fpLine' + i);
-        dot.classList.toggle('active', i === n);
-        dot.classList.toggle('done', i < n);
-        if (line) line.classList.toggle('done', i < n);
-      });
-    }
-
-    async function handleFPStep1() {
-      const e = document.getElementById('fp-email').value.trim();
-      clearFieldState('fp-email', 'fp-email-msg');
-      if (!e) { showToast('âš ï¸ Enter your registered email', true); return; }
-
-      _fpEmail = e.toLowerCase().trim();
-      showToast('â³ Sending reset code...');
-
-      try {
-        if (window.location.protocol === 'file:') {
-          throw new Error('Please run the server (npm start) and open http://localhost:3005 to use this feature.');
         }
-        const res = await fetch('http://localhost:3005/api/auth-flow/dispatch-otp', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: _fpEmail })
-        });
-        if (!res.ok) {
-          if (!res.headers.get('X-Backend')) {
-            throw new Error('You are hitting the wrong server. Please open http://localhost:3005 instead.');
-          }
-          const errData = await res.json().catch(() => ({ message: 'Server error ' + res.status }));
-          throw new Error(errData.message || 'Server error');
-        }
-        const data = await res.json();
-        if (data.success) {
-          document.getElementById('fpEmailDisplay').textContent = _fpEmail;
-          document.getElementById('fp-code').value = '';
-          clearFieldState('fp-code', 'fp-code-msg');
-          const preview = document.getElementById('fpEmailPreview');
-          preview.style.display = 'block';
-          if (data.simulated) {
-            document.getElementById('fpCodeDisplay').style.display = 'block';
-            document.getElementById('fpCodeDisplay').textContent = data.otp;
-            document.getElementById('fpSimMsg').textContent = 'âš ï¸ Email credentials not set in server. Code shown above.';
-            showToast('ðŸ“§ Code generated (Simulated)');
-          } else {
-            document.getElementById('fpCodeDisplay').style.display = 'none';
-            document.getElementById('fpSimMsg').textContent = 'âœ… Reset code sent to your email. Check your inbox.';
-            showToast('ðŸ“§ Reset code sent to your email!');
-          }
-          goFPStep(2);
-        } else {
-          showToast('âŒ ' + (data.message || 'Failed to send OTP'), true);
-        }
-      } catch (err) {
-        showToast('âŒ ' + err.message, true);
-        console.error('OTP Error:', err);
-      }
-    }
 
-    function resendCode() { handleFPStep1(); }
-
-    async function handleFPStep2() {
-      const entered = document.getElementById('fp-code').value.trim();
-      clearFieldState('fp-code', 'fp-code-msg');
-      if (!entered || entered.length < 6) {
-        setFieldState('fp-code', 'fp-code-msg', 'error', 'Enter the full 6-digit code');
-        showToast('âš ï¸ Please enter the 6-digit code', true); return;
-      }
-      showToast('â³ Verifying code...');
-      try {
-        const res = await fetch('http://localhost:3005/api/auth-flow/confirm-otp', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: _fpEmail, otp: entered })
-        });
-        if (!res.ok || !res.headers.get('X-Backend')) {
-          throw new Error('You are hitting the wrong server. Please open http://localhost:3005 instead.');
+        function handleSearch(query) {
+            if (!window.allBookings) return;
+            const q = query.toLowerCase();
+            const filtered = window.allBookings.filter(b =>
+                (b.name || '').toLowerCase().includes(q) ||
+                (b.item || '').toLowerCase().includes(q) ||
+                (b.id || '').toString().includes(q) ||
+                (b.phone || '').includes(q)
+            );
+            populateRentalsTable(filtered);
         }
-        const data = await res.json();
-        if (data.success) {
-          setFieldState('fp-code', 'fp-code-msg', 'ok', 'Code verified!');
-          setTimeout(() => {
-            document.getElementById('fp-newpass').value = '';
-            document.getElementById('fp-confirmpass').value = '';
-            document.getElementById('fpStrengthFill').style.width = '0';
-            document.getElementById('fpStrengthLabel').textContent = '';
-            clearFieldState('fp-newpass', 'fp-newpass-msg');
-            clearFieldState('fp-confirmpass', 'fp-confirmpass-msg');
-            goFPStep(3);
-          }, 500);
-        } else {
-          setFieldState('fp-code', 'fp-code-msg', 'error', data.message || 'Incorrect code');
-          showToast('âŒ ' + (data.message || 'Verification failed'), true);
+
+        async function fetchAndPopulateUsers() {
+            try {
+                const res = await fetch(API + '/api/users');
+                if (!res.ok) return;
+                const users = await res.json();
+                const tbody = document.getElementById('fullUsersTable');
+                if (!tbody) return;
+                tbody.innerHTML = '';
+                if (!users.length) { tbody.innerHTML = '<tr><td colspan="6">No users</td></tr>'; return; }
+                users.forEach(u => {
+                    const date = u.created_at ? new Date(u.created_at).toLocaleDateString() : '—';
+                    tbody.innerHTML += `<tr><td>#${u.id || ''}</td><td>${u.name || '—'}</td><td>${u.phone || '—'}</td><td>${u.email || '—'}</td><td>${u.address || '—'}</td><td>${date}</td></tr>`;
+                });
+            } catch (e) { }
         }
-      } catch (err) {
-        showToast('âŒ ' + err.message, true);
-        console.error('Verify Error:', err);
-      }
-    }
 
-    function handleFPStep3() {
-      const np = document.getElementById('fp-newpass').value;
-      const cp = document.getElementById('fp-confirmpass').value;
-      clearFieldState('fp-newpass', 'fp-newpass-msg');
-      clearFieldState('fp-confirmpass', 'fp-confirmpass-msg');
-      if (!np || !cp) { showToast('âš ï¸ Fill in both password fields', true); return; }
-      if (np.length < 6) {
-        setFieldState('fp-newpass', 'fp-newpass-msg', 'error', 'Password must be at least 6 characters');
-        showToast('âš ï¸ Password too short', true); return;
-      }
-      if (np !== cp) {
-        setFieldState('fp-confirmpass', 'fp-confirmpass-msg', 'error', 'Passwords do not match');
-        showToast('âŒ Passwords do not match', true); return;
-      }
-      const all = getAllAccounts();
-      if (all[_fpEmail]) { all[_fpEmail].password = np; saveAllAccounts(all); }
-      closeFP();
-      showToast('âœ… Password reset! Signing you inâ€¦');
-      setTimeout(() => {
-        document.getElementById('si-email').value = _fpEmail;
-        document.getElementById('si-pass').value = np;
-        clearFieldState('si-email', 'si-email-msg');
-        clearFieldState('si-pass', 'si-pass-msg');
-        document.getElementById('signinOverlay').classList.add('open');
-      }, 800);
-    }
-
-    /* Close modals on backdrop click */
-    ['signupOverlay', 'signinOverlay', 'fpOverlay'].forEach(id => {
-      document.getElementById(id).addEventListener('click', e => {
-        if (e.target === document.getElementById(id)) {
-          if (id === 'signupOverlay') closeSignup();
-          else if (id === 'signinOverlay') closeSignin();
-          else closeFP();
+        function populateFullPartners(delivery) {
+            const tbody = document.getElementById('fullPartnersTable');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!delivery.length) { tbody.innerHTML = '<tr><td colspan="7">No partners</td></tr>'; return; }
+            delivery.forEach(d => {
+                const name = `${d.first_name || ''} ${d.last_name || ''}`.trim() || d.name || '—';
+                const status = d.status === 'active' ? '<span class="badge badge-green">Active</span>' : (d.status === 'rejected' ? '<span class="badge badge-red">Rejected</span>' : '<span class="badge badge-yellow">Pending</span>');
+                tbody.innerHTML += `<tr><td>#${d.id}</td><td>${name}</td><td>${d.mobile || '—'}</td><td>${d.vehicle_type || '—'}</td><td>${d.city || '—'}</td><td>${status}</td>
+                <td>
+                    <button class="btn btn-ghost" style="padding:4px 8px;font-size:11px;" onclick="approvePartner(${d.id}, true, this)">Approve</button>
+                    <button class="btn btn-ghost" style="padding:4px 8px;font-size:11px;color:red;" onclick="approvePartner(${d.id}, false, this)">Reject</button>
+                </td></tr>`;
+            });
         }
-      });
-    });
 
-    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-       TOAST
-    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-    function showToast(msg, warn) {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.className = 'toast' + (warn ? ' warn' : '');
-      t.classList.add('show');
-      clearTimeout(t._t);
-      t._t = setTimeout(() => t.classList.remove('show'), 3400);
-    }
-  </script>
+        function populateFullGear(items) {
+            const tbody = document.getElementById('fullGearTable');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!items.length) { tbody.innerHTML = '<tr><td colspan="5">No items</td></tr>'; return; }
+            items.forEach(i => {
+                tbody.innerHTML += `<tr><td>#${i.id}</td><td>${i.name || i.item_name || '—'}</td><td>${i.category || '—'}</td><td>₹${i.price_per_day || i.price || '—'}</td><td>${i.store_id || '—'}</td></tr>`;
+            });
+        }
+
+        function populateFullReviews(reviews) {
+            const tbody = document.getElementById('fullReviewsTable');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!reviews.length) { tbody.innerHTML = '<tr><td colspan="6">No reviews</td></tr>'; return; }
+            reviews.forEach(r => {
+                const fullForm = `Rating: ${r.rating}★ | Name: ${r.name || 'Anonymous'} | City: ${r.city || '—'} | Category: ${r.category || '—'}`;
+                tbody.innerHTML += `<tr><td>#${r.id}</td><td>${r.category || '—'}</td><td>${r.name || 'Anonymous'}</td><td>${r.rating}★</td><td>${r.body || r.title || '—'}</td><td><div style="font-size:10px;color:var(--text3);">${fullForm}</div></td></tr>`;
+            });
+        }
+
+        function populateRevenueAndAnalytics(bookings) {
+            const revBody = document.getElementById('fullRevenueTable');
+            if (!revBody) return;
+
+            const userTotals = {};
+            bookings.forEach(b => {
+                if (!b.name) return;
+                if (!userTotals[b.name]) userTotals[b.name] = { count: 0, revenue: 0 };
+                userTotals[b.name].count += 1;
+                userTotals[b.name].revenue += parseFloat(b.price || 0);
+            });
+
+            const sorted = Object.keys(userTotals).sort((a, b) => userTotals[b].revenue - userTotals[a].revenue);
+            revBody.innerHTML = '';
+            sorted.forEach(name => {
+                revBody.innerHTML += `<tr><td>${name}</td><td>${userTotals[name].count}</td><td style="color:var(--accent);">₹${userTotals[name].revenue.toLocaleString()}</td></tr>`;
+            });
+
+            // Render Charts
+            if (window.Chart) {
+                Chart.defaults.color = '#94a3b8';
+
+                const bCtx = document.getElementById('bookingsChart');
+                if (bCtx && !window.bChart) {
+                    window.bChart = new Chart(bCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Total Bookings', 'Active/Pending', 'Completed', 'Cancelled'],
+                            datasets: [{
+                                label: 'Bookings',
+                                data: [
+                                    bookings.length,
+                                    bookings.filter(b => ['pending', 'confirmed'].includes((b.status || '').toLowerCase())).length,
+                                    bookings.filter(b => (b.status || '').toLowerCase() === 'completed').length,
+                                    bookings.filter(b => (b.status || '').toLowerCase() === 'cancelled').length
+                                ],
+                                backgroundColor: ['#3b82f6', '#f97316', '#22c55e', '#ef4444']
+                            }]
+                        },
+                        options: { plugins: { title: { display: true, text: 'Bookings Breakdown' } } }
+                    });
+                }
+
+                const rCtx = document.getElementById('revenueChart');
+                if (rCtx && !window.rChart) {
+                    const top5 = sorted.slice(0, 5);
+                    window.rChart = new Chart(rCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: top5,
+                            datasets: [{
+                                data: top5.map(n => userTotals[n].revenue),
+                                backgroundColor: ['#f97316', '#3b82f6', '#a855f7', '#22c55e', '#eab308'],
+                                borderWidth: 0
+                            }]
+                        },
+                        options: { plugins: { title: { display: true, text: 'Top 5 Customers by Revenue' } } }
+                    });
+                }
+            }
+        }
+
+        // KPI Cards
+        function updateKPIs(bookings, delivery, reviews, items) {
+            const totalRev = bookings.reduce((s, b) => s + (parseFloat(b.price) || 0), 0);
+            const active = bookings.filter(b => (b.status || '').toLowerCase() === 'confirmed' || (b.status || '').toLowerCase() === 'pending').length;
+            const avgRat = reviews.length ? (reviews.reduce((s, r) => s + (parseFloat(r.rating) || 0), 0) / reviews.length).toFixed(1) : '—';
+
+            document.getElementById('rev').textContent = '₹' + totalRev.toLocaleString();
+            document.getElementById('rentals').textContent = active;
+            document.getElementById('kpi-partners').textContent = delivery.length;
+            document.getElementById('kpi-rating').textContent = avgRat;
+
+            // Update nav badge
+            const nb = document.getElementById('nav-rentals-badge');
+            if (nb) nb.textContent = active;
+
+            // Sub-labels
+            const pending = bookings.filter(b => (b.status || '').toLowerCase() === 'pending').length;
+            const el = document.getElementById('kpi-rentals-sub');
+            if (el) el.textContent = '▲ ' + pending + ' pending';
+        }
+
+        // Rentals Table
+        function populateRentalsTable(bookings) {
+            const tbody = document.getElementById('rentalsBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            const recent = bookings.slice(0, 10);
+            if (!recent.length) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:24px;">No bookings yet</td></tr>';
+                return;
+            }
+            recent.forEach(b => {
+                const status = (b.status || 'pending').toLowerCase();
+                const badgeClass = status === 'confirmed' ? 'badge-green' : status === 'cancelled' ? 'badge-red' : status === 'completed' ? 'badge-blue' : 'badge-orange';
+                const badgeLabel = status === 'confirmed' ? '● Active' : status === 'cancelled' ? '✕ Cancelled' : status === 'completed' ? '↩ Completed' : '⏳ Pending';
+                tbody.innerHTML += `
+                <tr>
+                    <td style="color:var(--accent);">#GG-${b.id}</td>
+                    <td>${b.name || '—'}</td>
+                    <td>
+                        <div>${b.item || '—'}</div>
+                        <div style="font-size:10px; color:var(--text3); margin-top:2px;">
+                            ${b.purchase_mode ? `<span style="color:var(--accent)">${b.purchase_mode.toUpperCase()}</span>` : ''}
+                            ${b.size ? ` · Size: ${b.size}` : ''}
+                            ${b.condition ? ` · ${b.condition}` : ''}
+                        </div>
+                    </td>
+                    <td>${b.days || '—'} day${b.days > 1 ? 's' : ''}</td>
+                    <td>₹${parseFloat(b.price || 0).toLocaleString()}</td>
+                    <td><span class="badge ${badgeClass}">${badgeLabel}</span></td>
+                    <td><button class="btn btn-ghost" onclick="viewAgreement('${b.id}')" style="padding:4px 8px;font-size:11px;">📄 Sheet</button></td>
+                    <td>
+                        <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="manageBooking(${b.id})">Manage</button>
+                        <button class="btn" style="background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2);padding:4px 9px;font-size:11px;margin-left:4px;" onclick="deleteBooking(${b.id}, this)">✕</button>
+                    </td>
+                </tr>`;
+            });
+            const countEl = document.getElementById('rentals-count-label');
+            if (countEl) countEl.textContent = `Showing ${recent.length} of ${bookings.length} bookings`;
+
+            // Populate Full Rentals Table too
+            const fullBody = document.getElementById('fullRentalsTable');
+            if (fullBody) {
+                fullBody.innerHTML = '';
+                bookings.forEach(b => {
+                    const date = b.created_at ? new Date(b.created_at).toLocaleDateString() : '—';
+                    fullBody.innerHTML += `<tr><td>#${b.id}</td><td>${b.name}</td><td>${b.item}</td><td>${b.days}</td><td>₹${parseFloat(b.price || 0).toLocaleString()}</td><td>${date}</td><td>${b.status}</td><td><button class="btn btn-ghost" onclick="viewAgreement('${b.id}')" style="padding:2px 6px;font-size:10px;">📄 View</button></td></tr>`;
+                });
+            }
+        }
+
+        function viewAgreement(id) {
+            const b = (window.allBookings || []).find(x => x.id.toString() === id.toString());
+            if (!b) return;
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;';
+            modal.onclick = () => modal.remove();
+            const content = document.createElement('div');
+            content.style.cssText = 'background:var(--surface);padding:30px;border-radius:12px;width:500px;border:1px solid var(--border);';
+            content.onclick = (e) => e.stopPropagation();
+            content.innerHTML = `
+                <h2 style="margin:0 0 20px 0;">Rental Agreement Sheet</h2>
+                <div style="border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:15px;">
+                    <p><strong>Booking ID:</strong> #GG-${b.id}</p>
+                    <p><strong>Customer:</strong> ${b.name}</p>
+                    <p><strong>Item:</strong> ${b.item}</p>
+                    <p><strong>Date:</strong> ${new Date(b.created_at || Date.now()).toLocaleDateString()}</p>
+                </div>
+                <div>
+                    <p><strong>Digital Signature / Receipt:</strong></p>
+                    ${b.signature ? `<img src="${b.signature}" style="max-width:100%;background:#fff;padding:10px;border-radius:8px;border:1px solid #ddd;">` : '<div style="padding:40px;background:rgba(255,255,255,0.05);text-align:center;border-radius:8px;color:var(--text3)">No signature captured for this order</div>'}
+                </div>
+                <button class="btn btn-primary" onclick="this.parentElement.parentElement.remove()" style="margin-top:20px;width:100%;">Close Sheet</button>
+            `;
+            modal.appendChild(content);
+            document.body.appendChild(modal);
+        }
+
+        // Delivery Partners
+        function populateDeliveryPartners(delivery) {
+            const list = document.getElementById('partnerList');
+            if (!list) return;
+            list.innerHTML = '';
+            const colors = ['rgba(249,115,22,0.12)', 'rgba(59,130,246,0.12)', 'rgba(168,85,247,0.12)', 'rgba(34,197,94,0.12)', 'rgba(234,179,8,0.12)'];
+            const emojis = ['🛵', '🚴', '🤝', '🏕️', '📦'];
+            if (!delivery.length) {
+                list.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:12px 0;">No delivery partners yet</div>';
+                return;
+            }
+            delivery.slice(0, 5).forEach((d, i) => {
+                const name = `${d.first_name || ''} ${d.last_name || ''}`.trim() || d.name || 'Partner';
+                const statusBadge = d.status === 'active' ? '<span class="badge badge-green" style="font-size:9px;">Active</span>' : '<span class="badge badge-yellow" style="font-size:9px;">Pending</span>';
+                list.innerHTML += `
+                <div class="partner-item">
+                    <div class="partner-avatar" style="background:${colors[i % colors.length]};">${emojis[i % emojis.length]}</div>
+                    <div class="partner-info">
+                        <div class="partner-name">${name}</div>
+                        <div class="partner-meta">${d.city || d.vehicle_type || '—'} · ${d.mobile || ''}</div>
+                    </div>
+                    ${statusBadge}
+                </div>`;
+            });
+        }
+
+        // Reviews
+        function populateReviews(reviews) {
+            const wrap = document.getElementById('reviewsList');
+            if (!wrap) return;
+            wrap.innerHTML = '';
+            const avatarColors = ['rgba(249,115,22,0.2)', 'rgba(59,130,246,0.2)', 'rgba(168,85,247,0.2)', 'rgba(34,197,94,0.2)'];
+            const textColors = ['var(--accent)', 'var(--blue)', 'var(--purple)', 'var(--green)'];
+            if (!reviews.length) {
+                wrap.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:12px 0;">No reviews yet</div>';
+                return;
+            }
+            reviews.slice(0, 4).forEach((r, i) => {
+                const initials = (r.name || 'U').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+                const stars = '★'.repeat(Math.min(Math.round(r.rating || 5), 5));
+                const empty = '★'.repeat(Math.max(0, 5 - Math.round(r.rating || 5)));
+                wrap.innerHTML += `
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="review-avatar" style="background:${avatarColors[i % 4]};color:${textColors[i % 4]};">${initials}</div>
+                        <div>
+                            <div class="review-name">${r.name || 'Anonymous'}</div>
+                            <div class="review-gear">${r.category || r.title || '—'} · ${r.city || ''}</div>
+                        </div>
+                        <div style="margin-left:auto;"><div class="stars">${stars}<span style="color:var(--text3);">${empty}</span></div></div>
+                    </div>
+                    <div class="review-body">"${r.body || r.title || ''}"</div>
+                    <div class="review-meta">
+                        <span class="review-date">${r.created_at ? new Date(r.created_at).toLocaleDateString('en-IN') : 'Recent'}</span>
+                        <span class="badge badge-green" style="font-size:9px;">Verified</span>
+                    </div>
+                </div>`;
+            });
+            const avgEl = document.getElementById('reviews-avg');
+            if (avgEl && reviews.length) {
+                const avg = (reviews.reduce((s, r) => s + (parseFloat(r.rating) || 0), 0) / reviews.length).toFixed(1);
+                avgEl.textContent = avg + '★ avg · ' + reviews.length + ' total';
+            }
+        }
+
+        // Category Chart from items
+        function populateCategoryChart(items, bookings) {
+            if (!items.length) return;
+            const catCount = {};
+            items.forEach(it => { catCount[it.cat || 'Other'] = (catCount[it.cat || 'Other'] || 0) + 1; });
+            const total = items.length || 1;
+            const sorted = Object.entries(catCount).sort((a, b) => b[1] - a[1]).slice(0, 5);
+            const catBarsEl = document.getElementById('catBars');
+            if (catBarsEl) {
+                const clrs = ['var(--accent)', 'var(--blue)', 'var(--purple)', 'var(--green)', 'var(--yellow)'];
+                catBarsEl.innerHTML = sorted.map(([cat, cnt], i) => {
+                    const pct = Math.round((cnt / total) * 100);
+                    return `<div class="cat-bar">
+                        <div class="cat-label">${cat}</div>
+                        <div class="cat-track"><div class="cat-fill" style="width:${pct}%;background:${clrs[i]};"></div></div>
+                        <div class="cat-val">${pct}%</div>
+                    </div>`;
+                }).join('');
+            }
+            const totalRevEl = document.getElementById('cat-total-rev');
+            if (totalRevEl) {
+                const totalRev = bookings.reduce((s, b) => s + (parseFloat(b.price) || 0), 0);
+                totalRevEl.textContent = 'Total ₹' + totalRev.toLocaleString('en-IN');
+            }
+        }
+
+        // Alert Banner
+        function updateAlertBanner(bookings, delivery) {
+            // Accept either raw arrays or pre-computed {pending} objects from summary
+            const rentalsPending = Array.isArray(bookings)
+                ? bookings.filter(b => (b.status || '').toLowerCase() === 'pending').length
+                : (bookings.pending || 0);
+            const partnersPending = Array.isArray(delivery)
+                ? delivery.filter(d => d.status === 'pending').length
+                : (delivery.pending || 0);
+            const el = document.getElementById('alertText');
+            if (el) el.innerHTML = `<strong>${rentalsPending} rental${rentalsPending !== 1 ? 's' : ''} pending</strong> · ${partnersPending} partner requests pending approval`;
+        }
+
+        // Actions
+        async function manageBooking(id) {
+            const status = prompt('Update status for booking #' + id + ':\nType: confirmed, cancelled, or completed');
+            if (!status) return;
+            try {
+                const res = await fetch(API + '/api/bookings/' + id + '/status', {
+                    method: 'PUT', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: status.trim().toLowerCase() })
+                });
+                const data = await res.json();
+                if (res.ok) { alert('\u2705 Status updated to: ' + status); loadDashboard(); }
+                else alert('\u274C Error: ' + (data.error || 'Update failed'));
+            } catch (err) { alert('Network error: ' + err.message); }
+        }
+        async function deleteBooking(id, btn) {
+            if (!confirm('Delete booking #' + id + '?')) return;
+            btn.disabled = true;
+            const row = btn.closest('tr');
+            row.style.opacity = '0.4';
+            try {
+                const res = await fetch(API + '/api/bookings/' + id, { method: 'DELETE' });
+                if (res.ok) { row.remove(); setTimeout(loadDashboard, 500); }
+                else { row.style.opacity = ''; btn.disabled = false; alert('Delete failed'); }
+            } catch (err) { row.style.opacity = ''; btn.disabled = false; alert('Network error'); }
+        }
+
+        // Auto-refresh every 30 seconds
+        loadDashboard();
+        setInterval(loadDashboard, 30000);
+
+        // Nav active state
+        function setPage(el) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            el.classList.add('active');
+
+            const sectionId = el.getAttribute('data-section');
+            const name = el.textContent.trim().split('\n')[0].trim();
+            document.querySelector('.topbar-title').textContent = name + ' Overview';
+
+            // Hide all sections first
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            // Show relevant sections based on sidebar click
+            if (sectionId === 'dashboard') {
+                const kpis = document.getElementById('section-dashboard-kpis');
+                if (kpis) kpis.style.display = 'grid';
+                const charts = document.getElementById('section-dashboard-charts');
+                if (charts) charts.style.display = 'grid';
+                const rentals = document.getElementById('section-rentals');
+                if (rentals) rentals.style.display = 'block';
+                const partners = document.getElementById('section-partners-grid');
+                if (partners) partners.style.display = 'grid';
+            } else if (sectionId === 'rentals') {
+                const kpis = document.getElementById('section-dashboard-kpis');
+                if (kpis) kpis.style.display = 'grid';
+                const rentals = document.getElementById('section-rentals');
+                if (rentals) rentals.style.display = 'block';
+            } else if (sectionId === 'partners') {
+                const kpis = document.getElementById('section-dashboard-kpis');
+                if (kpis) kpis.style.display = 'grid';
+                const partners = document.getElementById('section-partners-full');
+                if (partners) partners.style.display = 'block';
+            } else if (sectionId === 'gear-inventory') {
+                const kpis = document.getElementById('section-dashboard-kpis');
+                if (kpis) kpis.style.display = 'grid';
+                const gear = document.getElementById('section-gear-full');
+                if (gear) gear.style.display = 'block';
+            } else if (sectionId === 'reviews') {
+                const kpis = document.getElementById('section-dashboard-kpis');
+                if (kpis) kpis.style.display = 'grid';
+                const reviews = document.getElementById('section-reviews-full');
+                if (reviews) reviews.style.display = 'block';
+            } else if (sectionId === 'users') {
+                const kpis = document.getElementById('section-dashboard-kpis');
+                if (kpis) kpis.style.display = 'grid';
+                const users = document.getElementById('section-users-full');
+                if (users) users.style.display = 'block';
+            } else if (sectionId === 'revenue') {
+                const kpis = document.getElementById('section-dashboard-kpis');
+                if (kpis) kpis.style.display = 'grid';
+                const rev = document.getElementById('section-revenue-full');
+                if (rev) rev.style.display = 'block';
+            } else if (sectionId === 'analytics') {
+                const kpis = document.getElementById('section-dashboard-kpis');
+                if (kpis) kpis.style.display = 'grid';
+                const ana = document.getElementById('section-analytics-full');
+                if (ana) ana.style.display = 'block';
+            } else if (sectionId === 'geo-heatmap') {
+                const mockup = document.getElementById('section-dashboard-mockup');
+                if (mockup) mockup.style.display = 'grid';
+            } else {
+                // For unbuilt pages, just show KPIs
+                const kpis = document.getElementById('section-dashboard-kpis');
+                if (kpis) kpis.style.display = 'grid';
+            }
+        }
+
+        // Period tabs
+        function switchPeriod(el, period) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+
+            if (!window.allBookings) return;
+
+            const now = new Date();
+            let filtered = window.allBookings;
+
+            if (period === 'Today') {
+                filtered = window.allBookings.filter(b => {
+                    const d = new Date(b.created_at || now);
+                    return d.getDate() === now.getDate() && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+                });
+            } else if (period === 'Week') {
+                const lastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                filtered = window.allBookings.filter(b => new Date(b.created_at || now) >= lastWeek);
+            } else if (period === 'Month') {
+                filtered = window.allBookings.filter(b => {
+                    const d = new Date(b.created_at || now);
+                    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+                });
+            }
+
+            const totalRev = filtered.reduce((s, b) => s + (parseFloat(b.price) || 0), 0);
+            document.getElementById('rev').textContent = '₹' + totalRev.toLocaleString();
+            document.getElementById('rentals').textContent = filtered.length;
+            populateRentalsTable(filtered);
+        }
+
+        function populateActivityFeed(bookings) {
+            const feed = document.getElementById('activityFeed');
+            if (!feed) return;
+            feed.innerHTML = '';
+            if (!bookings || !bookings.length) {
+                feed.innerHTML = '<div style="padding:12px;color:var(--text3);font-size:12px;">No activity yet</div>';
+                return;
+            }
+            const recent = bookings.slice(0, 10);
+            const colors = ['var(--green)', 'var(--blue)', 'var(--yellow)', 'var(--accent)', 'var(--purple)'];
+            recent.forEach((b, i) => {
+                const item = document.createElement('div');
+                item.style.cssText = 'flex:0 0 200px; background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:15px; position:relative;';
+
+                let timeStr = 'Recent';
+                try {
+                    const d = new Date(b.created_at || b.booking_date);
+                    const diffMins = Math.floor((Date.now() - d.getTime()) / 60000);
+                    if (diffMins < 1 || isNaN(diffMins)) timeStr = 'Just now';
+                    else if (diffMins < 60) timeStr = diffMins + ' min ago';
+                    else if (diffMins < 1440) timeStr = Math.floor(diffMins / 60) + ' hr ago';
+                    else timeStr = d.toLocaleDateString();
+                } catch (e) { }
+
+                item.innerHTML = `
+                    <div style="width:8px; height:8px; border-radius:50%; background:${colors[i % colors.length]}; position:absolute; top:15px; left:15px;"></div>
+                    <div style="margin-left:15px;">
+                        <div style="font-size:11px; color:var(--text3); margin-bottom:4px;">${timeStr}</div>
+                        <div style="font-size:12px; font-weight:600; line-height:1.4;">
+                            ${b.name || 'User'} rented ${b.item || 'an item'}
+                        </div>
+                        <div style="font-size:11px; color:var(--accent); margin-top:5px;">₹${parseFloat(b.price || 0).toLocaleString()}</div>
+                    </div>
+                `;
+                feed.appendChild(item);
+            });
+        }
+
+        function populatePendingApprovals(delivery) {
+            const list = document.getElementById('pendingApprovalsList');
+            if (!list) return;
+            const pending = delivery.filter(d => (d.status || '').toLowerCase() === 'pending');
+            list.innerHTML = '';
+            if (!pending.length) {
+                list.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:10px;">No pending approvals.</div>';
+                return;
+            }
+            pending.slice(0, 10).forEach(d => {
+                const name = `${d.first_name || ''} ${d.last_name || ''}`.trim() || d.name || 'Partner';
+                const el = document.createElement('div');
+                el.className = 'approval-mini';
+                el.innerHTML = `
+                    <div style="font-size:12px;font-weight:600;margin-bottom:4px;">${name}</div>
+                    <div style="font-size:10px;color:var(--text3);margin-bottom:10px;">${d.city || 'Location N/A'} · ${d.vehicle_type || 'Vehicle N/A'}</div>
+                    <div style="display:flex;gap:5px;">
+                        <button onclick="approvePartner(${d.id}, true, this)" class="btn btn-primary" style="padding:4px 8px;font-size:10px;flex:1;">Approve</button>
+                        <button onclick="approvePartner(${d.id}, false, this)" class="btn btn-ghost" style="padding:4px 8px;font-size:10px;color:var(--red);">✕</button>
+                    </div>
+                `;
+                list.appendChild(el);
+            });
+        }
+
+        async function approvePartner(id, approve, btn) {
+            btn.disabled = true;
+            const status = approve ? 'active' : 'rejected';
+            try {
+                const res = await fetch(API + '/api/delivery-boys/' + id + '/status', {
+                    method: 'PUT', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
+                });
+                if (res.ok) { btn.closest('div[style]').remove(); setTimeout(loadDashboard, 500); }
+                else { btn.disabled = false; alert('Update failed'); }
+            } catch (err) { btn.disabled = false; alert('Network error'); }
+        }
+    </script>
 </body>
 
 </html>
