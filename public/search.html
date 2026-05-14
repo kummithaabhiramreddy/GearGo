@@ -2990,7 +2990,8 @@
 
       document.getElementById('hoursVal').textContent = '0';
       document.getElementById('modalItemNameDisplay').textContent = name + ' — ₹' + price + '/day';
-      document.getElementById('itemName').value = name;
+      const nameInp = document.getElementById('itemName');
+      if (nameInp) nameInp.value = name;
       document.getElementById('userName').value = '';
       document.getElementById('userPhone').value = '';
       document.getElementById('userEmail').value = '';
@@ -3089,11 +3090,20 @@
           });
           localStorage.setItem(BOOKING_KEY, JSON.stringify(dashboardBookings));
           saveLocalBooking(data, bId);
-          const res = await fetch(`${apiBase}/book`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+          const res = await fetch(`${apiBase}/api/book`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
           const result = await res.json();
-          msg.innerHTML = result.success ? `✅ Booking #${result.bookingId} Confirmed!` : `✅ Saved Locally`;
-          if (data.userEmail) sendEmailJS(data, result.bookingId || bId);
-        } catch (err) { msg.innerHTML = `✅ Booking Saved Locally`; }
+          if (res.ok && result.success) {
+             msg.innerHTML = `✅ Booking #${result.bookingId} Confirmed!`;
+             if (data.userEmail) sendEmailJS(data, result.bookingId || bId);
+          } else {
+             throw new Error(result.error || 'Server error');
+          }
+        } catch (err) { 
+          console.error('Booking Error:', err);
+          msg.style.color = "var(--red)";
+          msg.innerHTML = `❌ Error: ${err.message}. Saving locally instead.`; 
+          saveLocalBooking(data, bId);
+        }
         setTimeout(closeModal, 4000);
       } else {
         sessionStorage.setItem('pending_booking', JSON.stringify(data));
@@ -3234,7 +3244,7 @@
       localStorage.setItem(BOOKING_KEY, JSON.stringify(db));
       saveLocalBooking(data, bId);
       try {
-        await fetch(`${apiBase}/book`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...data, id: bId, status: 'paid', verified: 'AI_OCR' }) });
+        await fetch(`${apiBase}/api/book`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...data, id: bId, status: 'paid', verified: 'AI_OCR' }) });
         if (data.userEmail) sendEmailJS(data, bId);
       } catch (e) { }
       showToast("🎉 Booking Confirmed Automatically!", "success");

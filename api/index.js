@@ -22,6 +22,15 @@ const pool = dbUrl
 app.use(cors({ origin: '*', methods: 'GET,POST,PUT,DELETE,OPTIONS' }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+ 
+// Test DB Connection
+pool.query('SELECT NOW()', (err, res) => {
+    if (err) {
+        console.error('❌ Database connection failed:', err.message);
+    } else {
+        console.log('✅ Database connected successfully!');
+    }
+});
 
 // ── STATIC WEBSITE SERVING ──
 // 1. Serve files from public folder
