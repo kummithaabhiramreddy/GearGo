@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "geargo",
   "version": "1.0.0",
   "description": "Gear Go - A gaming rental platform",
@@ -10,6 +10,9 @@
   "scripts": {
     "start": "node api/index.js",
     "dev": "npx nodemon api/index.js"
+  },
+  "engines": {
+    "node": "20.x"
   },
   "keywords": [],
   "author": "",
@@ -25,4 +28,3 @@
     "twilio": "^4.19.0"
   }
 }
-
