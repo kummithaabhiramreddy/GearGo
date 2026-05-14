@@ -1043,6 +1043,167 @@
       border-color: var(--accent);
     }
 
+    .modal select option {
+      background: #0d0f14;
+      color: var(--text);
+    }
+
+    /* ─── RENT / BUY TOGGLE ─── */
+    .purchase-toggle {
+      display: flex;
+      gap: 0;
+      margin-bottom: 1.1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #0d0f14;
+    }
+
+    .purchase-toggle button {
+      flex: 1;
+      padding: 10px 0;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: .8px;
+      cursor: pointer;
+      transition: all .18s;
+      text-transform: uppercase;
+      position: relative;
+    }
+
+    .purchase-toggle button.active {
+      background: var(--accent);
+      color: #000;
+    }
+
+    .purchase-toggle button:not(.active):hover {
+      color: var(--accent);
+      background: rgba(245, 166, 35, 0.07);
+    }
+
+    /* ─── BUY-CONDITION BADGE ROW ─── */
+    .buy-condition-row {
+      display: none;
+      gap: 10px;
+      margin-bottom: 1rem;
+    }
+
+    .buy-condition-row.show {
+      display: flex;
+    }
+
+    .condition-card {
+      flex: 1;
+      padding: 10px 8px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      background: #0d0f14;
+      transition: all .18s;
+    }
+
+    .condition-card:hover {
+      border-color: var(--accent);
+    }
+
+    .condition-card.active {
+      border-color: var(--accent);
+      background: rgba(245, 166, 35, 0.08);
+    }
+
+    .condition-card .cond-icon {
+      font-size: 1.4rem;
+      margin-bottom: 4px;
+    }
+
+    .condition-card .cond-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: .85rem;
+      font-weight: 700;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+
+    .condition-card .cond-sub {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .condition-card.active .cond-label {
+      color: var(--accent);
+    }
+
+    /* ─── SIZE SELECTOR ─── */
+    .size-group {
+      display: none;
+      margin-bottom: 1rem;
+    }
+
+    .size-group.show {
+      display: block;
+    }
+
+    .size-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .size-chip {
+      padding: 6px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      background: #0d0f14;
+      color: var(--muted);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: .95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .15s;
+      letter-spacing: .4px;
+    }
+
+    .size-chip:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .size-chip.selected {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #000;
+    }
+
+    .size-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .size-required {
+      font-size: 10px;
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    /* Rent-only fields */
+    .rent-only-fields {
+      display: block;
+    }
+
+    .rent-only-fields.hide {
+      display: none;
+    }
+
     .hours-ctrl {
       display: flex;
       align-items: center;
@@ -1422,12 +1583,6 @@
       margin-bottom: 4px;
     }
 
-    .sidebar-profile-phone {
-      font-size: 0.92rem;
-      color: var(--muted);
-      line-height: 1.4;
-    }
-
     .sidebar-close {
       position: absolute;
       top: 20px;
@@ -1692,7 +1847,6 @@
       font-size: 14px;
     }
 
-    /* User uploaded item indicator */
     .uploaded-indicator {
       position: absolute;
       top: 8px;
@@ -1892,7 +2046,7 @@
     </div>
   </div>
 
-  <!-- HERO — no store selector, no near me button -->
+  <!-- HERO -->
   <div class="hero">
     <div class="hero-badge">🎮 Premium Item Rentals</div>
     <h1>RENT ANY Item<br>ANYTIME</h1>
@@ -1985,18 +2139,78 @@
     </div>
   </div>
 
-  <!-- BOOKING MODAL -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!--  BOOKING MODAL  — with Rent/Buy + Size Selectors      -->
+  <!-- ══════════════════════════════════════════════════════ -->
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
       <button class="modal-close" onclick="closeModal()" type="button">✕</button>
-      <h3>📋 Book for Rent</h3>
+      <h3>📋 Book / Buy</h3>
       <form id="bookingForm">
+
+        <!-- Item name badge -->
         <div class="modal-item-name" id="modalItemNameDisplay"></div>
+
+        <!-- ── RENT / BUY TOGGLE ── -->
+        <div style="margin-bottom:.5rem;">
+          <label
+            style="font-size:12px; color:var(--muted); font-weight:500; letter-spacing:.4px; display:block; margin-bottom:6px;">Transaction
+            Type</label>
+          <div class="purchase-toggle">
+            <button type="button" id="toggleRent" class="active" onclick="setPurchaseMode('rent')">🔄 Rent</button>
+            <button type="button" id="toggleBuy" onclick="setPurchaseMode('buy')">🛒 Buy</button>
+          </div>
+        </div>
+
+        <!-- ── BUY CONDITION (First Hand / Second Hand) — shows only on Buy ── -->
+        <div class="buy-condition-row" id="buyConditionRow">
+          <div class="condition-card active" id="condNew" onclick="selectCondition('new')">
+            <div class="cond-icon">✨</div>
+            <div class="cond-label">First Hand</div>
+            <div class="cond-sub">Brand New</div>
+          </div>
+          <div class="condition-card" id="condUsed" onclick="selectCondition('used')">
+            <div class="cond-icon">♻️</div>
+            <div class="cond-label">Second Hand</div>
+            <div class="cond-sub">Pre-owned</div>
+          </div>
+        </div>
+
+        <!-- Hidden item tracking -->
         <div class="form-group">
           <label>Selected Item</label>
           <input type="text" id="itemName" readonly
             style="background:#0d0f14;color:var(--accent);border-color:var(--border);" />
         </div>
+
+        <!-- ── SIZE SELECTOR — Apron ── -->
+        <div class="size-group" id="sizeGroupApron">
+          <div class="size-label-row">
+            <label>👗 Apron Size (inches) <span class="size-required">* Required</span></label>
+          </div>
+          <div class="size-grid" id="sizeChipsApron"></div>
+          <input type="hidden" id="selectedSizeApron" />
+        </div>
+
+        <!-- ── SIZE SELECTOR — Khaki Pant ── -->
+        <div class="size-group" id="sizeGroupPant">
+          <div class="size-label-row">
+            <label>👖 Khaki Pant Waist Size (inches) <span class="size-required">* Required</span></label>
+          </div>
+          <div class="size-grid" id="sizeChipsPant"></div>
+          <input type="hidden" id="selectedSizePant" />
+        </div>
+
+        <!-- ── SIZE SELECTOR — White Shirt ── -->
+        <div class="size-group" id="sizeGroupShirt">
+          <div class="size-label-row">
+            <label>👕 Shirt Size <span class="size-required">* Required</span></label>
+          </div>
+          <div class="size-grid" id="sizeChipsShirt"></div>
+          <input type="hidden" id="selectedSizeShirt" />
+        </div>
+
+        <!-- User details -->
         <div class="form-row">
           <div class="form-group"><label>Your Name *</label><input type="text" id="userName" placeholder="Your Name"
               required /></div>
@@ -2024,46 +2238,55 @@
               style="background:rgba(255,255,255,0.05); color:var(--muted); cursor:not-allowed;" /></div>
           <div class="form-group"></div>
         </div>
-        <div style="display:flex;gap:10px;align-items:flex-end;margin-bottom:1rem;">
-          <div class="form-group" style="margin-bottom:0;flex:1;">
-            <label>Rental Duration</label>
-            <select id="mDuration" onchange="updatePrice()">
-              <option value="0">0 Days</option>
-              <option value="1" selected>1 Day</option>
-              <option value="3">3 Days</option>
-              <option value="7">1 Week</option>
-              <option value="14">2 Weeks</option>
-              <option value="30">1 Month</option>
-            </select>
-          </div>
-          <div style="flex:1;">
-            <div class="hours-label">Extra Hours</div>
-            <div class="hours-ctrl">
-              <button type="button" onclick="changeHours(-1)">−</button>
-              <span id="hoursVal">0</span>
-              <button type="button" onclick="changeHours(1)">+</button>
+
+        <!-- ── RENT-ONLY: Duration + Extra Hours ── -->
+        <div class="rent-only-fields" id="rentOnlyFields">
+          <div style="display:flex;gap:10px;align-items:flex-end;margin-bottom:1rem;">
+            <div class="form-group" style="margin-bottom:0;flex:1;">
+              <label>Rental Duration</label>
+              <select id="mDuration" onchange="updatePrice()">
+                <option value="0">0 Days</option>
+                <option value="1" selected>1 Day</option>
+                <option value="3">3 Days</option>
+                <option value="7">1 Week</option>
+                <option value="14">2 Weeks</option>
+                <option value="30">1 Month</option>
+              </select>
+            </div>
+            <div style="flex:1;">
+              <div class="hours-label">Extra Hours</div>
+              <div class="hours-ctrl">
+                <button type="button" onclick="changeHours(-1)">−</button>
+                <span id="hoursVal">0</span>
+                <button type="button" onclick="changeHours(1)">+</button>
+              </div>
             </div>
           </div>
         </div>
+
+        <!-- Price preview -->
         <div class="price-preview">
           <div>
-            <div class="label">Total Amount</div>
+            <div class="label" id="priceLabel">Total Amount</div>
             <div style="font-size:11px;color:var(--muted);" id="priceBreakdown"></div>
           </div>
           <div class="total" id="totalPrice">₹0</div>
         </div>
+
+        <!-- Payment tabs -->
         <div class="pay-tabs" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
           <button type="button" class="pay-tab active" id="tab-cod" onclick="setPayment('cod')">💵 Cash on
             Delivery</button>
           <button type="button" class="pay-tab" id="tab-online" onclick="setPayment('online')">📲 Online
             Payment</button>
         </div>
+
         <div
           style="margin-top: 1rem; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted);">
           <input type="checkbox" id="termsAccepted" required style="width: auto; margin: 0;">
           <label for="termsAccepted">I accept the Terms & Conditions of GearGo</label>
         </div>
-        <button type="submit" class="modal-confirm">Book / Rent Now</button>
+        <button type="submit" class="modal-confirm" id="bookSubmitBtn">Book / Rent Now</button>
         <p id="bookingMsg" class="success-msg"></p>
       </form>
     </div>
@@ -2103,9 +2326,7 @@
         <div class="form-group">
           <label>Item Photo *</label>
           <div class="img-preview" id="listImgPreview" onclick="document.getElementById('listPhoto').click()"
-            style="cursor:pointer;">
-            <span>Click to upload image</span>
-          </div>
+            style="cursor:pointer;"><span>Click to upload image</span></div>
           <input type="file" id="listPhoto" accept="image/*" style="display:none" onchange="previewListItemImg(event)"
             required />
         </div>
@@ -2208,10 +2429,105 @@
     let paymentCheckInterval = null;
     let isAwaitingPayment = false;
 
-    const apiBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '3000' ? 'http://localhost:3000' : '';
+    // ── NEW: Purchase mode state ──
+    let currentPurchaseMode = 'rent';   // 'rent' | 'buy'
+    let currentCondition = 'new';    // 'new'  | 'used'
+    let currentSizeApron = '';
+    let currentSizePant = '';
+    let currentSizeShirt = '';
+
+    const apiBase = (window.location.port === '3000') ? '' : 'http://localhost:3000';
 
     // ════════════════════════════════════════
-    // INVENTORY — ALL ITEMS, NO STORE FILTER
+    // SIZE DATA
+    // ════════════════════════════════════════
+    const SIZE_MAP = {
+      apron: { sizes: [30, 32, 34, 36, 38, 40, 42], label: 'Apron', group: 'sizeGroupApron', chips: 'sizeChipsApron', hidden: 'selectedSizeApron' },
+      pant: { sizes: [28, 30, 32, 34, 36, 38, 40], label: 'Pant', group: 'sizeGroupPant', chips: 'sizeChipsPant', hidden: 'selectedSizePant' },
+      shirt: { sizes: ['S', 'M', 'L', 'XL', 'XXL'], label: 'Shirt', group: 'sizeGroupShirt', chips: 'sizeChipsShirt', hidden: 'selectedSizeShirt' },
+    };
+
+    /** Returns which size type(s) apply to a given item name */
+    function getSizeType(name) {
+      const n = name.toLowerCase();
+      if (n.includes('apron')) return 'apron';
+      if (n.includes('khaki') || n.includes('pant')) return 'pant';
+      if (n.includes('white uniform shirt') || (n.includes('white') && n.includes('shirt'))) return 'shirt';
+      return null;
+    }
+
+    /** Build size chip HTML for a given type */
+    function buildSizeChips(type) {
+      const cfg = SIZE_MAP[type];
+      const grid = document.getElementById(cfg.chips);
+      grid.innerHTML = cfg.sizes.map(s =>
+        `<div class="size-chip" data-size="${s}" data-type="${type}" onclick="selectSize('${type}','${s}')">${s}</div>`
+      ).join('');
+    }
+
+    function selectSize(type, value) {
+      const cfg = SIZE_MAP[type];
+      document.querySelectorAll(`#${cfg.chips} .size-chip`).forEach(c => c.classList.remove('selected'));
+      const chip = document.querySelector(`#${cfg.chips} [data-size="${value}"]`);
+      if (chip) chip.classList.add('selected');
+      document.getElementById(cfg.hidden).value = value;
+      if (type === 'apron') currentSizeApron = value;
+      if (type === 'pant') currentSizePant = value;
+      if (type === 'shirt') currentSizeShirt = value;
+    }
+
+    /** Hide all size groups then show the one relevant to the item */
+    function showSizeGroups(itemName) {
+      ['apron', 'pant', 'shirt'].forEach(t => {
+        const cfg = SIZE_MAP[t];
+        document.getElementById(cfg.group).classList.remove('show');
+        document.getElementById(cfg.hidden).value = '';
+      });
+      currentSizeApron = currentSizePant = currentSizeShirt = '';
+
+      const type = getSizeType(itemName);
+      if (type) {
+        buildSizeChips(type);
+        document.getElementById(SIZE_MAP[type].group).classList.add('show');
+      }
+    }
+
+    // ════════════════════════════════════════
+    // PURCHASE MODE TOGGLE
+    // ════════════════════════════════════════
+    function setPurchaseMode(mode) {
+      currentPurchaseMode = mode;
+      document.getElementById('toggleRent').classList.toggle('active', mode === 'rent');
+      document.getElementById('toggleBuy').classList.toggle('active', mode === 'buy');
+
+      const condRow = document.getElementById('buyConditionRow');
+      const rentFields = document.getElementById('rentOnlyFields');
+      const submitBtn = document.getElementById('bookSubmitBtn');
+      const modalTitle = document.querySelector('#modalOverlay .modal h3');
+
+      if (mode === 'buy') {
+        condRow.classList.add('show');
+        rentFields.classList.add('hide');
+        submitBtn.textContent = '🛒 Buy Now';
+        if (modalTitle) modalTitle.textContent = '🛒 Buy Item';
+      } else {
+        condRow.classList.remove('show');
+        rentFields.classList.remove('hide');
+        submitBtn.textContent = 'Book / Rent Now';
+        if (modalTitle) modalTitle.textContent = '📋 Book / Buy';
+      }
+      updatePrice();
+    }
+
+    function selectCondition(type) {
+      currentCondition = type;
+      document.getElementById('condNew').classList.toggle('active', type === 'new');
+      document.getElementById('condUsed').classList.toggle('active', type === 'used');
+      updatePrice();
+    }
+
+    // ════════════════════════════════════════
+    // INVENTORY
     // ════════════════════════════════════════
     const LOCAL_INVENTORY = [];
 
@@ -2245,15 +2561,12 @@
       { name: "Dry Erase Markers", type: "kit", price: 15, emoji: "🖍️", desc: "Pack of 4 colors.", image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=500" },
       { name: "Desk Organizer", type: "single", price: 20, emoji: "🗃️", desc: "Pen and stationery holder.", image: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=500" },
       { name: "Student Backpack", type: "single", price: 45, emoji: "🎒", desc: "Spacious multi-compartment bag.", image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500" },
-      { name: "Study Lamp (LED)", type: "single", price: 35, emoji: "💡", desc: "Adjustable desk light.", image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=500" }
+      { name: "Study Lamp (LED)", type: "single", price: 35, emoji: "💡", desc: "Adjustable desk light.", image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=500" },
     ];
 
-    // Add student items once (not per-hub since no store filter now)
     studentTemplates.forEach((t, i) => {
       LOCAL_INVENTORY.push({ id: 10000 + i, ...t, cat: 'student', rating: 4.8, reviews: 15 });
     });
-
-
 
     // ════════════════════════════════════════
     // LOAD USER UPLOADED ITEMS
@@ -2263,65 +2576,36 @@
         const saved = localStorage.getItem('geargo_user_items');
         if (!saved) return [];
         const items = JSON.parse(saved);
-        return items.map(item => ({
-          ...item,
-          cat: item.cat || 'general',
-          user_uploaded: true,
-          rating: item.rating || 4.5,
-          reviews: item.reviews || 0
-        }));
-      } catch (e) {
-        console.warn('Failed to load user items', e);
-        return [];
-      }
+        return items.map(item => ({ ...item, cat: item.cat || 'general', user_uploaded: true, rating: item.rating || 4.5, reviews: item.reviews || 0 }));
+      } catch (e) { return []; }
     }
 
-    // Global items array
     let ITEMS = [];
 
-    async function fetchItems() {
-      try {
-        const res = await fetch(`${apiBase}/api/items`);
-        if (!res.ok) throw new Error('Failed to fetch items');
-        const data = await res.json();
-        
-        // Transform API data to match frontend expectations
-        ITEMS = data.map(item => ({
-          ...item,
-          img: item.image || item.img || '',
-          // Ensure rating and reviews have fallbacks
-          rating: parseFloat(item.rating) || 4.5,
-          reviews: parseInt(item.reviews) || 0
-        }));
-        
-        filterItems();
-      } catch (err) {
-        console.error('Fetch Error:', err);
-        // Fallback to local inventory if API fails
-        ITEMS = [...LOCAL_INVENTORY].map(item => ({
-          ...item,
-          img: item.image || item.img || ''
-        }));
-        filterItems();
-      }
+    function fetchItems() {
+      let data = [...LOCAL_INVENTORY];
+      const userItems = loadUserUploadedItems();
+      data = [...data, ...userItems];
+      ITEMS = data.map(item => ({ ...item, img: item.image || item.img || '' }));
+      filterItems();
     }
 
     // ════════════════════════════════════════
     // REVIEWS & FEATURES
     // ════════════════════════════════════════
     const REVIEW_POOLS = [
-      [{ author: "Chiru k.", stars: 5, text: "Excellent quality! Delivered on time and equipment was in perfect condition.", date: "2 days ago" },
-      { author: "Ram k.", stars: 4, text: "Good experience overall. Will definitely rent again.", date: "1 week ago" },
-      { author: "Arjun M.", stars: 5, text: "Amazing service! The kit was complete and instructions were clear.", date: "2 weeks ago" }],
+      [{ author: "Chiru k.", stars: 5, text: "Excellent quality! Delivered on time.", date: "2 days ago" },
+      { author: "Ram k.", stars: 4, text: "Good experience overall.", date: "1 week ago" },
+      { author: "Arjun M.", stars: 5, text: "Amazing service! Kit was complete.", date: "2 weeks ago" }],
       [{ author: "Sneha R.", stars: 4, text: "Prompt delivery. Good quality gear.", date: "3 days ago" },
-      { author: "Kiran B.", stars: 5, text: "Rented for a family gathering — everyone loved it!", date: "5 days ago" },
-      { author: "Rithika P.", stars: 4, text: "Professional service. Items were clean and well-maintained.", date: "3 weeks ago" }],
-      [{ author: "Venkat P.", stars: 5, text: "Top-notch equipment. Our office team-building event was a hit!", date: "1 day ago" },
-      { author: "Bharath N.", stars: 3, text: "Decent quality. Delivery was a bit late but service team was helpful.", date: "1 week ago" },
-      { author: "Suresh N.", stars: 5, text: "Very happy with the rental. Easy pickup and return process.", date: "2 weeks ago" }],
-      [{ author: "charan k.", stars: 4, text: "Kids absolutely loved it! Safe and fun equipment.", date: "4 days ago" },
-      { author: "Rahul D.", stars: 5, text: "Best rental service in the city. Highly recommend!", date: "6 days ago" },
-      { author: "Anita V.", stars: 4, text: "Good variety of games. Pricing is fair for the quality.", date: "2 weeks ago" }],
+      { author: "Kiran B.", stars: 5, text: "Rented for family — everyone loved it!", date: "5 days ago" },
+      { author: "Rithika P.", stars: 4, text: "Professional service.", date: "3 weeks ago" }],
+      [{ author: "Venkat P.", stars: 5, text: "Top-notch equipment!", date: "1 day ago" },
+      { author: "Bharath N.", stars: 3, text: "Decent quality. Delivery a bit late.", date: "1 week ago" },
+      { author: "Suresh N.", stars: 5, text: "Very happy with the rental.", date: "2 weeks ago" }],
+      [{ author: "charan k.", stars: 4, text: "Kids absolutely loved it!", date: "4 days ago" },
+      { author: "Rahul D.", stars: 5, text: "Best rental service in the city.", date: "6 days ago" },
+      { author: "Anita V.", stars: 4, text: "Good variety. Pricing is fair.", date: "2 weeks ago" }],
     ];
 
     const FEATURES_POOL = [
@@ -2408,8 +2692,6 @@
 
     function filterItems() {
       const q = document.getElementById('searchInput').value.toLowerCase().trim();
-
-      // Handle "User Listed" filter tab
       if (currentFilter === 'uploaded') {
         const uploadedItems = ITEMS.filter(g => g.user_uploaded);
         document.getElementById('studentSection').style.display = 'none';
@@ -2421,24 +2703,13 @@
         document.getElementById('resultCount').textContent = `${uploadedItems.length} user-listed item${uploadedItems.length !== 1 ? 's' : ''}`;
         return;
       }
-
       document.getElementById('uploadedSection').style.display = 'none';
-
       let filtered = ITEMS.filter(g => {
-        if (g.user_uploaded && currentFilter !== 'all') return false; // uploaded items only in 'all' or 'uploaded'
-        const matchSearch = !q ||
-          g.name.toLowerCase().includes(q) ||
-          g.cat.includes(q) ||
-          (g.type || '').includes(q) ||
-          (g.desc || '').toLowerCase().includes(q);
-        const matchFilter =
-          currentFilter === 'all' ? true :
-            currentFilter === 'student' ? g.cat === 'student' :
-              currentFilter === 'general' ? (g.cat === 'general' || g.cat === 'other') :
-                g.cat === currentFilter;
+        if (g.user_uploaded && currentFilter !== 'all') return false;
+        const matchSearch = !q || g.name.toLowerCase().includes(q) || g.cat.includes(q) || (g.type || '').includes(q) || (g.desc || '').toLowerCase().includes(q);
+        const matchFilter = currentFilter === 'all' ? true : currentFilter === 'student' ? g.cat === 'student' : currentFilter === 'general' ? (g.cat === 'general' || g.cat === 'other') : g.cat === currentFilter;
         return matchSearch && matchFilter;
       });
-
       let total = 0;
       SECTIONS.forEach(s => {
         const items = filtered.filter(g => g.cat === s.id || (s.id === 'general' && (g.cat === 'general' || g.cat === 'other')));
@@ -2447,8 +2718,6 @@
         document.getElementById(s.countId).textContent = items.length + ' items';
         total += items.length;
       });
-
-      // Also show uploaded in 'all' filter
       if (currentFilter === 'all') {
         const uploadedItems = ITEMS.filter(g => g.user_uploaded && (!q || g.name.toLowerCase().includes(q) || (g.desc || '').toLowerCase().includes(q)));
         if (uploadedItems.length) {
@@ -2458,9 +2727,7 @@
           total += uploadedItems.length;
         }
       }
-
       document.getElementById('resultCount').textContent = q ? `${total} result${total !== 1 ? 's' : ''} for "${q}"` : `${total} items available`;
-
       document.querySelectorAll('.lazy-image').forEach(img => lazyImageObserver.observe(img));
     }
 
@@ -2492,9 +2759,7 @@
       document.getElementById('tab-vision').classList.toggle('active', mode === 'vision');
       document.getElementById('analyzeBtn').style.display = mode === 'vision' ? 'flex' : 'none';
       document.getElementById('galleryBtnText').textContent = mode === 'barcode' ? "QR from Gallery" : "Photo from Gallery";
-      document.getElementById('scannerInstruction').textContent = mode === 'barcode'
-        ? "Align the barcode or QR code within the frame to search."
-        : "Point at a game and click Analyze. AI will identify and find it!";
+      document.getElementById('scannerInstruction').textContent = mode === 'barcode' ? "Align the barcode or QR code within the frame to search." : "Point at a game and click Analyze. AI will identify and find it!";
       if (mode === 'vision') loadVisionModel();
     }
 
@@ -2651,39 +2916,20 @@
     function finalizeAgreement() {
       const stamp = document.getElementById('stampContainer');
       const btn = document.getElementById('proceedToBookBtn');
-
-      console.log("Finalizing agreement...");
-
-      // 1. Show Stamp
       stamp.style.opacity = '1';
       stamp.style.transform = 'scale(1)';
       btn.innerHTML = "<span>✅ Stamped!</span>";
       btn.disabled = true;
-
-      // 2. Transition to Booking Form
       setTimeout(() => {
-        console.log("Hiding Agreement Overlay...");
         const agreement = document.getElementById('agreementOverlay');
-
-        // Use both class and direct style for safety
         agreement.classList.remove('show');
         agreement.style.display = 'none';
-
         setTimeout(() => {
-          console.log("Opening Booking Modal for:", pendingItemName);
-          try {
-            openModal(pendingItemName, pendingItemPrice);
-          } catch (err) {
-            console.error("Failed to open modal:", err);
-            // Fallback: try to show it manually if function fails
+          try { openModal(pendingItemName, pendingItemPrice); }
+          catch (err) {
             const modal = document.getElementById('modalOverlay');
-            if (modal) {
-              modal.classList.add('show');
-              modal.style.display = 'flex';
-            }
+            if (modal) { modal.classList.add('show'); modal.style.display = 'flex'; }
           }
-
-          // Reset Agreement UI for next time
           btn.innerHTML = "<span>Proceed to Booking</span>";
           btn.disabled = false;
           stamp.style.opacity = '0';
@@ -2720,7 +2966,7 @@
       document.getElementById('detailFeatures').innerHTML = feats.map(f => `<div class="detail-feature"><span class="icon">${f.slice(0, 2)}</span>${f.slice(2)}</div>`).join('');
       const revPool = REVIEW_POOLS[g.id % REVIEW_POOLS.length];
       document.getElementById('detailComments').innerHTML = g.user_uploaded
-        ? `<div class="comment"><div class="comment-header"><div class="comment-author">${g.seller_phone || 'Seller'}</div></div><div class="comment-text">This item was listed by a user. Condition: ${g.condition || 'Not specified'}. Contact seller for more details.</div></div>`
+        ? `<div class="comment"><div class="comment-header"><div class="comment-author">${g.seller_phone || 'Seller'}</div></div><div class="comment-text">This item was listed by a user. Condition: ${g.condition || 'Not specified'}.</div></div>`
         : revPool.map(r => `<div class="comment"><div class="comment-header"><div class="comment-author">${r.author}</div><div style="display:flex;align-items:center;gap:6px;"><span class="comment-stars">${'★'.repeat(r.stars)}</span><span class="comment-date">${r.date}</span></div></div><div class="comment-text">${r.text}</div></div>`).join('');
       document.getElementById('detailBookBtn').onclick = () => { closeDetail(); openAgreement(g.name, g.price); };
       document.getElementById('detailOverlay').classList.add('show');
@@ -2735,6 +2981,13 @@
       currentItemName = name;
       currentBasePrice = price;
       currentHours = 0;
+      currentPurchaseMode = 'rent';
+      currentCondition = 'new';
+
+      // Reset toggles
+      setPurchaseMode('rent');
+      selectCondition('new');
+
       document.getElementById('hoursVal').textContent = '0';
       document.getElementById('modalItemNameDisplay').textContent = name + ' — ₹' + price + '/day';
       document.getElementById('itemName').value = name;
@@ -2742,6 +2995,7 @@
       document.getElementById('userPhone').value = '';
       document.getElementById('userEmail').value = '';
       document.getElementById('mAddress').value = '';
+
       const now = new Date();
       const yyyy = now.getFullYear(), mm = String(now.getMonth() + 1).padStart(2, '0'), dd = String(now.getDate()).padStart(2, '0');
       document.getElementById('mDate').value = `${yyyy}-${mm}-${dd}`;
@@ -2749,13 +3003,18 @@
       document.getElementById('mDay').value = days[now.getDay()];
       document.getElementById('mTime').value = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
       document.getElementById('mDuration').value = "1";
+
       const msg = document.getElementById('bookingMsg');
       msg.textContent = ''; msg.className = 'success-msg';
       setPayment('cod');
+
+      // ── Show/hide size selectors based on item ──
+      showSizeGroups(name);
+
       updatePrice();
       document.getElementById('modalOverlay').classList.add('show');
 
-      // Auto-fill from saved profile
+      // Auto-fill saved profile
       const savedUser = localStorage.getItem('currentUser');
       if (savedUser) {
         try {
@@ -2768,13 +3027,35 @@
       }
     }
 
+    // ── Validate size before submit ──
+    function validateSize() {
+      const type = getSizeType(currentItemName);
+      if (!type) return true;   // no size needed
+      const cfg = SIZE_MAP[type];
+      const value = document.getElementById(cfg.hidden).value;
+      if (!value) {
+        showToast(`⚠️ Please select a size for ${cfg.label}.`, 'warn');
+        document.getElementById(cfg.group).scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return false;
+      }
+      return true;
+    }
+
     document.getElementById('bookingForm').addEventListener('submit', async function (e) {
       e.preventDefault();
       if (!document.getElementById('termsAccepted').checked) { showToast('⚠️ Please accept the Terms & Conditions.', 'warn'); return; }
+      if (!validateSize()) return;
+
       const msg = document.getElementById('bookingMsg');
       msg.textContent = "⏳ Processing your booking...";
       msg.className = "success-msg show";
       msg.style.color = "var(--accent)";
+
+      // Collect size
+      const sizeType = getSizeType(currentItemName);
+      let sizeValue = '';
+      if (sizeType) sizeValue = document.getElementById(SIZE_MAP[sizeType].hidden).value;
+
       const data = {
         userName: document.getElementById('userName').value,
         userPhone: document.getElementById('userPhone').value,
@@ -2784,11 +3065,14 @@
         bookingDate: document.getElementById('mDate').value,
         bookingDay: document.getElementById('mDay').value,
         bookingTime: document.getElementById('mTime').value,
-        days: document.getElementById('mDuration').value,
+        days: currentPurchaseMode === 'buy' ? 0 : document.getElementById('mDuration').value,
         price: document.getElementById('totalPrice').textContent.replace(/[₹,]/g, '').trim(),
         total: document.getElementById('totalPrice').textContent,
         paymentMode: currentPayment,
         signature: document.getElementById('renterSignature').value,
+        purchaseMode: currentPurchaseMode,
+        condition: currentPurchaseMode === 'buy' ? (currentCondition === 'new' ? 'First Hand (New)' : 'Second Hand') : '',
+        size: sizeValue,
       };
       const bId = Date.now();
 
@@ -2797,37 +3081,25 @@
           const BOOKING_KEY = 'geargo_dashboard_bookings';
           let dashboardBookings = JSON.parse(localStorage.getItem(BOOKING_KEY) || '[]');
           dashboardBookings.push({
-            id: bId,
-            name: data.userName,
-            phone: data.userPhone,
-            email: data.userEmail,
-            item: data.itemName,
-            price: data.price,
-            status: 'confirmed',
-            booking_date: data.bookingDate,
-            booking_time: data.bookingTime,
-            created_at: new Date().toISOString()
+            id: bId, name: data.userName, phone: data.userPhone, email: data.userEmail,
+            item: data.itemName, price: data.price, status: 'confirmed',
+            booking_date: data.bookingDate, booking_time: data.bookingTime,
+            created_at: new Date().toISOString(), purchase_mode: data.purchaseMode,
+            condition: data.condition, size: data.size,
           });
           localStorage.setItem(BOOKING_KEY, JSON.stringify(dashboardBookings));
           saveLocalBooking(data, bId);
-
-          const res = await fetch(`${apiBase}/book`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-          });
+          const res = await fetch(`${apiBase}/book`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
           const result = await res.json();
           msg.innerHTML = result.success ? `✅ Booking #${result.bookingId} Confirmed!` : `✅ Saved Locally`;
           if (data.userEmail) sendEmailJS(data, result.bookingId || bId);
         } catch (err) { msg.innerHTML = `✅ Booking Saved Locally`; }
         setTimeout(closeModal, 4000);
       } else {
-        // ONLINE PAYMENT: Store pending and trigger gateway
         sessionStorage.setItem('pending_booking', JSON.stringify(data));
         triggerUPIPayment(currentPayment);
       }
     });
-
 
     async function sendEmailJS(data, bookingId) {
       try {
@@ -2847,10 +3119,8 @@
         try {
           const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`);
           const data = await res.json();
-          if (data && data.display_name) {
-            document.getElementById('mAddress').value = data.display_name;
-            saveAddress(data.display_name, latitude, longitude);
-          } else { document.getElementById('mAddress').value = `${latitude}, ${longitude}`; }
+          if (data && data.display_name) { document.getElementById('mAddress').value = data.display_name; saveAddress(data.display_name, latitude, longitude); }
+          else { document.getElementById('mAddress').value = `${latitude}, ${longitude}`; }
         } catch (err) { document.getElementById('mAddress').value = `${latitude}, ${longitude}`; }
         setTimeout(() => { btn.textContent = "📍 Live Location"; }, 2000);
       }, (err) => { btn.textContent = "📍 Live Location"; showToast('Location denied.', 'warn'); }, { enableHighAccuracy: true });
@@ -2872,14 +3142,27 @@
     }
 
     function updatePrice() {
-      const days = parseInt(document.getElementById('mDuration').value);
-      const hourRate = Math.round(currentBasePrice / 10);
-      const extraHourCost = currentHours * hourRate * (days || 1);
-      const grandTotal = currentBasePrice * days + extraHourCost;
-      document.getElementById('totalPrice').textContent = '₹' + grandTotal;
-      let breakdown = days > 0 ? `₹${currentBasePrice} × ${days} day${days > 1 ? 's' : ''}` : `0 Days`;
-      if (currentHours > 0) breakdown += ` + ${currentHours}hr × ₹${hourRate}`;
-      document.getElementById('priceBreakdown').textContent = breakdown;
+      if (currentPurchaseMode === 'buy') {
+        // For "buy" show one-time price (10× daily rate as buy price)
+        const buyPrice = currentCondition === 'new'
+          ? currentBasePrice * 10
+          : Math.round(currentBasePrice * 6);
+        document.getElementById('totalPrice').textContent = '₹' + buyPrice;
+        document.getElementById('priceBreakdown').textContent = currentCondition === 'new'
+          ? `One-time purchase (First Hand)`
+          : `One-time purchase (Second Hand)`;
+        document.getElementById('priceLabel').textContent = 'Purchase Price';
+      } else {
+        document.getElementById('priceLabel').textContent = 'Total Amount';
+        const days = parseInt(document.getElementById('mDuration').value);
+        const hourRate = Math.round(currentBasePrice / 10);
+        const extraHours = currentHours * hourRate * (days || 1);
+        const total = currentBasePrice * days + extraHours;
+        document.getElementById('totalPrice').textContent = '₹' + total;
+        let breakdown = days > 0 ? `₹${currentBasePrice} × ${days} day${days > 1 ? 's' : ''}` : `0 Days`;
+        if (currentHours > 0) breakdown += ` + ${currentHours}hr × ₹${hourRate}`;
+        document.getElementById('priceBreakdown').textContent = breakdown;
+      }
     }
 
     function setPayment(method) {
@@ -2887,33 +3170,21 @@
       document.querySelectorAll('.pay-tab').forEach(tab => tab.classList.remove('active'));
       const t = document.getElementById('tab-' + method);
       if (t) t.classList.add('active');
-
-      // Update the main booking button text
-      const btn = document.querySelector('.modal-confirm');
+      const btn = document.getElementById('bookSubmitBtn');
       if (btn) {
-        if (method === 'cod') btn.textContent = 'Book / Rent Now (Cash)';
-        else btn.textContent = '💳 Pay Online & Book';
+        if (currentPurchaseMode === 'buy') btn.textContent = method === 'cod' ? '🛒 Buy Now (Cash)' : '💳 Pay & Buy Online';
+        else btn.textContent = method === 'cod' ? 'Book / Rent Now (Cash)' : '💳 Pay Online & Book';
       }
     }
 
     // ════════════════════════════════════════
-    // AI SCREENSHOT DETECTION (OCR)
+    // OCR PAYMENT VERIFICATION
     // ════════════════════════════════════════
     async function scanPaymentScreenshot(file) {
       if (!file) return;
       const msg = document.getElementById('bookingMsg');
       const amountToMatch = parseFloat(document.getElementById('totalPrice').textContent.replace(/[₹,]/g, '').trim());
-
-      msg.innerHTML = `
-        <div style="text-align:center; padding:20px; background:rgba(255,255,255,0.03); border-radius:16px; border:1px solid var(--border);">
-          <div class="ocr-loader" style="width:100%; height:4px; background:#111; border-radius:2px; margin-bottom:15px; overflow:hidden; position:relative;">
-            <div id="ocrProgress" style="position:absolute; top:0; left:0; height:100%; width:0%; background:var(--accent); transition:width 0.3s;"></div>
-          </div>
-          <p style="font-weight:800; font-size:16px; color:#fff; margin-bottom:4px;">🤖 AI Vision Scanning...</p>
-          <p id="ocrStatus" style="font-size:12px; color:var(--muted);">Analyzing screenshot for payment details</p>
-        </div>
-      `;
-
+      msg.innerHTML = `<div style="text-align:center; padding:20px; background:rgba(255,255,255,0.03); border-radius:16px; border:1px solid var(--border);"><div class="ocr-loader" style="width:100%; height:4px; background:#111; border-radius:2px; margin-bottom:15px; overflow:hidden; position:relative;"><div id="ocrProgress" style="position:absolute; top:0; left:0; height:100%; width:0%; background:var(--accent); transition:width 0.3s;"></div></div><p style="font-weight:800; font-size:16px; color:#fff; margin-bottom:4px;">🤖 AI Vision Scanning...</p><p id="ocrStatus" style="font-size:12px; color:var(--muted);">Analyzing screenshot for payment details</p></div>`;
       try {
         const { data: { text } } = await Tesseract.recognize(file, 'eng', {
           logger: m => {
@@ -2926,63 +3197,28 @@
             }
           }
         });
-
         const cleanText = text.toLowerCase();
-        console.log("OCR Result:", cleanText);
-
-        // Keywords for success
         const successKeywords = ['success', 'paid', 'successful', 'completed', 'transferred', 'done', 'accepted'];
         const isSuccess = successKeywords.some(kw => cleanText.includes(kw));
-
-        // Find amount in text
-        const amountFound = cleanText.includes(amountToMatch.toString()) ||
-          cleanText.includes(amountToMatch.toFixed(0)) ||
-          cleanText.includes(amountToMatch.toFixed(2));
-
-        // ANTI-FRAUD: Check for Today's Date
+        const amountFound = cleanText.includes(amountToMatch.toString()) || cleanText.includes(amountToMatch.toFixed(0)) || cleanText.includes(amountToMatch.toFixed(2));
         const today = new Date();
-        const dateOptions = { day: 'numeric', month: 'short' }; // e.g. "3 May"
-        const dateStr1 = today.toLocaleDateString('en-IN', dateOptions).toLowerCase();
-        const dateStr2 = today.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' }).replace(/\//g, ''); // "0305"
+        const dateStr1 = today.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }).toLowerCase();
         const isToday = cleanText.includes(dateStr1) || cleanText.includes('today') || cleanText.includes('just now');
-
-        // DETECT UTR (12 digits) or Transaction Reference
-        const utrRegex = /[0-9]{12}/; // Standard 12-digit UTR
+        const utrRegex = /[0-9]{12}/;
         const txnRegex = /txn|transaction|id|ref|reference|transfer/;
         const utrFound = utrRegex.test(cleanText);
         const txnIdFound = txnRegex.test(cleanText) && /[a-z0-9]{8,}/.test(cleanText);
-
         if (isSuccess && amountFound && isToday && (utrFound || txnIdFound)) {
           const utrValue = cleanText.match(utrRegex) ? cleanText.match(utrRegex)[0] : "Detected";
-          msg.innerHTML = `
-            <div style="text-align:center; padding:20px; background:rgba(46, 201, 126, 0.1); border-radius:16px; border:2px solid #10b981;">
-              <div style="font-size:40px; margin-bottom:10px;">✅</div>
-              <p style="font-weight:800; font-size:18px; color:#fff; margin-bottom:4px;">Payment Verified!</p>
-              <p style="font-size:12px; color:var(--muted);">UTR: ${utrValue} | Date: Today</p>
-              <p style="font-size:11px; color:#10b981; margin-top:5px; font-weight:700;">BOOKING SECURE</p>
-            </div>
-          `;
+          msg.innerHTML = `<div style="text-align:center; padding:20px; background:rgba(46,201,126,0.1); border-radius:16px; border:2px solid #10b981;"><div style="font-size:40px; margin-bottom:10px;">✅</div><p style="font-weight:800; font-size:18px; color:#fff; margin-bottom:4px;">Payment Verified!</p><p style="font-size:12px; color:var(--muted);">UTR: ${utrValue} | Date: Today</p><p style="font-size:11px; color:#10b981; margin-top:5px; font-weight:700;">BOOKING SECURE</p></div>`;
           setTimeout(finalizeBooking, 2000);
         } else {
-          let errorType = "";
-          if (!isSuccess) errorType = "Payment status (Success) not detected.";
-          else if (!amountFound) errorType = `Correct amount (₹${amountToMatch}) not found.`;
-          else if (!isToday) errorType = "Old Screenshot detected! Please use a fresh payment.";
-          else errorType = "Transaction ID / UTR not found.";
-
-          msg.innerHTML = `
-            <div style="text-align:center; padding:20px; background:rgba(239, 68, 68, 0.1); border-radius:16px; border:2px solid #ef4444;">
-              <div style="font-size:40px; margin-bottom:10px;">❌</div>
-              <p style="font-weight:800; font-size:16px; color:#fff; margin-bottom:4px;">Fraud Check Failed</p>
-              <p style="font-size:12px; color:var(--muted);">${errorType}</p>
-              <button onclick="triggerUPIPayment('online')" class="rent-btn" style="margin-top:12px; background:var(--accent); color:#000; font-size:12px; font-weight:800;">RETRY UPLOAD</button>
-            </div>
-          `;
+          let errorType = !isSuccess ? "Payment status (Success) not detected." : !amountFound ? `Correct amount (₹${amountToMatch}) not found.` : !isToday ? "Old Screenshot detected!" : "Transaction ID / UTR not found.";
+          msg.innerHTML = `<div style="text-align:center; padding:20px; background:rgba(239,68,68,0.1); border-radius:16px; border:2px solid #ef4444;"><div style="font-size:40px; margin-bottom:10px;">❌</div><p style="font-weight:800; font-size:16px; color:#fff; margin-bottom:4px;">Fraud Check Failed</p><p style="font-size:12px; color:var(--muted);">${errorType}</p><button onclick="triggerUPIPayment('online')" class="rent-btn" style="margin-top:12px; background:var(--accent); color:#000; font-size:12px; font-weight:800;">RETRY UPLOAD</button></div>`;
           showToast("⚠️ Security Check Failed: " + errorType, "error");
         }
       } catch (err) {
-        console.error("OCR Error:", err);
-        showToast("❌ Error analyzing screenshot. Please try again.", "error");
+        showToast("❌ Error analyzing screenshot.", "error");
         triggerUPIPayment(currentPayment);
       }
     }
@@ -2992,124 +3228,37 @@
       if (!dataStr) return;
       const data = JSON.parse(dataStr);
       const bId = Date.now();
-
-      // Save locally
       const BOOKING_KEY = 'geargo_dashboard_bookings';
       let db = JSON.parse(localStorage.getItem(BOOKING_KEY) || '[]');
-      db.push({
-        id: bId,
-        name: data.userName,
-        phone: data.userPhone,
-        email: data.userEmail,
-        item: data.itemName,
-        price: data.price,
-        status: 'paid',
-        booking_date: data.bookingDate,
-        booking_time: data.bookingTime,
-        created_at: new Date().toISOString(),
-        verified: 'AI_OCR'
-      });
+      db.push({ id: bId, name: data.userName, phone: data.userPhone, email: data.userEmail, item: data.itemName, price: data.price, status: 'paid', booking_date: data.bookingDate, booking_time: data.bookingTime, created_at: new Date().toISOString(), verified: 'AI_OCR', purchase_mode: data.purchaseMode, condition: data.condition, size: data.size });
       localStorage.setItem(BOOKING_KEY, JSON.stringify(db));
       saveLocalBooking(data, bId);
-
       try {
-        await fetch(`${apiBase}/book`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            id: bId,
-            userName: data.userName,
-            userPhone: data.userPhone,
-            userEmail: data.userEmail,
-            itemName: data.itemName,
-            address: data.address,
-            price: data.price,
-            days: data.days,
-            bookingDate: data.bookingDate,
-            bookingTime: data.bookingTime,
-            bookingDay: data.bookingDay,
-            paymentMode: data.paymentMode,
-            signature: data.signature,
-            status: 'paid',
-            verified: 'AI_OCR'
-          })
-        });
+        await fetch(`${apiBase}/book`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...data, id: bId, status: 'paid', verified: 'AI_OCR' }) });
         if (data.userEmail) sendEmailJS(data, bId);
-      } catch (e) { console.error("Server Storage Error:", e); }
-
+      } catch (e) { }
       showToast("🎉 Booking Confirmed Automatically!", "success");
       sessionStorage.removeItem('pending_booking');
       setTimeout(closeModal, 3000);
     }
 
-
     function triggerUPIPayment(method) {
       const amount = parseFloat(document.getElementById('totalPrice').textContent.replace(/[₹,]/g, '').trim());
       if (isNaN(amount) || amount <= 0) { showToast("⚠️ Set duration first.", "warn"); return; }
-
       const UPI_ID = '8185951564@ybl';
       const upiQuery = `pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=Kummitha%20Abhi%20Ramred`;
-      
-      // FORCING NAVI APP DIRECTLY (Bypasses chooser on Android)
       const targetUrl = `intent://pay?${upiQuery}#Intent;scheme=upi;package=com.naviapp;end`;
       const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(`upi://pay?${upiQuery}`)}`;
       const msg = document.getElementById('bookingMsg');
       isAwaitingPayment = true;
-
-      window.directPay = function (url) {
-        window.location.href = url;
-      };
-
-      msg.innerHTML = `
-        <div style="text-align:center; padding:20px; background:rgba(0,0,0,0.85); border-radius:24px; border:2px solid var(--accent); backdrop-filter: blur(15px); box-shadow: 0 15px 45px rgba(0,0,0,0.6);">
-          <div style="background:var(--accent); color:#000; padding:10px; border-radius:12px; font-size:11px; margin-bottom:15px; font-weight:900; letter-spacing:0.5px;">
-            🛡️ SECURE ONLINE PAYMENT
-          </div>
-
-          <div style="font-size:15px; color:#fff; font-weight:700; margin-bottom:15px;">
-            Total to Pay: <span style="color:var(--accent); font-size:22px;">₹${amount.toFixed(2)}</span>
-          </div>
-
-          <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:18px; padding:20px; margin-bottom:20px;">
-            <p style="font-size:11px; color:#aaa; margin-bottom:12px; font-weight:600;">DIRECT APP PAYMENT:</p>
-            
-            <button onclick="directPay('${targetUrl}')" style="width:100%; padding:18px; background:var(--accent); color:#000; border:none; border-radius:12px; font-weight:900; font-size:15px; margin-bottom:10px; cursor:pointer; box-shadow: 0 5px 15px rgba(245,166,35,0.3);">
-              🚀 PAY VIA MOBILE NUMBER
-            </button>
-            <p style="font-size:10px; color:#ccc; line-height:1.4;">Opens payment app with <b>fixed amount</b> ₹${amount.toFixed(2)}.</p>
-          </div>
-
-          <div style="display:flex; align-items:center; gap:15px; background:#fff; padding:12px; border-radius:15px; margin-bottom:20px;">
-            <img src="${qrUrl}" alt="Scan QR" style="width:100px; height:100px;">
-            <div style="text-align:left;">
-                <p style="color:#000; font-size:11px; font-weight:800; margin-bottom:4px;">OR SCAN QR CODE</p>
-                <p style="color:#666; font-size:9px;">Save this to gallery or scan from another phone.</p>
-            </div>
-          </div>
-
-          <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:15px; text-align:left;">
-            <p style="font-size:13px; font-weight:800; color:var(--accent); margin-bottom:8px;">✅ STEP 2: UPLOAD SUCCESS SCREENSHOT</p>
-            
-            <label class="gallery-btn" id="screenshotBtn" style="width:100%; margin:0; cursor:pointer; background:#fff; color:#000; border:none; padding:16px; display:flex; justify-content:center; align-items:center; gap:10px; font-weight:900; border-radius:12px; box-shadow: 0 5px 15px rgba(255,255,255,0.1);">
-              <span>📸</span> VERIFY & CONFIRM
-              <input type="file" accept="image/*" style="display:none" onchange="scanPaymentScreenshot(this.files[0])">
-            </label>
-          </div>
-        </div>
-      `;
-    }
-
-    function copyUPI(id) {
-      navigator.clipboard.writeText(id).then(() => {
-        showToast("✅ UPI ID Copied! Paste in your app.", "success");
-      });
+      window.directPay = function (url) { window.location.href = url; };
+      msg.innerHTML = `<div style="text-align:center; padding:20px; background:rgba(0,0,0,0.85); border-radius:24px; border:2px solid var(--accent); backdrop-filter: blur(15px);"><div style="background:var(--accent); color:#000; padding:10px; border-radius:12px; font-size:11px; margin-bottom:15px; font-weight:900; letter-spacing:0.5px;">🛡️ SECURE ONLINE PAYMENT</div><div style="font-size:15px; color:#fff; font-weight:700; margin-bottom:15px;">Total to Pay: <span style="color:var(--accent); font-size:22px;">₹${amount.toFixed(2)}</span></div><div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:18px; padding:20px; margin-bottom:20px;"><p style="font-size:11px; color:#aaa; margin-bottom:12px; font-weight:600;">DIRECT APP PAYMENT:</p><button onclick="directPay('${targetUrl}')" style="width:100%; padding:18px; background:var(--accent); color:#000; border:none; border-radius:12px; font-weight:900; font-size:15px; margin-bottom:10px; cursor:pointer;">🚀 PAY VIA MOBILE NUMBER</button><p style="font-size:10px; color:#ccc;">Opens payment app with fixed amount ₹${amount.toFixed(2)}.</p></div><div style="display:flex; align-items:center; gap:15px; background:#fff; padding:12px; border-radius:15px; margin-bottom:20px;"><img src="${qrUrl}" alt="QR" style="width:100px; height:100px;"><div style="text-align:left;"><p style="color:#000; font-size:11px; font-weight:800; margin-bottom:4px;">OR SCAN QR CODE</p><p style="color:#666; font-size:9px;">Scan from another phone.</p></div></div><div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:15px; text-align:left;"><p style="font-size:13px; font-weight:800; color:var(--accent); margin-bottom:8px;">✅ STEP 2: UPLOAD SUCCESS SCREENSHOT</p><label class="gallery-btn" style="width:100%; margin:0; cursor:pointer; background:#fff; color:#000; border:none; padding:16px; display:flex; justify-content:center; align-items:center; gap:10px; font-weight:900; border-radius:12px;"><span>📸</span> VERIFY & CONFIRM<input type="file" accept="image/*" style="display:none" onchange="scanPaymentScreenshot(this.files[0])"></label></div></div>`;
     }
 
     // ════════════════════════════════════════
-    // LIST ITEM — SAVES TO LOCALSTORAGE & SHOWS ON PAGE
+    // LIST ITEM
     // ════════════════════════════════════════
     function openListModal() { document.getElementById('listModalOverlay').classList.add('show'); }
-
     function closeListModal() {
       document.getElementById('listModalOverlay').classList.remove('show');
       document.getElementById('listItemForm').reset();
@@ -3130,74 +3279,43 @@
       const msg = document.getElementById('listMsg');
       const file = document.getElementById('listPhoto').files[0];
       if (!file) { showToast('📷 Please select a photo.', 'warn'); return; }
-
-      btn.disabled = true;
-      btn.textContent = 'Saving...';
-
+      btn.disabled = true; btn.textContent = 'Saving...';
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onload = async function () {
-        const itemData = {
+      reader.onload = function () {
+        const newItem = {
+          id: 90000 + Date.now() % 100000,
           name: document.getElementById('listName').value,
           cat: document.getElementById('listCat').value,
+          type: 'single',
           price: parseInt(document.getElementById('listPrice').value) || 0,
           condition: document.getElementById('listCondition').value,
           seller_phone: document.getElementById('listPhone').value,
           seller_email: document.getElementById('listEmail').value,
           desc: document.getElementById('listInfo').value,
-          image: reader.result,
-          emoji: '📦'
+          image: reader.result, img: reader.result,
+          emoji: '📦', user_uploaded: true, rating: 0, reviews: 0,
+          listed_at: new Date().toISOString()
         };
-
         try {
-          const response = await fetch(`${apiBase}/api/items`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(itemData)
-          });
-          
-          if (!response.ok) throw new Error('Failed to list item');
-          const result = await response.json();
-
-          // Still save to local storage for hybrid access if needed, but primary is DB now
-          const newItem = { ...itemData, id: result.id, user_uploaded: true, rating: 0, reviews: 0 };
-          try {
-            const saved = localStorage.getItem('geargo_user_items');
-            const items = saved ? JSON.parse(saved) : [];
-            items.push(newItem);
-            localStorage.setItem('geargo_user_items', JSON.stringify(items));
-          } catch (err) { }
-
-          // Add to live ITEMS array immediately
-          ITEMS.unshift(newItem);
+          const saved = localStorage.getItem('geargo_user_items');
+          const items = saved ? JSON.parse(saved) : [];
+          items.push(newItem);
+          localStorage.setItem('geargo_user_items', JSON.stringify(items));
+        } catch (err) { }
+        ITEMS.push(newItem); filterItems();
+        msg.textContent = '✅ Item listed! Visible in "User Listed" section.';
+        msg.className = 'success-msg show';
+        showToast("🎉 Your item is now live on GearGo!", "success");
+        btn.disabled = false; btn.textContent = 'Submit Listing';
+        setTimeout(() => {
+          closeListModal();
+          currentFilter = 'uploaded';
+          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          const uploadedBtn = Array.from(document.querySelectorAll('.filter-btn')).find(b => b.textContent.includes('User Listed'));
+          if (uploadedBtn) uploadedBtn.classList.add('active');
           filterItems();
-
-          msg.textContent = '✅ Item listed! It is now visible in "User Listed" section.';
-          msg.className = 'success-msg show';
-          showToast("🎉 Your item is now live on GearGo!", "success");
-        } catch (err) {
-          console.error('Listing Error:', err);
-          showToast("❌ Server error. Item saved locally.", "error");
-          // Fallback local save
-          const tempId = 90000 + Date.now() % 100000;
-          const newItem = { ...itemData, id: tempId, user_uploaded: true, rating: 0, reviews: 0 };
-          const saved = JSON.parse(localStorage.getItem('geargo_user_items') || '[]');
-          saved.push(newItem);
-          localStorage.setItem('geargo_user_items', JSON.stringify(saved));
-          ITEMS.unshift(newItem);
-          filterItems();
-        } finally {
-          btn.disabled = false;
-          btn.textContent = 'Submit Listing';
-          setTimeout(() => {
-            closeListModal();
-            currentFilter = 'uploaded';
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            const uploadedBtn = Array.from(document.querySelectorAll('.filter-btn')).find(b => b.textContent.includes('User Listed'));
-            if (uploadedBtn) uploadedBtn.classList.add('active');
-            filterItems();
-          }, 1500);
-        }
+        }, 1500);
       };
     });
 
@@ -3223,7 +3341,6 @@
         return;
       }
       const user = JSON.parse(savedUser);
-      // Try server first, fallback to local
       try {
         const res = await fetch(`${apiBase}/api/my-orders?phone=${user.phone}&email=${user.email || ''}`);
         const data = await res.json();
@@ -3246,13 +3363,18 @@
         <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:20px; margin-bottom:20px; position:relative; overflow:hidden;">
           <div style="position:absolute; top:0; left:0; width:4px; height:100%; background:${b.status === 'paid' ? 'var(--green)' : 'var(--accent)'}"></div>
           <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:15px;">
-            <div><h4 style="margin:0 0 5px; color:var(--accent); font-size:1.4rem; font-family:'Barlow Condensed',sans-serif;">${b.item || b.item_name}</h4>
-            <span style="font-size:11px; padding:4px 10px; border-radius:12px; background:rgba(255,255,255,0.05); color:var(--text); font-weight:700; border:1px solid var(--border); text-transform:uppercase;">${b.status}</span></div>
+            <div>
+              <h4 style="margin:0 0 5px; color:var(--accent); font-size:1.4rem; font-family:'Barlow Condensed',sans-serif;">${b.item || b.item_name}</h4>
+              <span style="font-size:11px; padding:4px 10px; border-radius:12px; background:rgba(255,255,255,0.05); color:var(--text); font-weight:700; border:1px solid var(--border); text-transform:uppercase;">${b.status}</span>
+              ${b.purchase_mode ? `<span style="margin-left:6px; font-size:11px; padding:4px 10px; border-radius:12px; background:rgba(245,166,35,0.1); color:var(--accent); font-weight:700; border:1px solid rgba(245,166,35,0.3);">${b.purchase_mode.toUpperCase()}</span>` : ''}
+            </div>
             <div style="text-align:right;"><div style="font-weight:800; font-size:1.2rem;">₹${b.price}</div><div style="font-size:11px; color:var(--muted);">ID: #${b.id}</div></div>
           </div>
           <div style="font-size:13px; margin-bottom:15px; display:grid; grid-template-columns:1fr 1fr; gap:15px;">
             <div><span style="color:var(--muted); font-size:11px; text-transform:uppercase;">Date</span><br><b>${b.booking_date}</b></div>
             <div><span style="color:var(--muted); font-size:11px; text-transform:uppercase;">Payment</span><br><b>${b.payment_mode || b.paymentMode || 'COD'}</b></div>
+            ${b.size ? `<div><span style="color:var(--muted); font-size:11px; text-transform:uppercase;">Size</span><br><b>${b.size}</b></div>` : ''}
+            ${b.condition ? `<div><span style="color:var(--muted); font-size:11px; text-transform:uppercase;">Condition</span><br><b>${b.condition}</b></div>` : ''}
           </div>
         </div>
       `).join('')}</div>`;
@@ -3265,7 +3387,7 @@
       let session = saved ? JSON.parse(saved) : { name: data.userName, phone: data.userPhone, email: data.userEmail, address: data.address, bookings: [] };
       session.name = data.userName; session.phone = data.userPhone; session.email = data.userEmail; session.address = data.address;
       if (!session.bookings) session.bookings = [];
-      session.bookings.unshift({ id: bId || "B" + Date.now(), item_name: data.itemName, total: data.total, status: 'Active', booking_date: data.bookingDate, created_at: new Date().toLocaleDateString() });
+      session.bookings.unshift({ id: bId || "B" + Date.now(), item_name: data.itemName, total: data.total, status: 'Active', booking_date: data.bookingDate, created_at: new Date().toLocaleDateString(), purchase_mode: data.purchaseMode, condition: data.condition, size: data.size });
       localStorage.setItem('acctSession', JSON.stringify(session));
     }
 
@@ -3283,7 +3405,6 @@
       if (saved) { try { applyProfileData(JSON.parse(saved)); } catch (e) { } }
       document.getElementById('profileOverlay').classList.add('show');
     }
-
     function closeProfile() { document.getElementById('profileOverlay').classList.remove('show'); }
 
     function openEditProfile() {
@@ -3300,7 +3421,6 @@
       }
       document.getElementById('editProfileOverlay').classList.add('show');
     }
-
     function closeEditProfile() { document.getElementById('editProfileOverlay').classList.remove('show'); }
 
     function saveProfileChanges() {
@@ -3317,7 +3437,6 @@
 
     // ── LANGUAGE ──
     let currentLang = localStorage.getItem('rpLang') || 'en';
-
     function openLanguage() {
       const sidebar = document.getElementById('sidebar');
       const sidebarOverlay = document.getElementById('sidebarOverlay');
@@ -3334,21 +3453,13 @@
       }));
       updateLangUISelection();
     }
-
     function closeLanguage() {
       const modal = document.getElementById('langModal');
       const overlay = document.getElementById('langOverlay');
       modal.style.transform = 'translateX(-100%)';
       setTimeout(() => overlay.classList.remove('show'), 400);
     }
-
-    function changeLanguage(lang) {
-      currentLang = lang;
-      localStorage.setItem('rpLang', lang);
-      updateLangUISelection();
-      setTimeout(closeLanguage, 300);
-    }
-
+    function changeLanguage(lang) { currentLang = lang; localStorage.setItem('rpLang', lang); updateLangUISelection(); setTimeout(closeLanguage, 300); }
     function updateLangUISelection() {
       document.querySelectorAll('.lang-item').forEach(el => el.classList.remove('selected'));
       const activeItem = document.querySelector(`[onclick="changeLanguage('${currentLang}')"]`);
@@ -3369,12 +3480,10 @@
       }));
       loadNotificationSettings();
     }
-
     function closeNotificationSettings() {
       document.getElementById('notifModal').style.transform = 'translateX(-100%)';
       setTimeout(() => document.getElementById('notifOverlay').classList.remove('show'), 400);
     }
-
     function loadNotificationSettings() {
       const settings = JSON.parse(localStorage.getItem('rpNotifications') || '{}');
       document.getElementById('emailToggle').classList.toggle('active', settings.email !== false);
@@ -3382,7 +3491,6 @@
       document.getElementById('promoToggle').classList.toggle('active', settings.promo !== false);
       document.getElementById('pushToggle').classList.toggle('active', settings.push !== false);
     }
-
     function toggleNotification(type) {
       const toggle = document.getElementById(type + 'Toggle');
       const settings = JSON.parse(localStorage.getItem('rpNotifications') || '{}');
@@ -3405,12 +3513,10 @@
       }));
       loadSavedAddresses();
     }
-
     function closeSavedAddresses() {
       document.getElementById('addressModal').style.transform = 'translateX(-100%)';
       setTimeout(() => document.getElementById('addressOverlay').classList.remove('show'), 400);
     }
-
     function loadSavedAddresses() {
       const addressList = document.getElementById('addressList');
       const saved = localStorage.getItem('savedAddresses');
@@ -3418,7 +3524,6 @@
       if (addresses.length === 0) { addressList.innerHTML = '<div class="no-addresses">No saved addresses yet.<br>Use "📍 Live Location" in booking form to save addresses.</div>'; return; }
       addressList.innerHTML = addresses.map((addr, index) => `<div class="address-item"><div class="address-content" onclick="selectAddress('${addr.address.replace(/'/g, "\\'")}')"><div class="address-text">${addr.address}</div><div class="address-date">${new Date(addr.timestamp).toLocaleDateString()}</div></div><div class="address-actions"><button class="address-btn" onclick="deleteAddress(${index})">🗑️</button></div></div>`).join('');
     }
-
     function selectAddress(address) { const a = document.getElementById('mAddress'); if (a) a.value = address; closeSavedAddresses(); }
     function deleteAddress(index) { const saved = localStorage.getItem('savedAddresses'); let addresses = saved ? JSON.parse(saved) : []; addresses.splice(index, 1); localStorage.setItem('savedAddresses', JSON.stringify(addresses)); loadSavedAddresses(); }
 
@@ -3457,29 +3562,26 @@
       }));
       renderPaymentCards();
     }
-
     function closeCards() {
       document.getElementById('cardsModal').style.transform = 'translateX(-100%)';
       setTimeout(() => document.getElementById('cardsOverlay').classList.remove('show'), 400);
     }
-
     function renderPaymentCards() {
       const list = document.getElementById('cardsList');
       const saved = JSON.parse(localStorage.getItem('rpCards') || '[]');
       if (!saved.length) {
         list.innerHTML = `<div style="padding:40px 24px; text-align:center; color:#888;"><div style="font-size:40px; margin-bottom:15px;">💳</div><p>No saved cards or gift vouchers.</p><button onclick="addSimulatedCard()" style="margin-top:20px; background:var(--accent); color:#000; border:none; padding:10px 20px; border-radius:8px; font-weight:700; cursor:pointer;">+ Add New Card</button></div>`;
       } else {
-        list.innerHTML = saved.map((c, i) => `<div style="background:#111; border:1px solid #333; border-radius:12px; padding:15px; margin:0 24px 15px; display:flex; justify-content:space-between; align-items:center;"><div style="display:flex; align-items:center; gap:12px;"><div style="font-size:24px;">💳</div><div><div style="font-weight:600; color:#fff;">${c.number}</div><div style="font-size:11px; color:#666;">Expires: ${c.expiry}</div></div></div><button onclick="deleteCard(${i})" style="background:none; border:none; color:#f87171; cursor:pointer;">✕</button></div>`).join('') + `<div style="padding:10px 24px;"><button onclick="addSimulatedCard()" style="width:100%; height:50px; border:1px dashed #444; background:none; color:#aaa; border-radius:12px; cursor:pointer;">+ Add Another Card</button></div>`;
+        list.innerHTML = saved.map((c, i) => `<div style="background:#111; border:1px solid #333; border-radius:12px; padding:15px; margin:0 24px 15px; display:flex; justify-content:space-between; align-items:center;"><div style="display:flex; align-items:center; gap:12px;"><div style="font-size:24px;">💳</div><div><div style="font-weight:600; color:#fff;">${c.number}</div><div style="font-size:11px; color:#666;">Expires: ${c.expiry}</div></div></div><button onclick="deleteCard(${i})" style="background:none; border:none; color:#f87171; cursor:pointer;">✕</button></div>`).join('')
+          + `<div style="padding:10px 24px;"><button onclick="addSimulatedCard()" style="width:100%; height:50px; border:1px dashed #444; background:none; color:#aaa; border-radius:12px; cursor:pointer;">+ Add Another Card</button></div>`;
       }
     }
-
     function addSimulatedCard() {
       const saved = JSON.parse(localStorage.getItem('rpCards') || '[]');
       saved.push({ type: 'visa', number: '**** **** **** ' + Math.floor(1000 + Math.random() * 9000), expiry: '12/28' });
       localStorage.setItem('rpCards', JSON.stringify(saved));
       renderPaymentCards();
     }
-
     function deleteCard(i) { const saved = JSON.parse(localStorage.getItem('rpCards') || '[]'); saved.splice(i, 1); localStorage.setItem('rpCards', JSON.stringify(saved)); renderPaymentCards(); }
 
     function openPrivacy() {
@@ -3494,7 +3596,6 @@
         modal.style.transform = 'translateX(0)';
       }));
     }
-
     function closePrivacy() {
       document.getElementById('privacyModal').style.transform = 'translateX(-100%)';
       setTimeout(() => document.getElementById('privacyOverlay').classList.remove('show'), 400);
@@ -3525,7 +3626,7 @@
     // INIT
     // ════════════════════════════════════════
     window.addEventListener('DOMContentLoaded', () => {
-      fetchItems();       // Load all items immediately — no store selection needed
+      fetchItems();
       loadSidebarProfile();
     });
 
@@ -3661,7 +3762,7 @@
   <div class="modal-overlay" id="supportOverlay" style="padding:0; background: #000; z-index: 10000;">
     <div style="width: 100%; height: 100%; display: flex; flex-direction: column; background: #f4f6fb;">
       <div
-        style="padding: 16px 24px; background: #1a1a2e; color: #fff; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10010; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+        style="padding: 16px 24px; background: #1a1a2e; color: #fff; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10010;">
         <div style="display:flex; align-items:center; gap: 12px;">
           <button onclick="closeSupport()"
             style="background:none; border:none; color:#fff; font-size:24px; cursor:pointer;">←</button>
