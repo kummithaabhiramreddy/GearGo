@@ -1915,6 +1915,14 @@
             ? 'http://localhost:3000'
             : '';  // relative URLs work for both localhost server and Vercel
 
+        // Show a status banner at top
+        function setStatus(msg, color) {
+            const el = document.getElementById('alertText');
+            if (el) el.innerHTML = msg;
+            const banner = document.getElementById('alertBanner');
+            if (banner && color) banner.style.borderColor = color;
+        }
+
         // Clock
         function updateClock() {
             const now = new Date();
@@ -1925,6 +1933,7 @@
 
         // ── LIVE DATA LOADER ──────────────────────────────────────────
         async function loadDashboard() {
+            setStatus('⏳ Loading live data from database...', 'rgba(249,115,22,0.5)');
             try {
                 const [bookingsRes, deliveryRes, reviewsRes, itemsRes, summaryRes] = await Promise.all([
                     fetch(API + '/api/view-bookings'),
@@ -1933,11 +1942,22 @@
                     fetch(API + '/api/items'),
                     fetch(API + '/api/admin-summary'),
                 ]);
+
+                console.log('API responses:', {
+                    bookings: bookingsRes.status,
+                    delivery: deliveryRes.status,
+                    reviews: reviewsRes.status,
+                    items: itemsRes.status,
+                    summary: summaryRes.status
+                });
+
                 const bookings  = bookingsRes.ok  ? await bookingsRes.json()  : [];
                 const delivery  = deliveryRes.ok  ? await deliveryRes.json()  : [];
                 const reviews   = reviewsRes.ok   ? await reviewsRes.json()   : [];
                 const items     = itemsRes.ok     ? await itemsRes.json()     : [];
                 const summary   = summaryRes.ok   ? await summaryRes.json()   : null;
+
+                console.log('DB data:', { bookings: bookings.length, delivery: delivery.length, reviews: reviews.length, items: items.length, summary });
 
                 window.allBookings = bookings;
 
@@ -1963,8 +1983,11 @@
                 populateCategoryChart(items, bookings);
                 populateActivityFeed(bookings);
                 populatePendingApprovals(delivery);
+
+                setStatus('\u2705 Live data loaded · ' + (bookings.length) + ' bookings · Auto-refreshes every 30s', 'rgba(34,197,94,0.4)');
             } catch(e) {
                 console.error('Dashboard load error:', e);
+                setStatus('\u274C Load failed: ' + e.message + ' — Is server running at ' + API + '?', 'rgba(239,68,68,0.5)');
             }
         }
 
