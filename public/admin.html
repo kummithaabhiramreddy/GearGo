@@ -1987,7 +1987,9 @@
     </main>
 
     <script>
-        const API = '';  // same-origin; empty = relative URLs
+        const API = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port === '3000'
+            ? '' 
+            : 'http://localhost:3000';
 
         // Clock
         function updateClock() {
@@ -2447,7 +2449,7 @@
             }
 
             const totalRev = filtered.reduce((s, b) => s + (parseFloat(b.price) || 0), 0);
-            document.getElementById('rev').textContent = '₹' + totalRev.toLocaleString('en-IN');
+            document.getElementById('rev').textContent = '₹' + totalRev.toLocaleString();
             document.getElementById('rentals').textContent = filtered.length;
         }
 
