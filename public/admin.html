@@ -8,6 +8,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@400;500;600&display=swap"
         rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --bg: #0a0c0f;
@@ -1593,9 +1594,29 @@
                 <div class="card-header"><div class="card-title">Registered Users & Customers</div></div>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>ID</th><th>Name</th><th>Phone</th><th>Email</th><th>Address</th></tr></thead>
+                        <thead><tr><th>ID</th><th>Name</th><th>Phone</th><th>Email</th><th>Address</th><th>Registered On</th></tr></thead>
                         <tbody id="fullUsersTable"></tbody>
                     </table>
+                </div>
+            </div>
+
+            <!-- FULL REVENUE SECTION -->
+            <div class="card page-section" id="section-revenue-full" style="display:none;margin-bottom:20px;">
+                <div class="card-header"><div class="card-title">Revenue by Customer</div></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Customer Name</th><th>Total Bookings</th><th>Total Revenue Paid</th></tr></thead>
+                        <tbody id="fullRevenueTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- FULL ANALYTICS SECTION -->
+            <div class="card page-section" id="section-analytics-full" style="display:none;margin-bottom:20px;">
+                <div class="card-header"><div class="card-title">Platform Analytics</div></div>
+                <div style="padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div><canvas id="bookingsChart" height="250"></canvas></div>
+                    <div><canvas id="revenueChart" height="250"></canvas></div>
                 </div>
             </div>
 
@@ -2022,6 +2043,7 @@
                 populateFullGear(items);
                 populateFullReviews(reviews);
                 fetchAndPopulateUsers();
+                populateRevenueAndAnalytics(bookings);
             } catch (e) {
                 console.error('Dashboard load error:', e);
             }
@@ -2035,9 +2057,10 @@
                 const tbody = document.getElementById('fullUsersTable');
                 if (!tbody) return;
                 tbody.innerHTML = '';
-                if (!users.length) { tbody.innerHTML = '<tr><td colspan="5">No users</td></tr>'; return; }
+                if (!users.length) { tbody.innerHTML = '<tr><td colspan="6">No users</td></tr>'; return; }
                 users.forEach(u => {
-                    tbody.innerHTML += `<tr><td>#${u.id || ''}</td><td>${u.name || '—'}</td><td>${u.phone || '—'}</td><td>${u.email || '—'}</td><td>${u.address || '—'}</td></tr>`;
+                    const date = u.created_at ? new Date(u.created_at).toLocaleDateString() : '—';
+                    tbody.innerHTML += `<tr><td>#${u.id || ''}</td><td>${u.name || '—'}</td><td>${u.phone || '—'}</td><td>${u.email || '—'}</td><td>${u.address || '—'}</td><td>${date}</td></tr>`;
                 });
             } catch(e) {}
         }
@@ -2076,6 +2099,68 @@
             reviews.forEach(r => {
                 tbody.innerHTML += `<tr><td>#${r.id}</td><td>${r.item_id || '—'}</td><td>${r.user_id || '—'}</td><td>${r.rating}★</td><td>${r.review_text || r.comment || '—'}</td></tr>`;
             });
+        }
+
+        function populateRevenueAndAnalytics(bookings) {
+            const revBody = document.getElementById('fullRevenueTable');
+            if (!revBody) return;
+            
+            const userTotals = {};
+            bookings.forEach(b => {
+                if (!b.name) return;
+                if (!userTotals[b.name]) userTotals[b.name] = { count: 0, revenue: 0 };
+                userTotals[b.name].count += 1;
+                userTotals[b.name].revenue += parseFloat(b.price || 0);
+            });
+            
+            const sorted = Object.keys(userTotals).sort((a,b) => userTotals[b].revenue - userTotals[a].revenue);
+            revBody.innerHTML = '';
+            sorted.forEach(name => {
+                revBody.innerHTML += `<tr><td>${name}</td><td>${userTotals[name].count}</td><td style="color:var(--accent);">₹${userTotals[name].revenue.toLocaleString()}</td></tr>`;
+            });
+            
+            // Render Charts
+            if (window.Chart) {
+                Chart.defaults.color = '#94a3b8';
+                
+                const bCtx = document.getElementById('bookingsChart');
+                if (bCtx && !window.bChart) {
+                    window.bChart = new Chart(bCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Total Bookings', 'Active/Pending', 'Completed', 'Cancelled'],
+                            datasets: [{
+                                label: 'Bookings',
+                                data: [
+                                    bookings.length,
+                                    bookings.filter(b => ['pending','confirmed'].includes((b.status||'').toLowerCase())).length,
+                                    bookings.filter(b => (b.status||'').toLowerCase() === 'completed').length,
+                                    bookings.filter(b => (b.status||'').toLowerCase() === 'cancelled').length
+                                ],
+                                backgroundColor: ['#3b82f6', '#f97316', '#22c55e', '#ef4444']
+                            }]
+                        },
+                        options: { plugins: { title: { display: true, text: 'Bookings Breakdown' } } }
+                    });
+                }
+                
+                const rCtx = document.getElementById('revenueChart');
+                if (rCtx && !window.rChart) {
+                    const top5 = sorted.slice(0, 5);
+                    window.rChart = new Chart(rCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: top5,
+                            datasets: [{
+                                data: top5.map(n => userTotals[n].revenue),
+                                backgroundColor: ['#f97316', '#3b82f6', '#a855f7', '#22c55e', '#eab308'],
+                                borderWidth: 0
+                            }]
+                        },
+                        options: { plugins: { title: { display: true, text: 'Top 5 Customers by Revenue' } } }
+                    });
+                }
+            }
         }
 
         // KPI Cards
@@ -2314,6 +2399,16 @@
                 if (kpis) kpis.style.display = 'grid';
                 const users = document.getElementById('section-users-full');
                 if (users) users.style.display = 'block';
+            } else if (sectionId === 'revenue') {
+                const kpis = document.getElementById('section-dashboard-kpis');
+                if (kpis) kpis.style.display = 'grid';
+                const rev = document.getElementById('section-revenue-full');
+                if (rev) rev.style.display = 'block';
+            } else if (sectionId === 'analytics') {
+                const kpis = document.getElementById('section-dashboard-kpis');
+                if (kpis) kpis.style.display = 'grid';
+                const ana = document.getElementById('section-analytics-full');
+                if (ana) ana.style.display = 'block';
             } else if (sectionId === 'geo-heatmap') {
                 const kpis = document.getElementById('section-dashboard-kpis');
                 if (kpis) kpis.style.display = 'grid';
