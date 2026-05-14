@@ -715,7 +715,6 @@
             gap: 14px;
         }
 
-        .progress-item {}
 
         .progress-label {
             display: flex;
@@ -1935,12 +1934,16 @@
                 const reviews   = reviewsRes.ok   ? await reviewsRes.json()   : [];
                 const items     = itemsRes.ok     ? await itemsRes.json()     : [];
 
+                window.allBookings = bookings;
+
                 updateKPIs(bookings, delivery, reviews, items);
                 populateRentalsTable(bookings);
                 populateDeliveryPartners(delivery);
                 populateReviews(reviews);
                 populateCategoryChart(items, bookings);
                 updateAlertBanner(bookings, delivery);
+                populateActivityFeed(bookings);
+                populatePendingApprovals(delivery);
             } catch(e) {
                 console.error('Dashboard load error:', e);
             }
