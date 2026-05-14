@@ -291,7 +291,7 @@ let rating = 0;
 let cachedReviews = [];
 let serverOnline = true;
 const isLocalHTML = window.location.protocol === 'file:';
-const apiBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '3000' ? 'http://localhost:3000' : '';
+const apiBase = '';
 const SAMPLE_REVIEWS = [
   { id: 1, name: 'Aarav Sharma', city: 'Mumbai', category: 'Board Games', title: 'Great rental experience', body: 'The console arrived on time and the team was very responsive.', rating: 5, tags: ['PS5','Fast Delivery'], helpful: 12, created_at: new Date(Date.now() - 86400000).toISOString() },
   { id: 2, name: 'Nisha Patel', city: 'Bengaluru', category: 'Outdoor', title: 'Smooth booking process', body: 'Loved the easy checkout and the gear quality was excellent.', rating: 4, tags: ['Outdoor','Comfortable'], helpful: 8, created_at: new Date(Date.now() - 172800000).toISOString() }

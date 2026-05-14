@@ -833,7 +833,7 @@
       <div class="badge">📋 New Application</div>
     </div>
 
-    <script>const globalApiBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '3000' ? 'http://localhost:3000' : '';</script>
+    <script>const globalApiBase = '';</script>
 
     <div class="progress-wrap">
       <div class="progress-steps">
@@ -1454,7 +1454,7 @@
         try { const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); return await r.json(); }
         catch (e) { return null; }
       }
-      const apiBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '3000' ? 'http://localhost:3000' : '';
+      const apiBase = '';
       const urls = [
         apiBase + '/api/register-delivery',
         '/api/register-delivery'

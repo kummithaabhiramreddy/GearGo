@@ -420,7 +420,7 @@
         let pollInterval;
 
         const isLocalHTML = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '3000';
-        const apiBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '3000' ? 'http://localhost:3000' : '';
+        const apiBase = '';
 
         // Auto-fetch delivery boys for demo login
         async function fetchPartners() {

@@ -1263,6 +1263,9 @@
             <div class="nav-item" data-section="geo-heatmap" onclick="setPage(this)">
                 <span class="icon">📍</span> Geo Heatmap
             </div>
+            <div class="nav-item" onclick="window.location.href='/db-explorer'">
+                <span class="icon">🗄️</span> DB Explorer
+            </div>
             <div class="nav-item" onclick="setPage(this)">
                 <span class="icon">🔔</span> Alerts
                 <span class="nav-badge" style="background:var(--red)">3</span>
@@ -1682,46 +1685,7 @@
                     <button class="btn btn-ghost" style="padding:5px 10px;font-size:11px;">View All</button>
                 </div>
                 <div class="partner-list" id="partnerList">
-                    <div class="partner-item">
-                        <div class="partner-avatar" style="background:rgba(249,115,22,0.12);">🏕️</div>
-                        <div class="partner-info">
-                            <div class="partner-name">OutdoorHub Jubilee</div>
-                            <div class="partner-meta">Hyderabad · 142 rentals</div>
-                        </div>
-                        <div class="partner-rev">₹84,200</div>
-                    </div>
-                    <div class="partner-item">
-                        <div class="partner-avatar" style="background:rgba(59,130,246,0.12);">🚴</div>
-                        <div class="partner-info">
-                            <div class="partner-name">CycleZone Banjara</div>
-                            <div class="partner-meta">Hyderabad · 118 rentals</div>
-                        </div>
-                        <div class="partner-rev">₹72,400</div>
-                    </div>
-                    <div class="partner-item">
-                        <div class="partner-avatar" style="background:rgba(168,85,247,0.12);">🤿</div>
-                        <div class="partner-info">
-                            <div class="partner-name">AdventureHub Madhapur</div>
-                            <div class="partner-meta">Hyderabad · 95 rentals</div>
-                        </div>
-                        <div class="partner-rev">₹61,800</div>
-                    </div>
-                    <div class="partner-item">
-                        <div class="partner-avatar" style="background:rgba(34,197,94,0.12);">📷</div>
-                        <div class="partner-info">
-                            <div class="partner-name">TechRent Hitech City</div>
-                            <div class="partner-meta">Hyderabad · 87 rentals</div>
-                        </div>
-                        <div class="partner-rev">₹58,900</div>
-                    </div>
-                    <div class="partner-item">
-                        <div class="partner-avatar" style="background:rgba(234,179,8,0.12);">🏄</div>
-                        <div class="partner-info">
-                            <div class="partner-name">WavePark Vizag</div>
-                            <div class="partner-meta">Vizag · 76 rentals</div>
-                        </div>
-                        <div class="partner-rev">₹44,500</div>
-                    </div>
+                    <div style="padding:12px;color:var(--text3);font-size:12px;">Loading partners...</div>
                 </div>
             </div>
 
@@ -1735,24 +1699,11 @@
                 </div>
 
                 <div class="donut-wrap" style="justify-content:center;margin-bottom:18px;">
-                    <svg width="110" height="110" viewBox="0 0 110 110">
+                    <svg width="110" height="110" viewBox="0 0 110 110" id="categoryDonut">
                         <circle cx="55" cy="55" r="40" fill="none" stroke="#1e232b" stroke-width="20" />
-                        <!-- Segments (stroke-dasharray = circumference portion) -->
-                        <!-- Circumference = 2*PI*40 = 251.3 -->
-                        <circle cx="55" cy="55" r="40" fill="none" stroke="#f97316" stroke-width="20"
-                            stroke-dasharray="87.9 163.4" stroke-dashoffset="0" transform="rotate(-90 55 55)" />
-                        <circle cx="55" cy="55" r="40" fill="none" stroke="#3b82f6" stroke-width="20"
-                            stroke-dasharray="62.8 188.5" stroke-dashoffset="-87.9" transform="rotate(-90 55 55)" />
-                        <circle cx="55" cy="55" r="40" fill="none" stroke="#a855f7" stroke-width="20"
-                            stroke-dasharray="50.3 201" stroke-dashoffset="-150.7" transform="rotate(-90 55 55)" />
-                        <circle cx="55" cy="55" r="40" fill="none" stroke="#22c55e" stroke-width="20"
-                            stroke-dasharray="37.7 213.6" stroke-dashoffset="-201" transform="rotate(-90 55 55)" />
-                        <circle cx="55" cy="55" r="40" fill="none" stroke="#eab308" stroke-width="20"
-                            stroke-dasharray="12.6 238.7" stroke-dashoffset="-238.7" transform="rotate(-90 55 55)" />
-                        <text x="55" y="51" text-anchor="middle" font-size="11" fill="#f1f5f9"
-                            font-family="DM Mono, monospace" font-weight="600">35%</text>
-                        <text x="55" y="63" text-anchor="middle" font-size="8" fill="#475569"
-                            font-family="DM Mono, monospace">Cycling</text>
+                        <!-- Dynamic segments will be inserted here by populateCategoryChart -->
+                        <text x="55" y="55" text-anchor="middle" font-size="8" fill="#475569"
+                            font-family="DM Mono, monospace" id="donut-center-text">Loading...</text>
                     </svg>
                     <div class="donut-legend">
                         <div class="legend-item">
@@ -1794,69 +1745,7 @@
                 </div>
 
                 <div id="reviewsList">
-                    <div class="review-card">
-                        <div class="review-header">
-                            <div class="review-avatar" style="background:rgba(249,115,22,0.2);color:var(--accent);">
-                                AM
-                            </div>
-                            <div>
-                                <div class="review-name">Arjun M.</div>
-                                <div class="review-gear">Trek Cycle · CycleZone</div>
-                            </div>
-                            <div style="margin-left:auto;">
-                                <div class="stars">★★★★★</div>
-                            </div>
-                        </div>
-                        <div class="review-body">"Gear was in perfect condition, quick pickup process. Will
-                            definitely
-                            rent again!"</div>
-                        <div class="review-meta">
-                            <span class="review-date">2 hours ago</span>
-                            <span class="badge badge-green" style="font-size:9px;">Verified</span>
-                        </div>
-                    </div>
-
-                    <div class="review-card">
-                        <div class="review-header">
-                            <div class="review-avatar" style="background:rgba(59,130,246,0.2);color:var(--blue);">SR
-                            </div>
-                            <div>
-                                <div class="review-name">Sneha R.</div>
-                                <div class="review-gear">Camping Tent · OutdoorHub</div>
-                            </div>
-                            <div style="margin-left:auto;">
-                                <div class="stars">★★★★<span style="color:var(--text3);">★</span></div>
-                            </div>
-                        </div>
-                        <div class="review-body">"Really nice tent, setup was easy. Return process could be
-                            smoother."
-                        </div>
-                        <div class="review-meta">
-                            <span class="review-date">5 hours ago</span>
-                            <span class="badge badge-green" style="font-size:9px;">Verified</span>
-                        </div>
-                    </div>
-
-                    <div class="review-card">
-                        <div class="review-header">
-                            <div class="review-avatar" style="background:rgba(168,85,247,0.2);color:var(--purple);">
-                                KS
-                            </div>
-                            <div>
-                                <div class="review-name">Karan S.</div>
-                                <div class="review-gear">Kayak · AdventureHub</div>
-                            </div>
-                            <div style="margin-left:auto;">
-                                <div class="stars">★★★★★</div>
-                            </div>
-                        </div>
-                        <div class="review-body">"Kayak was clean, staff was super helpful with the safety briefing.
-                            10/10!"</div>
-                        <div class="review-meta">
-                            <span class="review-date">Yesterday</span>
-                            <span class="badge badge-orange" style="font-size:9px;">Featured</span>
-                        </div>
-                    </div>
+                    <div style="padding:12px;color:var(--text3);font-size:12px;">Loading reviews...</div>
                 </div>
             </div>
 
@@ -1869,9 +1758,8 @@
     </main>
 
     <script>
-        const API = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port === '3000'
-            ? ''
-            : 'http://localhost:3000';
+        const API = ''; 
+
 
         // Clock
         function updateClock() {

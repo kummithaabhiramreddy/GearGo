@@ -973,7 +973,7 @@ async function deletePartner(id) {
     toast('Deleted successfully','ok'); fetchData(); return;
   }
   try {
-    const base = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '3000' ? 'http://localhost:3000' : '';
+    const base = '';
     const path = contextTargetType==='review' ? `/api/reviews/${id}` : `/api/delete-delivery-boy`;
     const res = await fetch(`${base}${path}`,{method: contextTargetType==='review'?'DELETE':'POST', headers:{'Content-Type':'application/json'}, body: contextTargetType==='review'?null:JSON.stringify({id})});
     if (!res.ok) throw new Error(await res.text()||res.statusText);
@@ -1049,7 +1049,7 @@ function updateMetricsUI() {
 }
 
 async function fetchData() {
-  const api = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '3000' ? 'http://localhost:3000' : '';
+  const api = '';
   let localRentals  = loadLocalDashboardData(DASHBOARD_BOOKING_KEY, SAMPLE_DASHBOARD_RENTALS);
   let localPartners = loadLocalDashboardData(DASHBOARD_PARTNER_KEY, SAMPLE_DASHBOARD_PARTNERS);
   let localReviews  = loadLocalDashboardData(DASHBOARD_REVIEW_KEY,  SAMPLE_DASHBOARD_REVIEWS);

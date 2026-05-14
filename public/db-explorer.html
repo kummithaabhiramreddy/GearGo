@@ -251,10 +251,13 @@
 
     <header>
         <div class="logo">GearGo <span>Database Explorer</span></div>
-        <div id="connectionStatus"
-            style="font-size: 0.8rem; color: var(--accent); display: flex; align-items: center; gap: 0.5rem;">
-            <span style="width: 8px; height: 8px; background: var(--accent); border-radius: 50%;"></span>
-            Connected to PostgreSQL
+        <div style="display: flex; align-items: center; gap: 1.5rem;">
+            <div id="connectionStatus"
+                style="font-size: 0.8rem; color: var(--accent); display: flex; align-items: center; gap: 0.5rem;">
+                <span style="width: 8px; height: 8px; background: var(--accent); border-radius: 50%;"></span>
+                Connected to PostgreSQL
+            </div>
+            <button onclick="window.location.href='/admin'" style="padding: 0.5rem 1rem; font-size: 0.8rem; background: rgba(255,255,255,0.05);">Back to Dashboard</button>
         </div>
     </header>
 
@@ -295,7 +298,7 @@
 
             try {
                 const isLocal = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '3000';
-                const apiBase = isLocal ? 'http://localhost:3000' : '';
+                const apiBase = '';
 
                 const res = await fetch(`${apiBase}/api/db/${table}`);
                 const data = await res.json();
