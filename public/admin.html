@@ -1923,25 +1923,41 @@
         // ── LIVE DATA LOADER ──────────────────────────────────────────
         async function loadDashboard() {
             try {
-                const [bookingsRes, deliveryRes, reviewsRes, itemsRes] = await Promise.all([
+                const [bookingsRes, deliveryRes, reviewsRes, itemsRes, summaryRes] = await Promise.all([
                     fetch(API + '/api/view-bookings'),
                     fetch(API + '/api/delivery-boys'),
                     fetch(API + '/api/reviews'),
                     fetch(API + '/api/items'),
+                    fetch(API + '/api/admin-summary'),
                 ]);
                 const bookings  = bookingsRes.ok  ? await bookingsRes.json()  : [];
                 const delivery  = deliveryRes.ok  ? await deliveryRes.json()  : [];
                 const reviews   = reviewsRes.ok   ? await reviewsRes.json()   : [];
                 const items     = itemsRes.ok     ? await itemsRes.json()     : [];
+                const summary   = summaryRes.ok   ? await summaryRes.json()   : null;
 
                 window.allBookings = bookings;
 
-                updateKPIs(bookings, delivery, reviews, items);
+                // Use summary for reliable KPI numbers
+                if (summary) {
+                    document.getElementById('rev').textContent = '\u20B9' + (summary.rentals.revenue || 0).toLocaleString('en-IN');
+                    document.getElementById('rentals').textContent = summary.rentals.total;
+                    document.getElementById('kpi-partners').textContent = summary.delivery.total;
+                    document.getElementById('kpi-rating').textContent = summary.reviews.avg_rating + '\u2605';
+                    const nb = document.getElementById('nav-rentals-badge');
+                    if (nb) nb.textContent = summary.rentals.total;
+                    const sub = document.getElementById('kpi-rentals-sub');
+                    if (sub) sub.textContent = '\u25B2 ' + summary.rentals.pending + ' pending';
+                    updateAlertBanner({ pending: summary.rentals.pending }, { pending: summary.delivery.pending });
+                } else {
+                    updateKPIs(bookings, delivery, reviews, items);
+                    updateAlertBanner(bookings, delivery);
+                }
+
                 populateRentalsTable(bookings);
                 populateDeliveryPartners(delivery);
                 populateReviews(reviews);
                 populateCategoryChart(items, bookings);
-                updateAlertBanner(bookings, delivery);
                 populateActivityFeed(bookings);
                 populatePendingApprovals(delivery);
             } catch(e) {
@@ -2096,23 +2112,41 @@
 
         // Alert Banner
         function updateAlertBanner(bookings, delivery) {
-            const pending = bookings.filter(b => (b.status||'').toLowerCase() === 'pending').length;
+            // Accept either raw arrays or pre-computed {pending} objects from summary
+            const rentalsPending = Array.isArray(bookings)
+                ? bookings.filter(b => (b.status||'').toLowerCase() === 'pending').length
+                : (bookings.pending || 0);
+            const partnersPending = Array.isArray(delivery)
+                ? delivery.filter(d => d.status === 'pending').length
+                : (delivery.pending || 0);
             const el = document.getElementById('alertText');
-            if (el) el.innerHTML = `<strong>${pending} rental${pending !== 1 ? 's' : ''} pending</strong> · ${delivery.filter(d=>d.status==='pending').length} partner requests pending approval`;
+            if (el) el.innerHTML = `<strong>${rentalsPending} rental${rentalsPending !== 1 ? 's' : ''} pending</strong> · ${partnersPending} partner requests pending approval`;
         }
 
         // Actions
         async function manageBooking(id) {
-            const status = prompt('Update status for booking #' + id + ':\n(confirmed / cancelled / completed)');
+            const status = prompt('Update status for booking #' + id + ':\nType: confirmed, cancelled, or completed');
             if (!status) return;
-            alert('Status update API not yet wired — set status to: ' + status);
+            try {
+                const res = await fetch(API + '/api/bookings/' + id + '/status', {
+                    method: 'PUT', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: status.trim().toLowerCase() })
+                });
+                const data = await res.json();
+                if (res.ok) { alert('\u2705 Status updated to: ' + status); loadDashboard(); }
+                else alert('\u274C Error: ' + (data.error || 'Update failed'));
+            } catch(err) { alert('Network error: ' + err.message); }
         }
         async function deleteBooking(id, btn) {
             if (!confirm('Delete booking #' + id + '?')) return;
-            btn.closest('tr').style.opacity = '0.4';
-            // Wire to DELETE /api/booking/:id when ready
-            alert('Delete API not wired yet. Row hidden for now.');
-            btn.closest('tr').remove();
+            btn.disabled = true;
+            const row = btn.closest('tr');
+            row.style.opacity = '0.4';
+            try {
+                const res = await fetch(API + '/api/bookings/' + id, { method: 'DELETE' });
+                if (res.ok) { row.remove(); setTimeout(loadDashboard, 500); }
+                else { row.style.opacity = ''; btn.disabled = false; alert('Delete failed'); }
+            } catch(err) { row.style.opacity = ''; btn.disabled = false; alert('Network error'); }
         }
 
         // Auto-refresh every 30 seconds
@@ -2198,20 +2232,35 @@
                 list.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:10px;">No pending approvals.</div>';
                 return;
             }
-            pending.slice(0, 3).forEach(d => {
+            pending.slice(0, 5).forEach(d => {
                 const name = `${d.first_name || ''} ${d.last_name || ''}`.trim() || d.name || 'Partner';
-                list.innerHTML += `
-                <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);margin-bottom:8px;">
-                    <div>
-                        <div style="font-size:12px;font-weight:600;">${name}</div>
-                        <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);">Partner onboarding request</div>
-                    </div>
-                    <div style="display:flex;gap:5px;">
-                        <button class="btn" style="background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.25);padding:4px 9px;font-size:11px;">✓</button>
-                        <button class="btn" style="background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2);padding:4px 9px;font-size:11px;">✕</button>
-                    </div>
+                const info = [d.vehicle_type, d.city, d.mobile].filter(Boolean).join(' · ');
+                const el = document.createElement('div');
+                el.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);margin-bottom:8px;';
+                el.innerHTML = `
+                <div>
+                    <div style="font-size:12px;font-weight:600;">${name}</div>
+                    <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);">${info || 'Partner onboarding request'}</div>
+                </div>
+                <div style="display:flex;gap:5px;">
+                    <button onclick="approvePartner(${d.id}, true, this)" class="btn" style="background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.25);padding:4px 9px;font-size:11px;">✓ Approve</button>
+                    <button onclick="approvePartner(${d.id}, false, this)" class="btn" style="background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2);padding:4px 9px;font-size:11px;">✕ Reject</button>
                 </div>`;
+                list.appendChild(el);
             });
+        }
+
+        async function approvePartner(id, approve, btn) {
+            btn.disabled = true;
+            const status = approve ? 'active' : 'rejected';
+            try {
+                const res = await fetch(API + '/api/delivery-boys/' + id + '/status', {
+                    method: 'PUT', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
+                });
+                if (res.ok) { btn.closest('div[style]').remove(); setTimeout(loadDashboard, 500); }
+                else { btn.disabled = false; alert('Update failed'); }
+            } catch(err) { btn.disabled = false; alert('Network error'); }
         }
     </script>
 </body>

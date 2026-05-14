@@ -179,6 +179,87 @@ app.post('/api/reviews', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+
+// ── ADMIN MANAGEMENT ROUTES ──────────────────────────────────────
+// Update booking status
+app.put('/api/bookings/:id/status', async (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body;
+    const allowed = ['pending', 'confirmed', 'cancelled', 'completed'];
+    if (!allowed.includes(status)) return res.status(400).json({ error: 'Invalid status' });
+    try {
+        const { rowCount } = await pool.query('UPDATE rentals SET status=$1 WHERE id=$2', [status, id]);
+        if (!rowCount) return res.status(404).json({ error: 'Booking not found' });
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// Delete booking
+app.delete('/api/bookings/:id', async (req, res) => {
+    try {
+        const { rowCount } = await pool.query('DELETE FROM rentals WHERE id=$1', [req.params.id]);
+        if (!rowCount) return res.status(404).json({ error: 'Not found' });
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// Approve / reject delivery partner
+app.put('/api/delivery-boys/:id/status', async (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body; // 'active' or 'rejected'
+    try {
+        const { rowCount } = await pool.query('UPDATE delivery_boys SET status=$1 WHERE id=$2', [status, id]);
+        if (!rowCount) return res.status(404).json({ error: 'Partner not found' });
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// Delete delivery partner
+app.delete('/api/delivery-boys/:id', async (req, res) => {
+    try {
+        const { rowCount } = await pool.query('DELETE FROM delivery_boys WHERE id=$1', [req.params.id]);
+        if (!rowCount) return res.status(404).json({ error: 'Not found' });
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// Get all unique users from rentals (name, email, phone)
+app.get('/api/users', async (_req, res) => {
+    try {
+        const { rows } = await pool.query(
+            `SELECT DISTINCT ON (email) id, name, email, phone, address, created_at
+             FROM rentals WHERE email IS NOT NULL ORDER BY email, id DESC`
+        );
+        res.json(rows);
+    } catch (err) {
+        // Fallback: return unique names/phones from rentals
+        try {
+            const { rows } = await pool.query(
+                'SELECT id, name, phone, email, address FROM rentals ORDER BY id DESC'
+            );
+            res.json(rows);
+        } catch (e) { res.status(500).json([]); }
+    }
+});
+
+// Admin summary for all tables
+app.get('/api/admin-summary', async (_req, res) => {
+    try {
+        const [r, d, rev, it] = await Promise.all([
+            pool.query('SELECT COUNT(*) as total, SUM(price::numeric) as revenue, COUNT(*) FILTER (WHERE status=\'pending\') as pending FROM rentals'),
+            pool.query('SELECT COUNT(*) as total, COUNT(*) FILTER (WHERE status=\'active\') as active, COUNT(*) FILTER (WHERE status=\'pending\') as pending FROM delivery_boys'),
+            pool.query('SELECT COUNT(*) as total, COALESCE(AVG(rating::numeric),0) as avg_rating FROM reviews'),
+            pool.query('SELECT COUNT(*) as total FROM items'),
+        ]);
+        res.json({
+            rentals:  { total: +r.rows[0].total, revenue: +r.rows[0].revenue || 0, pending: +r.rows[0].pending },
+            delivery: { total: +d.rows[0].total, active: +d.rows[0].active, pending: +d.rows[0].pending },
+            reviews:  { total: +rev.rows[0].total, avg_rating: parseFloat(rev.rows[0].avg_rating).toFixed(1) },
+            items:    { total: +it.rows[0].total },
+        });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
 // Root fallback (Home page)
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'index.html'));
