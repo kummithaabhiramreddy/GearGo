@@ -1853,7 +1853,7 @@
                         <div
                             style="font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;">
                             Pending Approvals</div>
-                        <div style="display:flex;flex-direction:column;gap:8px;">
+                        <div style="display:flex;flex-direction:column;gap:8px;" id="pendingApprovalsList">
                             <div
                                 style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);">
                                 <div>
@@ -2128,61 +2128,88 @@
         function switchPeriod(el, period) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
-            // Simulate changing KPI values
-            const revMap = { Today: '₹38,420', Week: '₹2,14,800', Month: '₹9,42,300', Year: '₹12,84,630' };
-            const rentMap = { Today: '48', Week: '312', Month: '1,284', Year: '14,820' };
-            document.getElementById('rev').textContent = revMap[period];
-            document.getElementById('rentals').textContent = rentMap[period];
+            
+            if (!window.allBookings) return;
+            
+            const now = new Date();
+            let filtered = window.allBookings;
+            
+            if (period === 'Today') {
+                filtered = window.allBookings.filter(b => {
+                    const d = new Date(b.created_at || now);
+                    return d.getDate() === now.getDate() && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+                });
+            } else if (period === 'Week') {
+                const lastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                filtered = window.allBookings.filter(b => new Date(b.created_at || now) >= lastWeek);
+            } else if (period === 'Month') {
+                filtered = window.allBookings.filter(b => {
+                    const d = new Date(b.created_at || now);
+                    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+                });
+            }
+            
+            const totalRev = filtered.reduce((s, b) => s + (parseFloat(b.price) || 0), 0);
+            document.getElementById('rev').textContent = '₹' + totalRev.toLocaleString('en-IN');
+            document.getElementById('rentals').textContent = filtered.length;
         }
 
-        // Live ticker: simulate real-time user count
-        const activities = [
-            ["🟢", "var(--green)", "<strong>Vikram P.</strong> rented Mountain Bike · ₹1,200"],
-            ["🔵", "var(--blue)", "<strong>OutdoorHub</strong> updated 2 gear listings"],
-            ["🟡", "var(--yellow)", "<strong>Pooja S.</strong> left a 4★ review · Tent Rental"],
-            ["🟠", "var(--accent)", "<strong>Payment</strong> ₹3,600 settled · Ref #GG8855"],
-            ["🟣", "var(--purple)", "<strong>Riya N.</strong> extended booking +1 day · ₹400"],
-            ["🔴", "var(--red)", "<strong>Fraud Alert</strong> suspicious login · IP blocked"],
-        ];
-
-        let actIdx = 0;
-        setInterval(() => {
+        function populateActivityFeed(bookings) {
             const feed = document.getElementById('activityFeed');
-            const times = ['Just now', '1 min ago', '2 min ago', '4 min ago', '7 min ago', '11 min ago'];
-            const items = feed.querySelectorAll('.activity-item');
-
-            // Shift times
-            items.forEach((item, i) => {
-                const t = item.querySelector('.activity-time');
-                if (t && i < times.length - 1) t.textContent = times[i + 1];
+            if (!feed) return;
+            feed.innerHTML = '';
+            if (!bookings.length) {
+                feed.innerHTML = '<div style="padding:12px;color:var(--text3);font-size:12px;">No activity yet</div>';
+                return;
+            }
+            const recent = bookings.slice(0, 6);
+            const colors = ['var(--green)', 'var(--blue)', 'var(--yellow)', 'var(--accent)', 'var(--purple)'];
+            recent.forEach((b, i) => {
+                let timeStr = 'Recent';
+                if (b.created_at || b.booking_date) {
+                    const d = new Date(b.created_at || b.booking_date);
+                    const diffMins = Math.floor((Date.now() - d.getTime()) / 60000);
+                    if (diffMins < 1 || isNaN(diffMins)) timeStr = 'Just now';
+                    else if (diffMins < 60) timeStr = diffMins + ' min ago';
+                    else if (diffMins < 1440) timeStr = Math.floor(diffMins/60) + ' hr ago';
+                    else timeStr = d.toLocaleDateString();
+                }
+                
+                feed.innerHTML += `
+                <div class="activity-item">
+                    <div class="activity-dot" style="background:${colors[i % colors.length]}"></div>
+                    <div>
+                        <div class="activity-text"><strong>${b.name || 'User'}</strong> rented ${b.item || 'an item'} · ₹${parseFloat(b.price || 0).toLocaleString('en-IN')}</div>
+                        <div class="activity-time">${timeStr}</div>
+                    </div>
+                </div>`;
             });
-
-            // Add new item at top
-            const a = activities[actIdx % activities.length];
-            const newItem = document.createElement('div');
-            newItem.className = 'activity-item';
-            newItem.style.opacity = '0';
-            newItem.style.transition = 'opacity 0.4s';
-            newItem.innerHTML = `
-      <div class="activity-dot" style="background:${a[1]}"></div>
-      <div>
-        <div class="activity-text">${a[2]}</div>
-        <div class="activity-time">Just now</div>
-      </div>`;
-            feed.insertBefore(newItem, feed.firstChild);
-            setTimeout(() => newItem.style.opacity = '1', 50);
-
-            // Remove last
-            if (feed.children.length > 6) feed.removeChild(feed.lastChild);
-            actIdx++;
-
-            // Update active users with small random drift
-            const el = document.getElementById('activeUsers');
-            const current = parseInt(el.textContent.replace(',', ''));
-            const delta = Math.floor(Math.random() * 10) - 4;
-            el.textContent = (current + delta).toLocaleString('en-IN');
-
-        }, 4000);
+        }
+        
+        function populatePendingApprovals(delivery) {
+            const list = document.getElementById('pendingApprovalsList');
+            if (!list) return;
+            const pending = delivery.filter(d => (d.status || '').toLowerCase() === 'pending');
+            list.innerHTML = '';
+            if (!pending.length) {
+                list.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:10px;">No pending approvals.</div>';
+                return;
+            }
+            pending.slice(0, 3).forEach(d => {
+                const name = `${d.first_name || ''} ${d.last_name || ''}`.trim() || d.name || 'Partner';
+                list.innerHTML += `
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);margin-bottom:8px;">
+                    <div>
+                        <div style="font-size:12px;font-weight:600;">${name}</div>
+                        <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);">Partner onboarding request</div>
+                    </div>
+                    <div style="display:flex;gap:5px;">
+                        <button class="btn" style="background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.25);padding:4px 9px;font-size:11px;">✓</button>
+                        <button class="btn" style="background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2);padding:4px 9px;font-size:11px;">✕</button>
+                    </div>
+                </div>`;
+            });
+        }
     </script>
 </body>
 
