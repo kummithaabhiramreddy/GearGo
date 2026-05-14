@@ -75,26 +75,46 @@ app.get('/api/search', async (req, res) => {
 });
 
 app.get('/api/items', async (req, res) => {
-    const { storeId } = req.query;
+    const { storeId, cat } = req.query;
     try {
-        let sql = 'SELECT * FROM items';
+        let sql = 'SELECT * FROM items WHERE 1=1';
         const params = [];
-        if (storeId && storeId !== 'null') { sql += ' WHERE store_id = $1'; params.push(storeId); }
+        if (storeId && storeId !== 'null') { 
+            params.push(storeId);
+            sql += ` AND store_id = $${params.length}`; 
+        }
+        if (cat && cat !== 'all') {
+            params.push(cat);
+            sql += ` AND cat = $${params.length}`;
+        }
         sql += ' ORDER BY id DESC';
         const { rows } = await pool.query(sql, params);
         res.json(rows);
     } catch (err) { res.status(500).json([]); }
 });
 
-app.post('/api/book', async (req, res) => {
-    const { name, phone, email, item, price, days, address, signature } = req.body;
+app.post('/api/items', async (req, res) => {
+    const b = req.body;
     try {
         const { rows } = await pool.query(
-            'INSERT INTO rentals (name, phone, email, item, price, days, address, signature, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id',
-            [name, phone, email, item, price, days, address, signature, 'pending']
+            `INSERT INTO items (name, cat, type, price, image, emoji, description, info, user_uploaded, seller_phone, seller_email, condition, rating, reviews)
+             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) RETURNING id`,
+            [b.name, b.cat, b.type || 'single', b.price, b.image, b.emoji || '📦', b.desc, b.info || '', true, b.seller_phone, b.seller_email, b.condition, 0, 0]
+        );
+        res.json({ success: true, id: rows[0].id });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.post('/api/book', async (req, res) => {
+    const b = req.body;
+    try {
+        const { rows } = await pool.query(
+            `INSERT INTO rentals (name, item, phone, email, price, days, address, booking_date, booking_time, booking_day, payment_mode, signature, status, verified)
+             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) RETURNING id`,
+            [b.userName, b.itemName, b.userPhone, b.userEmail, b.price, b.days, b.address, b.bookingDate, b.bookingTime, b.bookingDay, b.paymentMode, b.signature, b.status || 'pending', b.verified || null]
         );
         const bookingId = rows[0].id;
-        if (email) await sendBookingEmail(email, name, item, bookingId, `₹${price}`);
+        // if (b.userEmail) await sendBookingEmail(b.userEmail, b.userName, b.itemName, bookingId, `₹${b.price}`);
         res.json({ success: true, bookingId });
     } catch (err) { res.status(500).json({ error: err.message }); }
 });

@@ -2141,19 +2141,29 @@
     async function initStats() {
       const isLocalHTML = window.location.protocol === 'file:';
       let riders = 3; // Default/Fallback
+      let itemCount = 300; // Default/Fallback
       
       if (!isLocalHTML) {
         try {
-          const res = await fetch('/api/delivery-boys');
-          if (res.ok) {
-            const data = await res.json();
+          const [ridersRes, itemsRes] = await Promise.all([
+            fetch('/api/delivery-boys'),
+            fetch('/api/items')
+          ]);
+          
+          if (ridersRes.ok) {
+            const data = await ridersRes.json();
             if (Array.isArray(data)) riders = data.length;
+          }
+          
+          if (itemsRes.ok) {
+            const data = await itemsRes.json();
+            if (Array.isArray(data)) itemCount = data.length;
           }
         } catch (e) { console.warn('Stats sync failed, using fallback.'); }
       }
 
       const stats = [
-        { id: 'ctr-items', target: 300, suffix: '+' },
+        { id: 'ctr-items', target: itemCount, suffix: itemCount > 50 ? '+' : '' },
         { id: 'ctr-riders', target: riders, suffix: '' },
         { id: 'ctr-time', target: 12, suffix: ' min' }
       ];

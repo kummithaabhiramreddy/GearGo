@@ -2279,20 +2279,31 @@
     // Global items array
     let ITEMS = [];
 
-    function fetchItems() {
-      // Load base inventory
-      let data = [...LOCAL_INVENTORY];
-
-      // Merge user uploaded items
-      const userItems = loadUserUploadedItems();
-      data = [...data, ...userItems];
-
-      ITEMS = data.map(item => ({
-        ...item,
-        img: item.image || item.img || ''
-      }));
-
-      filterItems();
+    async function fetchItems() {
+      try {
+        const res = await fetch(`${apiBase}/api/items`);
+        if (!res.ok) throw new Error('Failed to fetch items');
+        const data = await res.json();
+        
+        // Transform API data to match frontend expectations
+        ITEMS = data.map(item => ({
+          ...item,
+          img: item.image || item.img || '',
+          // Ensure rating and reviews have fallbacks
+          rating: parseFloat(item.rating) || 4.5,
+          reviews: parseInt(item.reviews) || 0
+        }));
+        
+        filterItems();
+      } catch (err) {
+        console.error('Fetch Error:', err);
+        // Fallback to local inventory if API fails
+        ITEMS = [...LOCAL_INVENTORY].map(item => ({
+          ...item,
+          img: item.image || item.img || ''
+        }));
+        filterItems();
+      }
     }
 
     // ════════════════════════════════════════
@@ -3125,54 +3136,68 @@
 
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onload = function () {
-        const newItem = {
-          id: 90000 + Date.now() % 100000,
+      reader.onload = async function () {
+        const itemData = {
           name: document.getElementById('listName').value,
           cat: document.getElementById('listCat').value,
-          type: 'single',
           price: parseInt(document.getElementById('listPrice').value) || 0,
           condition: document.getElementById('listCondition').value,
           seller_phone: document.getElementById('listPhone').value,
           seller_email: document.getElementById('listEmail').value,
           desc: document.getElementById('listInfo').value,
           image: reader.result,
-          img: reader.result,
-          emoji: '📦',
-          user_uploaded: true,
-          rating: 0,
-          reviews: 0,
-          listed_at: new Date().toISOString()
+          emoji: '📦'
         };
 
-        // Save to localStorage
         try {
-          const saved = localStorage.getItem('geargo_user_items');
-          const items = saved ? JSON.parse(saved) : [];
-          items.push(newItem);
-          localStorage.setItem('geargo_user_items', JSON.stringify(items));
-        } catch (err) { console.error('Failed to save item', err); }
+          const response = await fetch(`${apiBase}/api/items`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(itemData)
+          });
+          
+          if (!response.ok) throw new Error('Failed to list item');
+          const result = await response.json();
 
-        // Add to live ITEMS array immediately
-        ITEMS.push(newItem);
-        filterItems();
+          // Still save to local storage for hybrid access if needed, but primary is DB now
+          const newItem = { ...itemData, id: result.id, user_uploaded: true, rating: 0, reviews: 0 };
+          try {
+            const saved = localStorage.getItem('geargo_user_items');
+            const items = saved ? JSON.parse(saved) : [];
+            items.push(newItem);
+            localStorage.setItem('geargo_user_items', JSON.stringify(items));
+          } catch (err) { }
 
-        msg.textContent = '✅ Item listed! It is now visible in "User Listed" section.';
-        msg.className = 'success-msg show';
-
-        showToast("🎉 Your item is now live on GearGo!", "success");
-        btn.disabled = false;
-        btn.textContent = 'Submit Listing';
-
-        setTimeout(() => {
-          closeListModal();
-          // Switch to uploaded filter to show the item
-          currentFilter = 'uploaded';
-          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-          const uploadedBtn = Array.from(document.querySelectorAll('.filter-btn')).find(b => b.textContent.includes('User Listed'));
-          if (uploadedBtn) uploadedBtn.classList.add('active');
+          // Add to live ITEMS array immediately
+          ITEMS.unshift(newItem);
           filterItems();
-        }, 1500);
+
+          msg.textContent = '✅ Item listed! It is now visible in "User Listed" section.';
+          msg.className = 'success-msg show';
+          showToast("🎉 Your item is now live on GearGo!", "success");
+        } catch (err) {
+          console.error('Listing Error:', err);
+          showToast("❌ Server error. Item saved locally.", "error");
+          // Fallback local save
+          const tempId = 90000 + Date.now() % 100000;
+          const newItem = { ...itemData, id: tempId, user_uploaded: true, rating: 0, reviews: 0 };
+          const saved = JSON.parse(localStorage.getItem('geargo_user_items') || '[]');
+          saved.push(newItem);
+          localStorage.setItem('geargo_user_items', JSON.stringify(saved));
+          ITEMS.unshift(newItem);
+          filterItems();
+        } finally {
+          btn.disabled = false;
+          btn.textContent = 'Submit Listing';
+          setTimeout(() => {
+            closeListModal();
+            currentFilter = 'uploaded';
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            const uploadedBtn = Array.from(document.querySelectorAll('.filter-btn')).find(b => b.textContent.includes('User Listed'));
+            if (uploadedBtn) uploadedBtn.classList.add('active');
+            filterItems();
+          }, 1500);
+        }
       };
     });
 
