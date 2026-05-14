@@ -223,32 +223,24 @@ app.delete('/api/delivery-boys/:id', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// Get all unique users from rentals (name, email, phone)
+// Get all unique users from rentals (prefer email, fallback to phone)
 app.get('/api/users', async (_req, res) => {
     try {
         const { rows } = await pool.query(
-            `SELECT DISTINCT ON (email) id, name, email, phone, address, created_at
-             FROM rentals WHERE email IS NOT NULL ORDER BY email, id DESC`
+            `SELECT DISTINCT ON (COALESCE(email, phone)) id, name, email, phone, address, created_at
+             FROM rentals ORDER BY COALESCE(email, phone), id DESC`
         );
         res.json(rows);
-    } catch (err) {
-        // Fallback: return unique names/phones from rentals
-        try {
-            const { rows } = await pool.query(
-                'SELECT id, name, phone, email, address FROM rentals ORDER BY id DESC'
-            );
-            res.json(rows);
-        } catch (e) { res.status(500).json([]); }
-    }
+    } catch (err) { res.status(500).json([]); }
 });
 
 // Admin summary for all tables
 app.get('/api/admin-summary', async (_req, res) => {
     try {
         const [r, d, rev, it] = await Promise.all([
-            pool.query('SELECT COUNT(*) as total, SUM(price::numeric) as revenue, COUNT(*) FILTER (WHERE status=\'pending\') as pending FROM rentals'),
+            pool.query('SELECT COUNT(*) as total, SUM(NULLIF(regexp_replace(price::text, \'[^0-9.]\', \'\', \'g\'), \'\')::numeric) as revenue, COUNT(*) FILTER (WHERE status=\'pending\') as pending FROM rentals'),
             pool.query('SELECT COUNT(*) as total, COUNT(*) FILTER (WHERE status=\'active\') as active, COUNT(*) FILTER (WHERE status=\'pending\') as pending FROM delivery_boys'),
-            pool.query('SELECT COUNT(*) as total, COALESCE(AVG(rating::numeric),0) as avg_rating FROM reviews'),
+            pool.query('SELECT COUNT(*) as total, COALESCE(AVG(NULLIF(regexp_replace(rating::text, \'[^0-9.]\', \'\', \'g\'), \'\')::numeric),0) as avg_rating FROM reviews'),
             pool.query('SELECT COUNT(*) as total FROM items'),
         ]);
         res.json({
