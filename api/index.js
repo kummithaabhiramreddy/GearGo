@@ -25,13 +25,13 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // ── STATIC WEBSITE SERVING ──
 // 1. Serve files from public folder
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '../public')));
 
 // 2. Handle extension-less URLs (e.g. /search -> search.html)
 app.get('/:page', (req, res, next) => {
     const page = req.params.page;
     if (page.includes('.') || page.startsWith('api')) return next();
-    const filePath = path.join(__dirname, 'public', `${page}.html`);
+    const filePath = path.join(__dirname, '../public', `${page}.html`);
     res.sendFile(filePath, (err) => {
         if (err) next();
     });
@@ -58,6 +58,22 @@ async function sendBookingEmail(toEmail, userName, itemName, bookingId, totalPri
 
 // ── API ROUTES ──
 app.get('/api/health', (req, res) => res.json({ status: 'ok', mode: 'PostgreSQL' }));
+
+app.get('/api/stats', async (_req, res) => {
+    try {
+        const [itemsRes, ridersRes] = await Promise.all([
+            pool.query('SELECT COUNT(*) FROM items'),
+            pool.query('SELECT COUNT(*) FROM delivery_boys'),
+        ]);
+        res.json({
+            itemsNearby: parseInt(itemsRes.rows[0].count) || 300,
+            deliveryBoys: parseInt(ridersRes.rows[0].count) || 3,
+            avgMins: 12,
+        });
+    } catch (err) {
+        res.json({ itemsNearby: 300, deliveryBoys: 3, avgMins: 12 });
+    }
+});
 
 app.get('/api/search', async (req, res) => {
     const query = (req.query.q || '').toLowerCase();
@@ -165,7 +181,7 @@ app.post('/api/reviews', async (req, res) => {
 
 // Root fallback (Home page)
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, '../public', 'index.html'));
 });
 
 // Export the app for Vercel

@@ -1,4 +1,4 @@
-{
+﻿{
   "name": "geargo",
   "version": "1.0.0",
   "description": "Gear Go - A gaming rental platform",
@@ -6,10 +6,10 @@
     "type": "git",
     "url": "git+https://github.com/kummithaabhiramreddy/Gear-Go.git"
   },
-  "main": "index.js",
+  "main": "api/index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "npx nodemon index.js"
+    "start": "node api/index.js",
+    "dev": "npx nodemon api/index.js"
   },
   "keywords": [],
   "author": "",
@@ -25,3 +25,4 @@
     "twilio": "^4.19.0"
   }
 }
+

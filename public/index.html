@@ -1,21 +1,21 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GearGo – Rent Anything Near You</title>
+  <title>GearGo â€“ Rent Anything Near You</title>
   <link
     href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap"
     rel="stylesheet" />
 
-  <!-- Google Identity Services SDK — Real Google OAuth -->
+  <!-- Google Identity Services SDK â€” Real Google OAuth -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 
   <style>
-    /* ════════════════════════════════════════
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      ALL STYLES FROM PAGE 1
-  ════════════════════════════════════════ */
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     :root {
       --bg: #0a0a0f;
       --surface: #13131a;
@@ -533,9 +533,9 @@
       margin-top: 10px;
     }
 
-    /* ════════════════════════════════════════
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      AUTH MODAL BASE
-  ════════════════════════════════════════ */
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -1279,7 +1279,7 @@
   <div class="redirect-overlay" id="redirectOverlay">
     <div class="redirect-logo">Gear<span>Go</span></div>
     <div class="redirect-spinner"></div>
-    <div class="redirect-msg" id="redirectMsg">Sign in successful — loading Search page…</div>
+    <div class="redirect-msg" id="redirectMsg">Sign in successful â€” loading Search pageâ€¦</div>
     <div class="redirect-bar-track">
       <div class="redirect-bar-fill" id="redirectBar"></div>
     </div>
@@ -1317,7 +1317,7 @@
   <div id="g_id_onload" data-client_id="440675514682-lng0e1v467junk79btos6fvdbbuht0jv.apps.googleusercontent.com"
     data-callback="onGoogleSignInCallback" data-auto_prompt="false"></div>
 
-  <!-- NAV (Page 1 style — hamburger) -->
+  <!-- NAV (Page 1 style â€” hamburger) -->
   <nav>
     <div class="logo" onclick="window.location.href='index.html'">Gear<span>Go</span></div>
     <div class="nav-right">
@@ -1337,27 +1337,27 @@
       <!-- Hamburger drawer (Page 1 style) -->
       <div class="hero-nav-drawer" id="heroNavDrawer">
         <div class="hero-nav-inner">
-          <a class="hero-nav-link" onclick="window.location.href='index.html'"><span class="link-icon">🏠</span>
+          <a class="hero-nav-link" onclick="window.location.href='index.html'"><span class="link-icon">ðŸ </span>
             Home</a>
-          <a class="hero-nav-link" onclick="window.location.href='Reviewpage.html'"><span class="link-icon">⭐</span>
+          <a class="hero-nav-link" onclick="window.location.href='reviews.html'"><span class="link-icon">â­</span>
             Reviews</a>
-          <a class="hero-nav-link" onclick="window.location.href='Dashboard.html'"><span class="link-icon">📊</span>
+          <a class="hero-nav-link" onclick="window.location.href='dashboard.html'"><span class="link-icon">ðŸ“Š</span>
             Dashboard</a>
-          <a class="hero-nav-link" onclick="window.location.href='Delivery boy registation form.html'"><span
-              class="link-icon">🛵</span> Delivery Boy Register</a>
+          <a class="hero-nav-link" onclick="window.location.href='delivery-partner.html'"><span
+              class="link-icon">ðŸ›µ</span> Delivery Boy Register</a>
         </div>
       </div>
       <div class="drawer-divider" id="drawerDivider"></div>
 
       <div class="hero-badge"><span class="dot-live"></span> Live near you</div>
       <h1>Rent <em>anything</em> within minutes.</h1>
-      <p class="hero-sub">Sports gear, games, bikes, camping kits — borrow from neighbours. A delivery boy picks it up
+      <p class="hero-sub">Sports gear, games, bikes, camping kits â€” borrow from neighbours. A delivery boy picks it up
         and drops it at your door.</p>
       <div class="hero-actions">
-        <button class="btn btn-primary" id="heroGetStarted" onclick="openSignup()">Get Started 📍</button>
+        <button class="btn btn-primary" id="heroGetStarted" onclick="openSignup()">Get Started ðŸ“</button>
         <button class="btn btn-ghost" onclick="showComingSoon('heroBanner')">Download App</button>
       </div>
-      <div class="coming-soon-banner" id="heroBanner">🚀 Coming Soon!</div>
+      <div class="coming-soon-banner" id="heroBanner">ðŸš€ Coming Soon!</div>
       <div class="hero-stats">
         <div>
           <div class="stat-num" id="ctr-items">0</div>
@@ -1385,22 +1385,22 @@
             stroke-dasharray="6 4" />
         </svg>
         <div class="map-pin pin-user">
-          <div class="pin-icon">🏠</div>
+          <div class="pin-icon">ðŸ </div>
           <div class="pin-label">You</div>
         </div>
         <div class="map-pin pin-item1">
-          <div class="pin-icon">⚽</div>
+          <div class="pin-icon">âš½</div>
           <div class="pin-label">0.4 km</div>
         </div>
         <div class="map-pin pin-item2">
-          <div class="pin-icon">🎮</div>
+          <div class="pin-icon">ðŸŽ®</div>
           <div class="pin-label">1.1 km</div>
         </div>
         <div class="map-pin pin-delivery">
-          <div class="pin-icon">🛵</div>
-          <div class="pin-label">Raju · En Route</div>
+          <div class="pin-icon">ðŸ›µ</div>
+          <div class="pin-label">Raju Â· En Route</div>
         </div>
-        <div class="distance-badge">⚡ Nearest: 15-20 km</div>
+        <div class="distance-badge">âš¡ Nearest: 15-20 km</div>
       </div>
     </div>
 
@@ -1417,22 +1417,22 @@
             stroke-dasharray="6 4" />
         </svg>
         <div class="map-pin pin-user">
-          <div class="pin-icon">🏠</div>
+          <div class="pin-icon">ðŸ </div>
           <div class="pin-label">You</div>
         </div>
         <div class="map-pin pin-item1">
-          <div class="pin-icon">⚽</div>
+          <div class="pin-icon">âš½</div>
           <div class="pin-label">0.4 km</div>
         </div>
         <div class="map-pin pin-item2">
-          <div class="pin-icon">🎮</div>
+          <div class="pin-icon">ðŸŽ®</div>
           <div class="pin-label">1.1 km</div>
         </div>
         <div class="map-pin pin-delivery">
-          <div class="pin-icon">🛵</div>
-          <div class="pin-label">Raju · En Route</div>
+          <div class="pin-icon">ðŸ›µ</div>
+          <div class="pin-label">Raju Â· En Route</div>
         </div>
-        <div class="distance-badge">⚡ Nearest: 15-20 km</div>
+        <div class="distance-badge">âš¡ Nearest: 15-20 km</div>
       </div>
     </div>
   </section>
@@ -1440,33 +1440,33 @@
 
   <!-- DOWNLOAD STRIP -->
   <section class="download-strip">
-    <button class="dl-btn" onclick="showComingSoon('footerBanner')">📲 Download the App</button>
-    <div class="coming-soon-banner" id="footerBanner">🚀 Coming Soon!</div>
-    <div class="dl-sub">iOS &amp; Android · Free to download · Available soon</div>
+    <button class="dl-btn" onclick="showComingSoon('footerBanner')">ðŸ“² Download the App</button>
+    <div class="coming-soon-banner" id="footerBanner">ðŸš€ Coming Soon!</div>
+    <div class="dl-sub">iOS &amp; Android Â· Free to download Â· Available soon</div>
   </section>
   <br><br>
 
   <footer>
     <div class="logo" style="font-size:1.1rem">Gear<span style="color:var(--accent)">Go</span></div>
     <div style="display:flex;gap:18px">
-      <a href="Terms&conditions.html" style="color:var(--muted);text-decoration:none">T&amp;C</a>
-      <a href="Privacy.html" style="color:var(--muted);text-decoration:none">Privacy</a>
-      <a href="Support.html" style="color:var(--muted);text-decoration:none">Support</a>
+      <a href="terms.html" style="color:var(--muted);text-decoration:none">T&amp;C</a>
+      <a href="privacy.html" style="color:var(--muted);text-decoration:none">Privacy</a>
+      <a href="support.html" style="color:var(--muted);text-decoration:none">Support</a>
     </div>
-    <div>© 2026 GearGo · Rent smart, play more.</div>
+    <div>Â© 2026 GearGo Â· Rent smart, play more.</div>
   </footer>
 
-  <!-- ══════════════════════════════════════
+  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      SIGNUP MODAL
-════════════════════════════════════════ -->
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
   <div class="modal-overlay" id="signupOverlay">
     <div class="modal">
-      <button class="modal-close" onclick="closeSignup()">✕</button>
-      <div class="modal-eyebrow green">✦ STEP 1 — START HERE</div>
+      <button class="modal-close" onclick="closeSignup()">âœ•</button>
+      <div class="modal-eyebrow green">âœ¦ STEP 1 â€” START HERE</div>
       <div class="modal-title">Create Account</div>
       <div class="modal-sub">Sign up to unlock rentals, track deliveries, and list your own items on GearGo.</div>
       <div class="dup-bar" id="dupBar">
-        ⚠️ This email is already registered. <a onclick="closeSignup();setTimeout(openSignin,220)">Sign In instead →</a>
+        âš ï¸ This email is already registered. <a onclick="closeSignup();setTimeout(openSignin,220)">Sign In instead â†’</a>
       </div>
       <div class="form-group">
         <label>FULL NAME</label>
@@ -1495,18 +1495,18 @@
           <div class="strength-label" id="strengthLabel" style="color:var(--muted)"></div>
         </div>
       </div>
-      <button class="modal-submit submit-green" onclick="handleSignup()">Create My Account 🚀</button>
-      <div class="modal-note">Already have an account? <a onclick="switchToSignin()">Sign In →</a></div>
+      <button class="modal-submit submit-green" onclick="handleSignup()">Create My Account ðŸš€</button>
+      <div class="modal-note">Already have an account? <a onclick="switchToSignin()">Sign In â†’</a></div>
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════
+  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      SIGNIN MODAL
-════════════════════════════════════════ -->
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
   <div class="modal-overlay" id="signinOverlay">
     <div class="modal signin-modal">
-      <button class="modal-close" onclick="closeSignin()">✕</button>
-      <div class="modal-eyebrow yellow">✦ WELCOME BACK</div>
+      <button class="modal-close" onclick="closeSignin()">âœ•</button>
+      <div class="modal-eyebrow yellow">âœ¦ WELCOME BACK</div>
       <div class="modal-title">Sign In</div>
       <div class="modal-sub">Access your rentals, live delivery tracking and saved items.</div>
       <div class="form-group">
@@ -1526,7 +1526,7 @@
           style="font-size:0.78rem;color:var(--accent3);cursor:pointer;text-decoration:none;font-weight:600;">Forgot
           Password?</a>
       </div>
-      <button class="modal-submit submit-yellow" onclick="handleSignin()">Sign In to GearGo →</button>
+      <button class="modal-submit submit-yellow" onclick="handleSignin()">Sign In to GearGo â†’</button>
 
       <div class="separator">or</div>
       <button class="btn-google" onclick="handleGoogleAuth()">
@@ -1542,18 +1542,18 @@
         </svg>
         <span>Continue with Google</span>
       </button>
-      <div class="gauth-notice" id="gauthNotice">⚙️ Set your Google Client ID to enable Google Sign-In.</div>
+      <div class="gauth-notice" id="gauthNotice">âš™ï¸ Set your Google Client ID to enable Google Sign-In.</div>
 
-      <div class="modal-note">No account yet? <a onclick="switchToSignup()">Create one →</a></div>
+      <div class="modal-note">No account yet? <a onclick="switchToSignup()">Create one â†’</a></div>
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════
+  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      FORGOT PASSWORD MODAL (3 steps)
-════════════════════════════════════════ -->
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
   <div class="modal-overlay" id="fpOverlay">
     <div class="modal fp-modal">
-      <button class="modal-close" onclick="closeFP()">✕</button>
+      <button class="modal-close" onclick="closeFP()">âœ•</button>
       <div class="step-indicator">
         <div class="step-dot" id="fpDot1">1</div>
         <div class="step-line" id="fpLine1"></div>
@@ -1564,7 +1564,7 @@
 
       <!-- Step 1: Email/Phone -->
       <div class="fp-step active" id="fpStep1">
-        <div class="modal-eyebrow pink">✦ FORGOT PASSWORD · STEP 1</div>
+        <div class="modal-eyebrow pink">âœ¦ FORGOT PASSWORD Â· STEP 1</div>
         <div class="modal-title" style="font-size:1.4rem;">Find Your Account</div>
         <div class="modal-sub">Enter your registered email address to receive a 6-digit reset code.</div>
         <div class="form-group">
@@ -1573,21 +1573,21 @@
             oninput="clearFieldState('fp-email','fp-email-msg')" />
           <div class="field-msg" id="fp-email-msg"></div>
         </div>
-        <button class="modal-submit submit-pink" onclick="handleFPStep1()">Send Reset Code →</button>
-        <div class="modal-note">Remember your password? <a onclick="closeFP();setTimeout(openSignin,220)">Sign In →</a>
+        <button class="modal-submit submit-pink" onclick="handleFPStep1()">Send Reset Code â†’</button>
+        <div class="modal-note">Remember your password? <a onclick="closeFP();setTimeout(openSignin,220)">Sign In â†’</a>
         </div>
       </div>
 
       <!-- Step 2: Code -->
       <div class="fp-step" id="fpStep2">
-        <div class="modal-eyebrow pink">✦ FORGOT PASSWORD · STEP 2</div>
+        <div class="modal-eyebrow pink">âœ¦ FORGOT PASSWORD Â· STEP 2</div>
         <div class="modal-title" style="font-size:1.4rem;">Check Your Inbox</div>
         <div class="modal-sub">A reset code has been sent to your registered contact.</div>
         <div class="email-preview" id="fpEmailPreview" style="display:none;">
-          <div class="ep-to">To: <span id="fpEmailDisplay">—</span></div>
+          <div class="ep-to">To: <span id="fpEmailDisplay">â€”</span></div>
           <div class="ep-body">Hi there! Here is your GearGo password reset code. It expires in 10 minutes.</div>
-          <div class="ep-code" id="fpCodeDisplay" style="display:none;">——</div>
-          <div class="ep-note" id="fpSimMsg">⚠️ Real service is active. Check your inbox/messages.</div>
+          <div class="ep-code" id="fpCodeDisplay" style="display:none;">â€”â€”</div>
+          <div class="ep-note" id="fpSimMsg">âš ï¸ Real service is active. Check your inbox/messages.</div>
         </div>
         <div class="form-group">
           <label>ENTER 6-DIGIT CODE</label>
@@ -1595,14 +1595,14 @@
             oninput="this.value=this.value.replace(/\D/g,'');clearFieldState('fp-code','fp-code-msg')" />
           <div class="field-msg" id="fp-code-msg"></div>
         </div>
-        <button class="modal-submit submit-pink" onclick="handleFPStep2()">Verify Code →</button>
-        <div class="modal-note"><a onclick="goFPStep(1)" style="color:var(--muted)">← Back</a> &nbsp;·&nbsp; <a
+        <button class="modal-submit submit-pink" onclick="handleFPStep2()">Verify Code â†’</button>
+        <div class="modal-note"><a onclick="goFPStep(1)" style="color:var(--muted)">â† Back</a> &nbsp;Â·&nbsp; <a
             onclick="resendCode()" style="color:var(--accent3)">Resend code</a></div>
       </div>
 
       <!-- Step 3: New password -->
       <div class="fp-step" id="fpStep3">
-        <div class="modal-eyebrow pink">✦ FORGOT PASSWORD · STEP 3</div>
+        <div class="modal-eyebrow pink">âœ¦ FORGOT PASSWORD Â· STEP 3</div>
         <div class="modal-title" style="font-size:1.4rem;">Set New Password</div>
         <div class="modal-sub">Create a strong new password for your account.</div>
         <div class="form-group">
@@ -1622,7 +1622,7 @@
             oninput="clearFieldState('fp-confirmpass','fp-confirmpass-msg')" />
           <div class="field-msg" id="fp-confirmpass-msg"></div>
         </div>
-        <button class="modal-submit submit-pink" onclick="handleFPStep3()">Reset Password & Sign In →</button>
+        <button class="modal-submit submit-pink" onclick="handleFPStep3()">Reset Password & Sign In â†’</button>
       </div>
     </div>
   </div>
@@ -1631,23 +1631,23 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    /* ─────────────────────────────────────────────────
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
        CONFIG
-    ───────────────────────────────────────────────── */
+    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     const GOOGLE_CLIENT_ID = '440675514682-lng0e1v467junk79btos6fvdbbuht0jv.apps.googleusercontent.com';
 
-    /* ─────────────────────────────────────────────────
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
        STORAGE
-    ───────────────────────────────────────────────── */
+    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     const STORE_KEY = 'geargo_accounts_v2';
     function getAllAccounts() { try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch (e) { return {}; } }
     function saveAllAccounts(obj) { localStorage.setItem(STORE_KEY, JSON.stringify(obj)); }
     function getAccountByEmail(email) { return getAllAccounts()[email.toLowerCase().trim()] || null; }
     function upsertAccount(data) { const all = getAllAccounts(); all[data.email.toLowerCase().trim()] = data; saveAllAccounts(all); }
 
-    /* ─────────────────────────────────────────────────
-       PAGE LOAD — STATS COUNTER ANIMATION
-    ───────────────────────────────────────────────── */
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+       PAGE LOAD â€” STATS COUNTER ANIMATION
+    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     window.addEventListener('load', async () => {
       if (GOOGLE_CLIENT_ID === '' || GOOGLE_CLIENT_ID.includes('YOUR_')) {
         document.getElementById('gauthNotice').classList.add('show');
@@ -1681,9 +1681,9 @@
       }, 16);
     }
 
-    /* ─────────────────────────────────────────────────
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
        HAMBURGER MENU (from Page 1)
-    ───────────────────────────────────────────────── */
+    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     let menuOpen = false;
     function toggleMenu() {
       menuOpen = !menuOpen;
@@ -1700,9 +1700,9 @@
       }
     });
 
-    /* ─────────────────────────────────────────────────
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
        COMING SOON
-    ───────────────────────────────────────────────── */
+    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     let bannerTimer = null;
     function showComingSoon(id) {
       document.querySelectorAll('.coming-soon-banner').forEach(b => b.classList.remove('show'));
@@ -1711,9 +1711,9 @@
       bannerTimer = setTimeout(() => document.getElementById(id).classList.remove('show'), 2000);
     }
 
-    /* ─────────────────────────────────────────────────
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
        FIELD STATE HELPERS
-    ───────────────────────────────────────────────── */
+    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     function setFieldState(inputId, msgId, type, message) {
       const inp = document.getElementById(inputId);
       const msg = document.getElementById(msgId);
@@ -1722,10 +1722,10 @@
       if (msg) msg.classList.remove('show', 'err', 'ok');
       if (type === 'error') {
         inp.classList.add('input-error');
-        if (msg) { msg.textContent = '✖ ' + message; msg.classList.add('show', 'err'); }
+        if (msg) { msg.textContent = 'âœ– ' + message; msg.classList.add('show', 'err'); }
       } else if (type === 'ok') {
         inp.classList.add('input-ok');
-        if (msg && message) { msg.textContent = '✔ ' + message; msg.classList.add('show', 'ok'); }
+        if (msg && message) { msg.textContent = 'âœ” ' + message; msg.classList.add('show', 'ok'); }
       }
     }
     function clearFieldState(inputId, msgId) {
@@ -1736,9 +1736,9 @@
     }
     function clearSuField(id) { clearFieldState(id, null); }
 
-    /* ─────────────────────────────────────────────────
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
        PASSWORD STRENGTH
-    ───────────────────────────────────────────────── */
+    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     function strengthScore(pw) {
       let score = 0;
       if (pw.length >= 6) score++;
@@ -1773,9 +1773,9 @@
       document.getElementById('fpStrengthLabel').style.color = color;
     }
 
-    /* ─────────────────────────────────────────────────
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
        SIGNUP
-    ───────────────────────────────────────────────── */
+    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     function onSuEmailInput() {
       const email = document.getElementById('su-email').value.trim().toLowerCase();
       const dup = document.getElementById('dupBar');
@@ -1804,22 +1804,22 @@
       const addr = document.getElementById('su-address').value.trim();
       const e = document.getElementById('su-email').value.trim();
       const pw = document.getElementById('su-pass').value;
-      if (!n || !ph || !addr || !e || !pw) { showToast('⚠️ Please fill in all fields', true); return; }
-      if (pw.length < 6) { showToast('⚠️ Password must be at least 6 characters', true); return; }
+      if (!n || !ph || !addr || !e || !pw) { showToast('âš ï¸ Please fill in all fields', true); return; }
+      if (pw.length < 6) { showToast('âš ï¸ Password must be at least 6 characters', true); return; }
       if (getAccountByEmail(e)) {
         document.getElementById('dupBar').classList.add('show');
         setFieldState('su-email', 'su-email-msg', 'error', 'Email already registered');
-        showToast('⚠️ That email is already linked to an account', true); return;
+        showToast('âš ï¸ That email is already linked to an account', true); return;
       }
       upsertAccount({ name: n, phone: ph, address: addr, email: e.toLowerCase(), password: pw });
       closeSignup();
-      showToast('✅ Account created! You can now Sign In.');
+      showToast('âœ… Account created! You can now Sign In.');
       setTimeout(openSignin, 1000);
     }
 
-    /* ─────────────────────────────────────────────────
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
        SIGNIN
-    ───────────────────────────────────────────────── */
+    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     function openSignin() {
       clearFieldState('si-email', 'si-email-msg');
       clearFieldState('si-pass', 'si-pass-msg');
@@ -1836,16 +1836,16 @@
       const pw = document.getElementById('si-pass').value;
       clearFieldState('si-email', 'si-email-msg');
       clearFieldState('si-pass', 'si-pass-msg');
-      if (!e || !pw) { showToast('⚠️ Enter your email and password', true); return; }
+      if (!e || !pw) { showToast('âš ï¸ Enter your email and password', true); return; }
       const acc = getAccountByEmail(e);
       if (!acc) {
         setFieldState('si-email', 'si-email-msg', 'error', 'No account found for this email');
-        showToast('❌ Email not registered — create an account first', true); return;
+        showToast('âŒ Email not registered â€” create an account first', true); return;
       }
       if (pw !== acc.password) {
-        setFieldState('si-email', 'si-email-msg', 'ok', 'Email looks good ✓');
-        setFieldState('si-pass', 'si-pass-msg', 'error', 'Wrong password — try again');
-        showToast('❌ Incorrect password', true); return;
+        setFieldState('si-email', 'si-email-msg', 'ok', 'Email looks good âœ“');
+        setFieldState('si-pass', 'si-pass-msg', 'error', 'Wrong password â€” try again');
+        showToast('âŒ Incorrect password', true); return;
       }
       localStorage.setItem('currentUser', JSON.stringify(acc));
       closeSignin();
@@ -1859,26 +1859,26 @@
       setTimeout(() => { checkGPSAndRedirect(); }, 800);
     }
 
-    /* ─────────────────────────────────────────────────
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
        GPS VERIFICATION (from Page 2)
-    ───────────────────────────────────────────────── */
+    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     function checkGPSAndRedirect() {
       const msg = document.getElementById('redirectMsg');
       const bar = document.getElementById('redirectBar');
 
       if (!navigator.geolocation) {
-        msg.innerHTML = '<span style="color:var(--accent3)">❌ GPS not supported.</span><br>Redirecting...';
-        setTimeout(() => { window.location.href = 'Search page.html'; }, 1500);
+        msg.innerHTML = '<span style="color:var(--accent3)">âŒ GPS not supported.</span><br>Redirecting...';
+        setTimeout(() => { window.location.href = 'search.html'; }, 1500);
         return;
       }
 
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          msg.innerHTML = '<span style="color:var(--accent2)">✅ GPS Location Active</span><br>Opening Search page...';
+          msg.innerHTML = '<span style="color:var(--accent2)">âœ… GPS Location Active</span><br>Opening Search page...';
           bar.style.animation = 'none';
           bar.style.width = '100%';
           bar.style.background = 'var(--accent2)';
-          setTimeout(() => { window.location.href = 'Search page.html'; }, 1000);
+          setTimeout(() => { window.location.href = 'search.html'; }, 1000);
         },
         (err) => {
           let reason = "Please turn on GPS";
@@ -1887,7 +1887,7 @@
           else if (err.code === 3) reason = "GPS check timed out";
           msg.innerHTML = `
         <div style="margin-top:10px;text-align:center;">
-          <span style="color:var(--accent3);font-weight:800;font-size:1.2rem;">📍 GPS REQUIRED</span><br>
+          <span style="color:var(--accent3);font-weight:800;font-size:1.2rem;">ðŸ“ GPS REQUIRED</span><br>
           <span style="color:#fff;font-size:0.85rem;">${reason}</span><br>
           <button onclick="checkGPSAndRedirect()" class="btn btn-primary" style="margin-top:15px;padding:8px 20px;">Retry GPS Check</button>
         </div>`;
@@ -1898,9 +1898,9 @@
       );
     }
 
-    /* ─────────────────────────────────────────────────
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
        GOOGLE OAUTH (from Page 2)
-    ───────────────────────────────────────────────── */
+    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     let _googleWaitTimer = null;
 
     function initGoogleAuth() {
@@ -1923,7 +1923,7 @@
         setTimeout(() => {
           openSignin();
           document.getElementById('gauthNotice').classList.add('show');
-          showToast('⚙️ Set your Google Client ID to enable Google Sign-In', true);
+          showToast('âš™ï¸ Set your Google Client ID to enable Google Sign-In', true);
         }, 220);
         return;
       }
@@ -1936,7 +1936,7 @@
             if (reason === 'suppressed_by_user') {
               triggerGoogleRedirectFlow();
             } else {
-              showToast('⚠️ Google sign-in not available: ' + reason, true);
+              showToast('âš ï¸ Google sign-in not available: ' + reason, true);
               openSignin();
             }
           } else if (notification.isSkippedMoment() || notification.isDismissedMoment()) {
@@ -1947,7 +1947,7 @@
         _googleWaitTimer = setTimeout(() => {
           if (document.getElementById('googleWaitOverlay').classList.contains('show')) {
             cancelGoogleWait();
-            showToast('⚠️ Google sign-in timed out. Please try again.', true);
+            showToast('âš ï¸ Google sign-in timed out. Please try again.', true);
             openSignin();
           }
         }, 60000);
@@ -1961,16 +1961,16 @@
           client_id: GOOGLE_CLIENT_ID,
           scope: 'openid email profile',
           callback: (tokenResponse) => {
-            if (tokenResponse.error) { showToast('❌ Google sign-in failed: ' + tokenResponse.error, true); openSignin(); return; }
+            if (tokenResponse.error) { showToast('âŒ Google sign-in failed: ' + tokenResponse.error, true); openSignin(); return; }
             fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
               headers: { Authorization: 'Bearer ' + tokenResponse.access_token }
             }).then(r => r.json()).then(profile => onGoogleProfileReceived(profile))
-              .catch(() => { showToast('❌ Could not fetch Google profile', true); openSignin(); });
+              .catch(() => { showToast('âŒ Could not fetch Google profile', true); openSignin(); });
           },
         });
         document.getElementById('googleWaitOverlay').classList.add('show');
         tokenClient.requestAccessToken({ prompt: 'select_account' });
-      } catch (e) { showToast('❌ Google OAuth error: ' + e.message, true); openSignin(); }
+      } catch (e) { showToast('âŒ Google OAuth error: ' + e.message, true); openSignin(); }
     }
 
     function onGoogleSignInCallback(response) {
@@ -1978,7 +1978,7 @@
       try {
         const payload = parseJwt(response.credential);
         onGoogleProfileReceived({ name: payload.name, email: payload.email, picture: payload.picture, sub: payload.sub });
-      } catch (e) { showToast('❌ Could not read Google profile', true); openSignin(); }
+      } catch (e) { showToast('âŒ Could not read Google profile', true); openSignin(); }
     }
 
     function onGoogleProfileReceived(profile) {
@@ -2020,9 +2020,9 @@
       return JSON.parse(jsonPayload);
     }
 
-    /* ─────────────────────────────────────────────────
-       FORGOT PASSWORD — 3-step flow (Page 2 server OTP)
-    ───────────────────────────────────────────────── */
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+       FORGOT PASSWORD â€” 3-step flow (Page 2 server OTP)
+    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     let _fpEmail = '', _fpCode = '';
 
     function openForgotPassword() {
@@ -2055,10 +2055,10 @@
     async function handleFPStep1() {
       const e = document.getElementById('fp-email').value.trim();
       clearFieldState('fp-email', 'fp-email-msg');
-      if (!e) { showToast('⚠️ Enter your registered email', true); return; }
+      if (!e) { showToast('âš ï¸ Enter your registered email', true); return; }
 
       _fpEmail = e.toLowerCase().trim();
-      showToast('⏳ Sending reset code...');
+      showToast('â³ Sending reset code...');
 
       try {
         if (window.location.protocol === 'file:') {
@@ -2086,19 +2086,19 @@
           if (data.simulated) {
             document.getElementById('fpCodeDisplay').style.display = 'block';
             document.getElementById('fpCodeDisplay').textContent = data.otp;
-            document.getElementById('fpSimMsg').textContent = '⚠️ Email credentials not set in server. Code shown above.';
-            showToast('📧 Code generated (Simulated)');
+            document.getElementById('fpSimMsg').textContent = 'âš ï¸ Email credentials not set in server. Code shown above.';
+            showToast('ðŸ“§ Code generated (Simulated)');
           } else {
             document.getElementById('fpCodeDisplay').style.display = 'none';
-            document.getElementById('fpSimMsg').textContent = '✅ Reset code sent to your email. Check your inbox.';
-            showToast('📧 Reset code sent to your email!');
+            document.getElementById('fpSimMsg').textContent = 'âœ… Reset code sent to your email. Check your inbox.';
+            showToast('ðŸ“§ Reset code sent to your email!');
           }
           goFPStep(2);
         } else {
-          showToast('❌ ' + (data.message || 'Failed to send OTP'), true);
+          showToast('âŒ ' + (data.message || 'Failed to send OTP'), true);
         }
       } catch (err) {
-        showToast('❌ ' + err.message, true);
+        showToast('âŒ ' + err.message, true);
         console.error('OTP Error:', err);
       }
     }
@@ -2110,9 +2110,9 @@
       clearFieldState('fp-code', 'fp-code-msg');
       if (!entered || entered.length < 6) {
         setFieldState('fp-code', 'fp-code-msg', 'error', 'Enter the full 6-digit code');
-        showToast('⚠️ Please enter the 6-digit code', true); return;
+        showToast('âš ï¸ Please enter the 6-digit code', true); return;
       }
-      showToast('⏳ Verifying code...');
+      showToast('â³ Verifying code...');
       try {
         const res = await fetch('http://localhost:3005/api/auth-flow/confirm-otp', {
           method: 'POST',
@@ -2136,10 +2136,10 @@
           }, 500);
         } else {
           setFieldState('fp-code', 'fp-code-msg', 'error', data.message || 'Incorrect code');
-          showToast('❌ ' + (data.message || 'Verification failed'), true);
+          showToast('âŒ ' + (data.message || 'Verification failed'), true);
         }
       } catch (err) {
-        showToast('❌ ' + err.message, true);
+        showToast('âŒ ' + err.message, true);
         console.error('Verify Error:', err);
       }
     }
@@ -2149,19 +2149,19 @@
       const cp = document.getElementById('fp-confirmpass').value;
       clearFieldState('fp-newpass', 'fp-newpass-msg');
       clearFieldState('fp-confirmpass', 'fp-confirmpass-msg');
-      if (!np || !cp) { showToast('⚠️ Fill in both password fields', true); return; }
+      if (!np || !cp) { showToast('âš ï¸ Fill in both password fields', true); return; }
       if (np.length < 6) {
         setFieldState('fp-newpass', 'fp-newpass-msg', 'error', 'Password must be at least 6 characters');
-        showToast('⚠️ Password too short', true); return;
+        showToast('âš ï¸ Password too short', true); return;
       }
       if (np !== cp) {
         setFieldState('fp-confirmpass', 'fp-confirmpass-msg', 'error', 'Passwords do not match');
-        showToast('❌ Passwords do not match', true); return;
+        showToast('âŒ Passwords do not match', true); return;
       }
       const all = getAllAccounts();
       if (all[_fpEmail]) { all[_fpEmail].password = np; saveAllAccounts(all); }
       closeFP();
-      showToast('✅ Password reset! Signing you in…');
+      showToast('âœ… Password reset! Signing you inâ€¦');
       setTimeout(() => {
         document.getElementById('si-email').value = _fpEmail;
         document.getElementById('si-pass').value = np;
@@ -2182,9 +2182,9 @@
       });
     });
 
-    /* ─────────────────────────────────────────────────
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
        TOAST
-    ───────────────────────────────────────────────── */
+    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     function showToast(msg, warn) {
       const t = document.getElementById('toast');
       t.textContent = msg;
