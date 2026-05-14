@@ -125,9 +125,9 @@ app.post('/api/book', async (req, res) => {
     const b = req.body;
     try {
         const { rows } = await pool.query(
-            `INSERT INTO rentals (name, item, phone, email, price, days, address, booking_date, booking_time, booking_day, payment_mode, signature, status, verified)
-             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) RETURNING id`,
-            [b.userName, b.itemName, b.userPhone, b.userEmail, b.price, b.days, b.address, b.bookingDate, b.bookingTime, b.bookingDay, b.paymentMode, b.signature, b.status || 'pending', b.verified || null]
+            `INSERT INTO rentals (name, item, phone, email, price, days, address, booking_date, booking_time, booking_day, payment_mode, signature, status, verified, purchase_mode, condition, size)
+             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17) RETURNING id`,
+            [b.userName, b.itemName, b.userPhone, b.userEmail, b.price, b.days, b.address, b.bookingDate, b.bookingTime, b.bookingDay, b.paymentMode, b.signature, b.status || 'pending', b.verified || null, b.purchaseMode || '', b.condition || '', b.size || '']
         );
         const bookingId = rows[0].id;
         // if (b.userEmail) await sendBookingEmail(b.userEmail, b.userName, b.itemName, bookingId, `₹${b.price}`);

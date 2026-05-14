@@ -2099,7 +2099,14 @@
                 <tr>
                     <td style="color:var(--accent);">#GG-${b.id}</td>
                     <td>${b.name || '—'}</td>
-                    <td>${b.item || '—'}</td>
+                    <td>
+                        <div>${b.item || '—'}</div>
+                        <div style="font-size:10px; color:var(--text3); margin-top:2px;">
+                            ${b.purchase_mode ? `<span style="color:var(--accent)">${b.purchase_mode.toUpperCase()}</span>` : ''}
+                            ${b.size ? ` · Size: ${b.size}` : ''}
+                            ${b.condition ? ` · ${b.condition}` : ''}
+                        </div>
+                    </td>
                     <td>${b.days || '—'} day${b.days > 1 ? 's' : ''}</td>
                     <td>₹${parseFloat(b.price || 0).toLocaleString()}</td>
                     <td><span class="badge ${badgeClass}">${badgeLabel}</span></td>

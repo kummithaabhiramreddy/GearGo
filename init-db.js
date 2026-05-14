@@ -51,7 +51,10 @@ CREATE TABLE IF NOT EXISTS rentals (
     email VARCHAR(255), signature TEXT,
     delivery_boy_name VARCHAR(100), delivery_boy_phone VARCHAR(20),
     track_status VARCHAR(50), assigned_store_id INTEGER,
-    verified VARCHAR(50)
+    verified VARCHAR(50),
+    purchase_mode VARCHAR(50),
+    condition VARCHAR(50),
+    size VARCHAR(50)
 );
 
 CREATE TABLE IF NOT EXISTS delivery_boys (
