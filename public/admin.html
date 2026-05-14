@@ -1254,7 +1254,7 @@
             </div>
 
             <!-- KPI CARDS -->
-            <div class="kpi-grid">
+            <div class="kpi-grid page-section" id="section-dashboard-kpis">
                 <div class="kpi-card orange">
                     <div class="kpi-icon">💰</div>
                     <div class="kpi-label">Total Revenue</div>
@@ -1282,7 +1282,7 @@
             </div>
 
             <!-- ROW 2: Revenue Chart + Activity -->
-            <div class="grid-3">
+            <div class="grid-3 page-section" id="section-dashboard-charts">
                 <!-- Revenue Chart -->
                 <div class="card">
                     <div class="card-header">
@@ -1432,7 +1432,7 @@
             </div>
 
             <!-- ROW 3: Active Rentals Table -->
-            <div class="card" style="margin-bottom:20px;">
+            <div class="card page-section" id="section-rentals" style="margin-bottom:20px;">
                 <div class="card-header">
                     <div>
                         <div class="card-title">Active & Recent Rentals</div>
@@ -1541,7 +1541,8 @@
                 </div>
                 <div
                     style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:14px;border-top:1px solid var(--border);">
-                    <div style="font-family:var(--font-mono);font-size:11px;color:var(--text3);" id="rentals-count-label">Loading bookings...</div>
+                    <div style="font-family:var(--font-mono);font-size:11px;color:var(--text3);"
+                        id="rentals-count-label">Loading bookings...</div>
                     <div style="display:flex;gap:6px;">
                         <button class="btn btn-ghost" style="padding:5px 12px;font-size:12px;">← Prev</button>
                         <button class="btn btn-ghost"
@@ -1554,7 +1555,7 @@
             </div>
 
             <!-- ROW 4: Partners + Revenue Breakdown + Reviews -->
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:20px;">
+            <div class="page-section" id="section-partners-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:20px;">
 
                 <!-- Partners -->
                 <div class="card">
@@ -1663,7 +1664,9 @@
                         </div>
                     </div>
 
-                    <div id="catBars"><div style="color:var(--text3);font-size:12px;padding:12px 0;">Loading...</div></div>
+                    <div id="catBars">
+                        <div style="color:var(--text3);font-size:12px;padding:12px 0;">Loading...</div>
+                    </div>
                 </div>
 
                 <!-- Reviews -->
@@ -1676,252 +1679,249 @@
                         <button class="btn btn-ghost" style="padding:5px 10px;font-size:11px;">All Reviews</button>
                     </div>
 
-                    <div id="reviewsList"><div class="review-card">
-                        <div class="review-header">
-                            <div class="review-avatar" style="background:rgba(249,115,22,0.2);color:var(--accent);">AM
+                    <div id="reviewsList">
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="review-avatar" style="background:rgba(249,115,22,0.2);color:var(--accent);">
+                                    AM
+                                </div>
+                                <div>
+                                    <div class="review-name">Arjun M.</div>
+                                    <div class="review-gear">Trek Cycle · CycleZone</div>
+                                </div>
+                                <div style="margin-left:auto;">
+                                    <div class="stars">★★★★★</div>
+                                </div>
                             </div>
-                            <div>
-                                <div class="review-name">Arjun M.</div>
-                                <div class="review-gear">Trek Cycle · CycleZone</div>
-                            </div>
-                            <div style="margin-left:auto;">
-                                <div class="stars">★★★★★</div>
+                            <div class="review-body">"Gear was in perfect condition, quick pickup process. Will
+                                definitely
+                                rent again!"</div>
+                            <div class="review-meta">
+                                <span class="review-date">2 hours ago</span>
+                                <span class="badge badge-green" style="font-size:9px;">Verified</span>
                             </div>
                         </div>
-                        <div class="review-body">"Gear was in perfect condition, quick pickup process. Will definitely
-                            rent again!"</div>
-                        <div class="review-meta">
-                            <span class="review-date">2 hours ago</span>
-                            <span class="badge badge-green" style="font-size:9px;">Verified</span>
-                        </div>
-                    </div>
 
-                    <div class="review-card">
-                        <div class="review-header">
-                            <div class="review-avatar" style="background:rgba(59,130,246,0.2);color:var(--blue);">SR
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="review-avatar" style="background:rgba(59,130,246,0.2);color:var(--blue);">SR
+                                </div>
+                                <div>
+                                    <div class="review-name">Sneha R.</div>
+                                    <div class="review-gear">Camping Tent · OutdoorHub</div>
+                                </div>
+                                <div style="margin-left:auto;">
+                                    <div class="stars">★★★★<span style="color:var(--text3);">★</span></div>
+                                </div>
                             </div>
-                            <div>
-                                <div class="review-name">Sneha R.</div>
-                                <div class="review-gear">Camping Tent · OutdoorHub</div>
+                            <div class="review-body">"Really nice tent, setup was easy. Return process could be
+                                smoother."
                             </div>
-                            <div style="margin-left:auto;">
-                                <div class="stars">★★★★<span style="color:var(--text3);">★</span></div>
+                            <div class="review-meta">
+                                <span class="review-date">5 hours ago</span>
+                                <span class="badge badge-green" style="font-size:9px;">Verified</span>
                             </div>
                         </div>
-                        <div class="review-body">"Really nice tent, setup was easy. Return process could be smoother."
-                        </div>
-                        <div class="review-meta">
-                            <span class="review-date">5 hours ago</span>
-                            <span class="badge badge-green" style="font-size:9px;">Verified</span>
-                        </div>
-                    </div>
 
-                    <div class="review-card">
-                        <div class="review-header">
-                            <div class="review-avatar" style="background:rgba(168,85,247,0.2);color:var(--purple);">KS
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="review-avatar" style="background:rgba(168,85,247,0.2);color:var(--purple);">
+                                    KS
+                                </div>
+                                <div>
+                                    <div class="review-name">Karan S.</div>
+                                    <div class="review-gear">Kayak · AdventureHub</div>
+                                </div>
+                                <div style="margin-left:auto;">
+                                    <div class="stars">★★★★★</div>
+                                </div>
                             </div>
-                            <div>
-                                <div class="review-name">Karan S.</div>
-                                <div class="review-gear">Kayak · AdventureHub</div>
+                            <div class="review-body">"Kayak was clean, staff was super helpful with the safety briefing.
+                                10/10!"</div>
+                            <div class="review-meta">
+                                <span class="review-date">Yesterday</span>
+                                <span class="badge badge-orange" style="font-size:9px;">Featured</span>
                             </div>
-                            <div style="margin-left:auto;">
-                                <div class="stars">★★★★★</div>
-                            </div>
-                        </div>
-                        <div class="review-body">"Kayak was clean, staff was super helpful with the safety briefing.
-                            10/10!"</div>
-                        <div class="review-meta">
-                            <span class="review-date">Yesterday</span>
-                            <span class="badge badge-orange" style="font-size:9px;">Featured</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ROW 5: Platform Stats + Geo + Quick Actions -->
-            <div style="display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:20px;">
-
-                <!-- Platform Health -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Platform Health</div>
-                        <span class="badge badge-green">All Systems Normal</span>
-                    </div>
-                    <div>
-                        <div class="mini-stat">
-                            <div class="mini-stat-label">🟢 API Uptime</div>
-                            <div class="mini-stat-val" style="color:var(--green);">99.97%</div>
-                        </div>
-                        <div class="mini-stat">
-                            <div class="mini-stat-label">⚡ Avg Response</div>
-                            <div class="mini-stat-val">182ms</div>
-                        </div>
-                        <div class="mini-stat">
-                            <div class="mini-stat-label">👥 Active Users Now</div>
-                            <div class="mini-stat-val" id="activeUsers">1,284</div>
-                        </div>
-                        <div class="mini-stat">
-                            <div class="mini-stat-label">📱 App Sessions Today</div>
-                            <div class="mini-stat-val">8,441</div>
-                        </div>
-                        <div class="mini-stat">
-                            <div class="mini-stat-label">💳 Payment Success Rate</div>
-                            <div class="mini-stat-val" style="color:var(--green);">98.4%</div>
-                        </div>
-                        <div class="mini-stat">
-                            <div class="mini-stat-label">🔄 Pending Payouts</div>
-                            <div class="mini-stat-val" style="color:var(--yellow);">₹34,800</div>
-                        </div>
-                        <div class="mini-stat">
-                            <div class="mini-stat-label">🛡️ Fraud Flags</div>
-                            <div class="mini-stat-val" style="color:var(--red);">2 flagged</div>
-                        </div>
-                        <div class="mini-stat">
-                            <div class="mini-stat-label">📦 Gear Utilization</div>
-                            <div class="mini-stat-val">74%</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Geo Heatmap placeholder -->
-                <div class="card">
-                    <div class="card-header">
+                <!-- ROW 5: Platform Stats + Geo + Quick Actions -->
+                <div style="display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:20px;">
+
+                    <!-- Platform Health -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Platform Health</div>
+                            <span class="badge badge-green">All Systems Normal</span>
+                        </div>
                         <div>
-                            <div class="card-title">Rental Hotspots</div>
-                            <div class="section-sub">Active city clusters</div>
-                        </div>
-                        <span class="badge badge-orange">Live</span>
-                    </div>
-                    <div class="map-placeholder">
-                        <div class="map-dots"></div>
-                        <div class="map-pin">📍</div>
-                        <div>Interactive Map</div>
-                        <div style="font-size:10px;color:var(--text3);">Hyderabad · Vizag · Pune · Bengaluru</div>
-                        <button class="btn btn-ghost"
-                            style="font-size:11px;padding:5px 14px;margin-top:4px;position:relative;z-index:1;">Open
-                            Full Map</button>
-                    </div>
-                    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
-                        <span class="badge badge-orange">Hyd: 312</span>
-                        <span class="badge badge-blue">Vizag: 94</span>
-                        <span class="badge badge-purple">Pune: 78</span>
-                        <span class="badge badge-green">BLR: 65</span>
-                        <span class="badge badge-yellow">Chennai: 40</span>
-                    </div>
-                </div>
-
-                <!-- Quick Actions + Pending Approvals -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Quick Actions</div>
-                    </div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;">
-                        <button class="btn btn-ghost"
-                            style="justify-content:center;padding:12px;flex-direction:column;gap:4px;height:auto;align-items:center;">
-                            <span style="font-size:20px;">➕</span>
-                            <span style="font-size:11px;">Add Partner</span>
-                        </button>
-                        <button class="btn btn-ghost"
-                            style="justify-content:center;padding:12px;flex-direction:column;gap:4px;height:auto;align-items:center;">
-                            <span style="font-size:20px;">📦</span>
-                            <span style="font-size:11px;">Add Gear</span>
-                        </button>
-                        <button class="btn btn-ghost"
-                            style="justify-content:center;padding:12px;flex-direction:column;gap:4px;height:auto;align-items:center;">
-                            <span style="font-size:20px;">👤</span>
-                            <span style="font-size:11px;">Add User</span>
-                        </button>
-                        <button class="btn btn-ghost"
-                            style="justify-content:center;padding:12px;flex-direction:column;gap:4px;height:auto;align-items:center;">
-                            <span style="font-size:20px;">📊</span>
-                            <span style="font-size:11px;">Run Report</span>
-                        </button>
-                        <button class="btn btn-ghost"
-                            style="justify-content:center;padding:12px;flex-direction:column;gap:4px;height:auto;align-items:center;">
-                            <span style="font-size:20px;">💸</span>
-                            <span style="font-size:11px;">Bulk Payout</span>
-                        </button>
-                        <button class="btn btn-ghost"
-                            style="justify-content:center;padding:12px;flex-direction:column;gap:4px;height:auto;align-items:center;">
-                            <span style="font-size:20px;">🔔</span>
-                            <span style="font-size:11px;">Push Alert</span>
-                        </button>
-                    </div>
-
-                    <div style="border-top:1px solid var(--border);padding-top:14px;">
-                        <div
-                            style="font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;">
-                            Pending Approvals</div>
-                        <div style="display:flex;flex-direction:column;gap:8px;" id="pendingApprovalsList">
-                            <div
-                                style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);">
-                                <div>
-                                    <div style="font-size:12px;font-weight:600;">MountainGear Co.</div>
-                                    <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);">Partner
-                                        onboarding request</div>
-                                </div>
-                                <div style="display:flex;gap:5px;">
-                                    <button class="btn"
-                                        style="background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.25);padding:4px 9px;font-size:11px;">✓</button>
-                                    <button class="btn"
-                                        style="background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2);padding:4px 9px;font-size:11px;">✕</button>
-                                </div>
+                            <div class="mini-stat">
+                                <div class="mini-stat-label">🟢 API Uptime</div>
+                                <div class="mini-stat-val" style="color:var(--green);">99.97%</div>
                             </div>
-                            <div
-                                style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);">
-                                <div>
-                                    <div style="font-size:12px;font-weight:600;">DiveGear Pro</div>
-                                    <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);">Gear
-                                        listing · 8 items</div>
-                                </div>
-                                <div style="display:flex;gap:5px;">
-                                    <button class="btn"
-                                        style="background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.25);padding:4px 9px;font-size:11px;">✓</button>
-                                    <button class="btn"
-                                        style="background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2);padding:4px 9px;font-size:11px;">✕</button>
-                                </div>
+                            <div class="mini-stat">
+                                <div class="mini-stat-label">⚡ Avg Response</div>
+                                <div class="mini-stat-val">182ms</div>
                             </div>
-                            <div
-                                style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);">
-                                <div>
-                                    <div style="font-size:12px;font-weight:600;">Refund · #GG-1030</div>
-                                    <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);">User
-                                        disputed · ₹1,400</div>
-                                </div>
-                                <div style="display:flex;gap:5px;">
-                                    <button class="btn"
-                                        style="background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.25);padding:4px 9px;font-size:11px;">✓</button>
-                                    <button class="btn"
-                                        style="background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2);padding:4px 9px;font-size:11px;">✕</button>
-                                </div>
+                            <div class="mini-stat">
+                                <div class="mini-stat-label">👥 Active Users Now</div>
+                                <div class="mini-stat-val" id="activeUsers">1,284</div>
+                            </div>
+                            <div class="mini-stat">
+                                <div class="mini-stat-label">📱 App Sessions Today</div>
+                                <div class="mini-stat-val">8,441</div>
+                            </div>
+                            <div class="mini-stat">
+                                <div class="mini-stat-label">💳 Payment Success Rate</div>
+                                <div class="mini-stat-val" style="color:var(--green);">98.4%</div>
+                            </div>
+                            <div class="mini-stat">
+                                <div class="mini-stat-label">🔄 Pending Payouts</div>
+                                <div class="mini-stat-val" style="color:var(--yellow);">₹34,800</div>
+                            </div>
+                            <div class="mini-stat">
+                                <div class="mini-stat-label">🛡️ Fraud Flags</div>
+                                <div class="mini-stat-val" style="color:var(--red);">2 flagged</div>
+                            </div>
+                            <div class="mini-stat">
+                                <div class="mini-stat-label">📦 Gear Utilization</div>
+                                <div class="mini-stat-val">74%</div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Geo Heatmap placeholder -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">Rental Hotspots</div>
+                                <div class="section-sub">Active city clusters</div>
+                            </div>
+                            <span class="badge badge-orange">Live</span>
+                        </div>
+                        <div class="map-placeholder">
+                            <div class="map-dots"></div>
+                            <div class="map-pin">📍</div>
+                            <div>Interactive Map</div>
+                            <div style="font-size:10px;color:var(--text3);">Hyderabad · Vizag · Pune · Bengaluru</div>
+                            <button class="btn btn-ghost"
+                                style="font-size:11px;padding:5px 14px;margin-top:4px;position:relative;z-index:1;">Open
+                                Full Map</button>
+                        </div>
+                        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+                            <span class="badge badge-orange">Hyd: 312</span>
+                            <span class="badge badge-blue">Vizag: 94</span>
+                            <span class="badge badge-purple">Pune: 78</span>
+                            <span class="badge badge-green">BLR: 65</span>
+                            <span class="badge badge-yellow">Chennai: 40</span>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions + Pending Approvals -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Quick Actions</div>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;">
+                            <button class="btn btn-ghost"
+                                style="justify-content:center;padding:12px;flex-direction:column;gap:4px;height:auto;align-items:center;">
+                                <span style="font-size:20px;">➕</span>
+                                <span style="font-size:11px;">Add Partner</span>
+                            </button>
+                            <button class="btn btn-ghost"
+                                style="justify-content:center;padding:12px;flex-direction:column;gap:4px;height:auto;align-items:center;">
+                                <span style="font-size:20px;">📦</span>
+                                <span style="font-size:11px;">Add Gear</span>
+                            </button>
+                            <button class="btn btn-ghost"
+                                style="justify-content:center;padding:12px;flex-direction:column;gap:4px;height:auto;align-items:center;">
+                                <span style="font-size:20px;">👤</span>
+                                <span style="font-size:11px;">Add User</span>
+                            </button>
+                            <button class="btn btn-ghost"
+                                style="justify-content:center;padding:12px;flex-direction:column;gap:4px;height:auto;align-items:center;">
+                                <span style="font-size:20px;">📊</span>
+                                <span style="font-size:11px;">Run Report</span>
+                            </button>
+                            <button class="btn btn-ghost"
+                                style="justify-content:center;padding:12px;flex-direction:column;gap:4px;height:auto;align-items:center;">
+                                <span style="font-size:20px;">💸</span>
+                                <span style="font-size:11px;">Bulk Payout</span>
+                            </button>
+                            <button class="btn btn-ghost"
+                                style="justify-content:center;padding:12px;flex-direction:column;gap:4px;height:auto;align-items:center;">
+                                <span style="font-size:20px;">🔔</span>
+                                <span style="font-size:11px;">Push Alert</span>
+                            </button>
+                        </div>
+
+                        <div style="border-top:1px solid var(--border);padding-top:14px;">
+                            <div
+                                style="font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;">
+                                Pending Approvals</div>
+                            <div style="display:flex;flex-direction:column;gap:8px;" id="pendingApprovalsList">
+                                <div
+                                    style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);">
+                                    <div>
+                                        <div style="font-size:12px;font-weight:600;">MountainGear Co.</div>
+                                        <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);">
+                                            Partner
+                                            onboarding request</div>
+                                    </div>
+                                    <div style="display:flex;gap:5px;">
+                                        <button class="btn"
+                                            style="background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.25);padding:4px 9px;font-size:11px;">✓</button>
+                                        <button class="btn"
+                                            style="background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2);padding:4px 9px;font-size:11px;">✕</button>
+                                    </div>
+                                </div>
+                                <div
+                                    style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);">
+                                    <div>
+                                        <div style="font-size:12px;font-weight:600;">DiveGear Pro</div>
+                                        <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);">
+                                            Gear
+                                            listing · 8 items</div>
+                                    </div>
+                                    <div style="display:flex;gap:5px;">
+                                        <button class="btn"
+                                            style="background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.25);padding:4px 9px;font-size:11px;">✓</button>
+                                        <button class="btn"
+                                            style="background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2);padding:4px 9px;font-size:11px;">✕</button>
+                                    </div>
+                                </div>
+                                <div
+                                    style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);">
+                                    <div>
+                                        <div style="font-size:12px;font-weight:600;">Refund · #GG-1030</div>
+                                        <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);">
+                                            User
+                                            disputed · ₹1,400</div>
+                                    </div>
+                                    <div style="display:flex;gap:5px;">
+                                        <button class="btn"
+                                            style="background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.25);padding:4px 9px;font-size:11px;">✓</button>
+                                        <button class="btn"
+                                            style="background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2);padding:4px 9px;font-size:11px;">✕</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
+                <!-- FOOTER -->
+                <div
+                    style="text-align:center;padding:28px 0 8px;font-family:var(--font-mono);font-size:10px;color:var(--text3);letter-spacing:1px;">
+                    GEARGO ADMIN v2.1 · © 2025 GEARGO PVT LTD · ALL SYSTEMS OPERATIONAL
+                </div>
             </div>
-
-            <!-- FOOTER -->
-            <div
-                style="text-align:center;padding:28px 0 8px;font-family:var(--font-mono);font-size:10px;color:var(--text3);letter-spacing:1px;">
-                GEARGO ADMIN v2.1 · © 2025 GEARGO PVT LTD · ALL SYSTEMS OPERATIONAL
-            </div>
-        </div>
     </main>
 
     <script>
-        // Smart API base: handles file:// (direct open), localhost dev, and Vercel production
-        const API = window.location.protocol === 'file:'
-            ? 'http://localhost:3000'
-            : '';  // relative URLs work for both localhost server and Vercel
-
-        // Show a status banner at top
-        function setStatus(msg, color) {
-            const el = document.getElementById('alertText');
-            if (el) el.innerHTML = msg;
-            const banner = document.getElementById('alertBanner');
-            if (banner && color) banner.style.borderColor = color;
-        }
+        const API = '';  // same-origin; empty = relative URLs
 
         // Clock
         function updateClock() {
@@ -1933,7 +1933,6 @@
 
         // ── LIVE DATA LOADER ──────────────────────────────────────────
         async function loadDashboard() {
-            setStatus('⏳ Loading live data from database...', 'rgba(249,115,22,0.5)');
             try {
                 const [bookingsRes, deliveryRes, reviewsRes, itemsRes, summaryRes] = await Promise.all([
                     fetch(API + '/api/view-bookings'),
@@ -1942,22 +1941,11 @@
                     fetch(API + '/api/items'),
                     fetch(API + '/api/admin-summary'),
                 ]);
-
-                console.log('API responses:', {
-                    bookings: bookingsRes.status,
-                    delivery: deliveryRes.status,
-                    reviews: reviewsRes.status,
-                    items: itemsRes.status,
-                    summary: summaryRes.status
-                });
-
-                const bookings  = bookingsRes.ok  ? await bookingsRes.json()  : [];
-                const delivery  = deliveryRes.ok  ? await deliveryRes.json()  : [];
-                const reviews   = reviewsRes.ok   ? await reviewsRes.json()   : [];
-                const items     = itemsRes.ok     ? await itemsRes.json()     : [];
-                const summary   = summaryRes.ok   ? await summaryRes.json()   : null;
-
-                console.log('DB data:', { bookings: bookings.length, delivery: delivery.length, reviews: reviews.length, items: items.length, summary });
+                const bookings = bookingsRes.ok ? await bookingsRes.json() : [];
+                const delivery = deliveryRes.ok ? await deliveryRes.json() : [];
+                const reviews = reviewsRes.ok ? await reviewsRes.json() : [];
+                const items = itemsRes.ok ? await itemsRes.json() : [];
+                const summary = summaryRes.ok ? await summaryRes.json() : null;
 
                 window.allBookings = bookings;
 
@@ -1983,31 +1971,28 @@
                 populateCategoryChart(items, bookings);
                 populateActivityFeed(bookings);
                 populatePendingApprovals(delivery);
-
-                setStatus('\u2705 Live data loaded · ' + (bookings.length) + ' bookings · Auto-refreshes every 30s', 'rgba(34,197,94,0.4)');
-            } catch(e) {
+            } catch (e) {
                 console.error('Dashboard load error:', e);
-                setStatus('\u274C Load failed: ' + e.message + ' — Is server running at ' + API + '?', 'rgba(239,68,68,0.5)');
             }
         }
 
         // KPI Cards
         function updateKPIs(bookings, delivery, reviews, items) {
             const totalRev = bookings.reduce((s, b) => s + (parseFloat(b.price) || 0), 0);
-            const active   = bookings.filter(b => (b.status || '').toLowerCase() === 'confirmed' || (b.status || '').toLowerCase() === 'pending').length;
-            const avgRat   = reviews.length ? (reviews.reduce((s, r) => s + (parseFloat(r.rating) || 0), 0) / reviews.length).toFixed(1) : '—';
+            const active = bookings.filter(b => (b.status || '').toLowerCase() === 'confirmed' || (b.status || '').toLowerCase() === 'pending').length;
+            const avgRat = reviews.length ? (reviews.reduce((s, r) => s + (parseFloat(r.rating) || 0), 0) / reviews.length).toFixed(1) : '—';
 
-            document.getElementById('rev').textContent      = '₹' + totalRev.toLocaleString('en-IN');
-            document.getElementById('rentals').textContent  = active;
+            document.getElementById('rev').textContent = '₹' + totalRev.toLocaleString('en-IN');
+            document.getElementById('rentals').textContent = active;
             document.getElementById('kpi-partners').textContent = delivery.length;
-            document.getElementById('kpi-rating').textContent   = avgRat;
+            document.getElementById('kpi-rating').textContent = avgRat;
 
             // Update nav badge
             const nb = document.getElementById('nav-rentals-badge');
             if (nb) nb.textContent = active;
 
             // Sub-labels
-            const pending = bookings.filter(b => (b.status||'').toLowerCase() === 'pending').length;
+            const pending = bookings.filter(b => (b.status || '').toLowerCase() === 'pending').length;
             const el = document.getElementById('kpi-rentals-sub');
             if (el) el.textContent = '▲ ' + pending + ' pending';
         }
@@ -2050,8 +2035,8 @@
             const list = document.getElementById('partnerList');
             if (!list) return;
             list.innerHTML = '';
-            const colors = ['rgba(249,115,22,0.12)','rgba(59,130,246,0.12)','rgba(168,85,247,0.12)','rgba(34,197,94,0.12)','rgba(234,179,8,0.12)'];
-            const emojis = ['🛵','🚴','🤝','🏕️','📦'];
+            const colors = ['rgba(249,115,22,0.12)', 'rgba(59,130,246,0.12)', 'rgba(168,85,247,0.12)', 'rgba(34,197,94,0.12)', 'rgba(234,179,8,0.12)'];
+            const emojis = ['🛵', '🚴', '🤝', '🏕️', '📦'];
             if (!delivery.length) {
                 list.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:12px 0;">No delivery partners yet</div>';
                 return;
@@ -2076,8 +2061,8 @@
             const wrap = document.getElementById('reviewsList');
             if (!wrap) return;
             wrap.innerHTML = '';
-            const avatarColors = ['rgba(249,115,22,0.2)','rgba(59,130,246,0.2)','rgba(168,85,247,0.2)','rgba(34,197,94,0.2)'];
-            const textColors = ['var(--accent)','var(--blue)','var(--purple)','var(--green)'];
+            const avatarColors = ['rgba(249,115,22,0.2)', 'rgba(59,130,246,0.2)', 'rgba(168,85,247,0.2)', 'rgba(34,197,94,0.2)'];
+            const textColors = ['var(--accent)', 'var(--blue)', 'var(--purple)', 'var(--green)'];
             if (!reviews.length) {
                 wrap.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:12px 0;">No reviews yet</div>';
                 return;
@@ -2089,7 +2074,7 @@
                 wrap.innerHTML += `
                 <div class="review-card">
                     <div class="review-header">
-                        <div class="review-avatar" style="background:${avatarColors[i%4]};color:${textColors[i%4]};">${initials}</div>
+                        <div class="review-avatar" style="background:${avatarColors[i % 4]};color:${textColors[i % 4]};">${initials}</div>
                         <div>
                             <div class="review-name">${r.name || 'Anonymous'}</div>
                             <div class="review-gear">${r.category || r.title || '—'} · ${r.city || ''}</div>
@@ -2105,7 +2090,7 @@
             });
             const avgEl = document.getElementById('reviews-avg');
             if (avgEl && reviews.length) {
-                const avg = (reviews.reduce((s,r) => s+(parseFloat(r.rating)||0), 0)/reviews.length).toFixed(1);
+                const avg = (reviews.reduce((s, r) => s + (parseFloat(r.rating) || 0), 0) / reviews.length).toFixed(1);
                 avgEl.textContent = avg + '★ avg · ' + reviews.length + ' total';
             }
         }
@@ -2114,14 +2099,14 @@
         function populateCategoryChart(items, bookings) {
             if (!items.length) return;
             const catCount = {};
-            items.forEach(it => { catCount[it.cat || 'Other'] = (catCount[it.cat||'Other'] || 0) + 1; });
+            items.forEach(it => { catCount[it.cat || 'Other'] = (catCount[it.cat || 'Other'] || 0) + 1; });
             const total = items.length || 1;
-            const sorted = Object.entries(catCount).sort((a,b) => b[1]-a[1]).slice(0, 5);
+            const sorted = Object.entries(catCount).sort((a, b) => b[1] - a[1]).slice(0, 5);
             const catBarsEl = document.getElementById('catBars');
             if (catBarsEl) {
-                const clrs = ['var(--accent)','var(--blue)','var(--purple)','var(--green)','var(--yellow)'];
+                const clrs = ['var(--accent)', 'var(--blue)', 'var(--purple)', 'var(--green)', 'var(--yellow)'];
                 catBarsEl.innerHTML = sorted.map(([cat, cnt], i) => {
-                    const pct = Math.round((cnt/total)*100);
+                    const pct = Math.round((cnt / total) * 100);
                     return `<div class="cat-bar">
                         <div class="cat-label">${cat}</div>
                         <div class="cat-track"><div class="cat-fill" style="width:${pct}%;background:${clrs[i]};"></div></div>
@@ -2131,7 +2116,7 @@
             }
             const totalRevEl = document.getElementById('cat-total-rev');
             if (totalRevEl) {
-                const totalRev = bookings.reduce((s,b) => s+(parseFloat(b.price)||0), 0);
+                const totalRev = bookings.reduce((s, b) => s + (parseFloat(b.price) || 0), 0);
                 totalRevEl.textContent = 'Total ₹' + totalRev.toLocaleString('en-IN');
             }
         }
@@ -2140,7 +2125,7 @@
         function updateAlertBanner(bookings, delivery) {
             // Accept either raw arrays or pre-computed {pending} objects from summary
             const rentalsPending = Array.isArray(bookings)
-                ? bookings.filter(b => (b.status||'').toLowerCase() === 'pending').length
+                ? bookings.filter(b => (b.status || '').toLowerCase() === 'pending').length
                 : (bookings.pending || 0);
             const partnersPending = Array.isArray(delivery)
                 ? delivery.filter(d => d.status === 'pending').length
@@ -2161,7 +2146,7 @@
                 const data = await res.json();
                 if (res.ok) { alert('\u2705 Status updated to: ' + status); loadDashboard(); }
                 else alert('\u274C Error: ' + (data.error || 'Update failed'));
-            } catch(err) { alert('Network error: ' + err.message); }
+            } catch (err) { alert('Network error: ' + err.message); }
         }
         async function deleteBooking(id, btn) {
             if (!confirm('Delete booking #' + id + '?')) return;
@@ -2172,7 +2157,7 @@
                 const res = await fetch(API + '/api/bookings/' + id, { method: 'DELETE' });
                 if (res.ok) { row.remove(); setTimeout(loadDashboard, 500); }
                 else { row.style.opacity = ''; btn.disabled = false; alert('Delete failed'); }
-            } catch(err) { row.style.opacity = ''; btn.disabled = false; alert('Network error'); }
+            } catch (err) { row.style.opacity = ''; btn.disabled = false; alert('Network error'); }
         }
 
         // Auto-refresh every 30 seconds
@@ -2183,20 +2168,58 @@
         function setPage(el) {
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             el.classList.add('active');
+
+            const sectionId = el.getAttribute('data-section');
             const name = el.textContent.trim().split('\n')[0].trim();
             document.querySelector('.topbar-title').textContent = name + ' Overview';
+
+            // Hide all sections first
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            // Show relevant sections based on sidebar click
+            if (sectionId === 'dashboard') {
+                const kpis = document.getElementById('section-dashboard-kpis');
+                if (kpis) kpis.style.display = 'grid';
+                
+                const charts = document.getElementById('section-dashboard-charts');
+                if (charts) charts.style.display = 'grid';
+                
+                const rentals = document.getElementById('section-rentals');
+                if (rentals) rentals.style.display = 'block';
+                
+                const partners = document.getElementById('section-partners-grid');
+                if (partners) partners.style.display = 'grid';
+            } else if (sectionId === 'rentals') {
+                const kpis = document.getElementById('section-dashboard-kpis');
+                if (kpis) kpis.style.display = 'grid'; // Keep KPIs for context
+                
+                const rentals = document.getElementById('section-rentals');
+                if (rentals) rentals.style.display = 'block';
+            } else if (sectionId === 'partners' || sectionId === 'gear-inventory' || sectionId === 'reviews' || sectionId === 'geo-heatmap') {
+                const kpis = document.getElementById('section-dashboard-kpis');
+                if (kpis) kpis.style.display = 'grid';
+                
+                const partners = document.getElementById('section-partners-grid');
+                if (partners) partners.style.display = 'grid';
+            } else {
+                // For unbuilt pages, just show KPIs
+                const kpis = document.getElementById('section-dashboard-kpis');
+                if (kpis) kpis.style.display = 'grid';
+            }
         }
 
         // Period tabs
         function switchPeriod(el, period) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
-            
+
             if (!window.allBookings) return;
-            
+
             const now = new Date();
             let filtered = window.allBookings;
-            
+
             if (period === 'Today') {
                 filtered = window.allBookings.filter(b => {
                     const d = new Date(b.created_at || now);
@@ -2211,7 +2234,7 @@
                     return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
                 });
             }
-            
+
             const totalRev = filtered.reduce((s, b) => s + (parseFloat(b.price) || 0), 0);
             document.getElementById('rev').textContent = '₹' + totalRev.toLocaleString('en-IN');
             document.getElementById('rentals').textContent = filtered.length;
@@ -2234,10 +2257,10 @@
                     const diffMins = Math.floor((Date.now() - d.getTime()) / 60000);
                     if (diffMins < 1 || isNaN(diffMins)) timeStr = 'Just now';
                     else if (diffMins < 60) timeStr = diffMins + ' min ago';
-                    else if (diffMins < 1440) timeStr = Math.floor(diffMins/60) + ' hr ago';
+                    else if (diffMins < 1440) timeStr = Math.floor(diffMins / 60) + ' hr ago';
                     else timeStr = d.toLocaleDateString();
                 }
-                
+
                 feed.innerHTML += `
                 <div class="activity-item">
                     <div class="activity-dot" style="background:${colors[i % colors.length]}"></div>
@@ -2248,7 +2271,7 @@
                 </div>`;
             });
         }
-        
+
         function populatePendingApprovals(delivery) {
             const list = document.getElementById('pendingApprovalsList');
             if (!list) return;
@@ -2286,7 +2309,7 @@
                 });
                 if (res.ok) { btn.closest('div[style]').remove(); setTimeout(loadDashboard, 500); }
                 else { btn.disabled = false; alert('Update failed'); }
-            } catch(err) { btn.disabled = false; alert('Network error'); }
+            } catch (err) { btn.disabled = false; alert('Network error'); }
         }
     </script>
 </body>
