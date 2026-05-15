@@ -16,6 +16,7 @@ const pool = dbUrl
         host: process.env.DB_HOST || 'localhost',
         port: parseInt(process.env.DB_PORT) || 5432,
         database: process.env.DB_DATABASE || 'rentplay',
+        ssl: false
     });
 
 // Middleware
@@ -131,17 +132,39 @@ app.post('/api/items', async (req, res) => {
 });
 
 app.post('/api/book', async (req, res) => {
-    const b = req.body;
+    const b = req.body || {};
+    console.log('📦 New Booking Request:', b.itemName, 'for', b.userName);
     try {
         const { rows } = await pool.query(
-            `INSERT INTO rentals (name, item, phone, email, price, days, address, booking_date, booking_time, booking_day, payment_mode, signature, status, verified, purchase_mode, condition, size)
+            `INSERT INTO rentals ("name", "item", "phone", "email", "price", "days", "address", "booking_date", "booking_time", "booking_day", "payment_mode", "signature", "status", "verified", "purchase_mode", "condition", "size")
              VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17) RETURNING id`,
-            [b.userName, b.itemName, b.userPhone, b.userEmail, b.price, b.days, b.address, b.bookingDate, b.bookingTime, b.bookingDay, b.paymentMode, b.signature, b.status || 'pending', b.verified || null, b.purchaseMode || '', b.condition || '', b.size || '']
+            [
+                b.userName || 'Guest', 
+                b.itemName || 'Unknown Item', 
+                b.userPhone || '', 
+                b.userEmail || '', 
+                parseInt(b.price) || 0, 
+                parseInt(b.days) || 0, 
+                b.address || '', 
+                b.bookingDate || new Date().toISOString().split('T')[0], 
+                b.bookingTime || '00:00', 
+                b.bookingDay || '', 
+                b.paymentMode || 'COD', 
+                b.signature || '', 
+                b.status || 'pending', 
+                b.verified || null, 
+                b.purchaseMode || 'rent', 
+                b.condition || '', 
+                b.size || ''
+            ]
         );
         const bookingId = rows[0].id;
-        // if (b.userEmail) await sendBookingEmail(b.userEmail, b.userName, b.itemName, bookingId, `₹${b.price}`);
+        console.log('✅ Booking Successful:', bookingId);
         res.json({ success: true, bookingId });
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) {
+        console.error('❌ Booking Insert Error:', err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
 });
 
 app.get('/api/view-bookings', async (_req, res) => {

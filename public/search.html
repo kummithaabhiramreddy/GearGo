@@ -2436,7 +2436,9 @@
     let currentSizePant = '';
     let currentSizeShirt = '';
 
-    const apiBase = '';
+    const apiBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') 
+      ? 'http://localhost:3000' 
+      : '';
 
     // ════════════════════════════════════════
     // SIZE DATA
@@ -3090,8 +3092,20 @@
           });
           localStorage.setItem(BOOKING_KEY, JSON.stringify(dashboardBookings));
           saveLocalBooking(data, bId);
-          const res = await fetch(`${apiBase}/api/book`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-          const result = await res.json();
+          
+          const res = await fetch(`${apiBase}/api/book`, { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify(data) 
+          });
+          
+          let result;
+          try {
+            result = await res.json();
+          } catch (jsonErr) {
+            throw new Error('Server returned an invalid response. Please check if the server is running.');
+          }
+
           if (res.ok && result.success) {
              msg.innerHTML = `✅ Booking #${result.bookingId} Confirmed!`;
              if (data.userEmail) sendEmailJS(data, result.bookingId || bId);
@@ -3101,8 +3115,9 @@
         } catch (err) { 
           console.error('Booking Error:', err);
           msg.style.color = "var(--red)";
-          msg.innerHTML = `❌ Error: ${err.message}. Saving locally instead.`; 
+          msg.innerHTML = `❌ Error: ${err.message}`; 
           saveLocalBooking(data, bId);
+          showToast(`❌ Booking Failed: ${err.message}`, 'error');
         }
         setTimeout(closeModal, 4000);
       } else {
