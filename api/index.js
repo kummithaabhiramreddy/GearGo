@@ -8,6 +8,7 @@ const app = express();
 
 // ── POSTGRESQL CONNECTION ──
 const dbUrl = process.env.DATABASE_URL ? process.env.DATABASE_URL.split('?')[0] : null;
+console.log('📡 DB Connection Mode:', dbUrl ? 'Cloud (DATABASE_URL)' : 'Local (localhost)');
 const pool = dbUrl
     ? new Pool({ connectionString: dbUrl, ssl: { rejectUnauthorized: false } })
     : new Pool({
@@ -135,6 +136,7 @@ app.post('/api/book', async (req, res) => {
     const b = req.body || {};
     console.log('📦 New Booking Request:', b.itemName, 'for', b.userName);
     try {
+        console.log('⏳ Attempting DB Insert with pool...');
         const { rows } = await pool.query(
             `INSERT INTO rentals ("name", "item", "phone", "email", "price", "days", "address", "booking_date", "booking_time", "booking_day", "payment_mode", "signature", "status", "verified", "purchase_mode", "condition", "size")
              VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17) RETURNING id`,

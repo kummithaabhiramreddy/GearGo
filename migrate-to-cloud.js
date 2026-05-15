@@ -34,7 +34,9 @@ CREATE TABLE IF NOT EXISTS items (
     brand VARCHAR(100), rating NUMERIC(3,1), avail BOOLEAN DEFAULT TRUE,
     players VARCHAR(50), age VARCHAR(20), deposit INTEGER,
     emoji VARCHAR(20), reviews INTEGER DEFAULT 0,
-    description TEXT, info TEXT, store_id INTEGER REFERENCES stores(id) ON DELETE SET NULL
+    description TEXT, info TEXT, store_id INTEGER REFERENCES stores(id) ON DELETE SET NULL,
+    user_uploaded BOOLEAN DEFAULT FALSE, seller_phone VARCHAR(20),
+    seller_email VARCHAR(100), condition VARCHAR(100)
 );
 
 CREATE TABLE IF NOT EXISTS rentals (
@@ -46,7 +48,9 @@ CREATE TABLE IF NOT EXISTS rentals (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     email VARCHAR(255), signature TEXT,
     delivery_boy_name VARCHAR(100), delivery_boy_phone VARCHAR(20),
-    track_status VARCHAR(50), assigned_store_id INTEGER
+    track_status VARCHAR(50), assigned_store_id INTEGER,
+    verified VARCHAR(50), purchase_mode VARCHAR(50) DEFAULT 'rent',
+    condition VARCHAR(100), size VARCHAR(50)
 );
 
 CREATE TABLE IF NOT EXISTS delivery_boys (
