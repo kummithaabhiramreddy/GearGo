@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GearGo — Reviews</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0d12;--surface:#16161f;--surface2:#1d1d2a;
+  --border:rgba(255,255,255,0.07);--accent:#7c6dfa;--accent2:#f5a623;
+  --text:#f0eeff;--muted:#7e7d96;--tag-bg:rgba(124,109,250,0.13);
+  --tag-color:#b0a5ff;--green:#3ecf8e;--red:#f55b5b;
+}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
+
+header{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 2.5rem;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(13,13,18,0.92);backdrop-filter:blur(12px);z-index:100}
+.logo{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;letter-spacing:-0.5px}
+.logo span{color:var(--accent)}
+nav{display:flex;gap:2rem}
+nav a{color:var(--muted);text-decoration:none;font-size:0.9rem;transition:color 0.2s}
+nav a:hover{color:var(--text)}
+.header-btn{background:var(--accent);color:#fff;border:none;padding:0.55rem 1.3rem;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;cursor:pointer;transition:opacity 0.2s,transform 0.15s}
+.header-btn:hover{opacity:0.85;transform:translateY(-1px)}
+
+.hero{padding:4rem 2.5rem 3rem;max-width:1200px;margin:0 auto}
+.hero-label{display:inline-block;background:var(--tag-bg);color:var(--tag-color);font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;padding:0.3rem 0.8rem;border-radius:20px;margin-bottom:1.2rem}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3rem);font-weight:700;line-height:1.2;margin-bottom:0.7rem;max-width:560px}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.hero p{color:var(--muted);font-size:1rem;max-width:420px;line-height:1.7}
+
+.stats-row{display:flex;gap:2.5rem;padding:2rem 2.5rem;max-width:1200px;margin:0 auto;border-top:1px solid var(--border);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.stat{display:flex;flex-direction:column;gap:0.25rem}
+.stat-num{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:600;line-height:1}
+.stat-label{font-size:0.8rem;color:var(--muted)}
+
+.rating-overview{max-width:1200px;margin:2.5rem auto;padding:0 2.5rem;display:grid;grid-template-columns:220px 1fr;gap:3rem;align-items:center}
+.big-score{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2rem;text-align:center}
+.big-score .num{font-family:'Playfair Display',serif;font-size:4rem;font-weight:700;line-height:1}
+.big-score .of{font-size:0.85rem;color:var(--muted);margin:0.3rem 0 0.6rem}
+.big-score .stars-row{display:flex;justify-content:center;gap:3px;margin-bottom:0.5rem}
+.big-score .count{font-size:0.8rem;color:var(--muted)}
+.bars{display:flex;flex-direction:column;gap:0.65rem}
+.bar-row{display:flex;align-items:center;gap:0.75rem;font-size:0.85rem}
+.bar-label{color:var(--muted);width:50px;text-align:right}
+.bar-track{flex:1;height:6px;background:var(--surface2);border-radius:99px;overflow:hidden}
+.bar-fill{height:100%;background:var(--accent2);border-radius:99px;transition:width 0.6s ease}
+.bar-count{color:var(--muted);width:36px;font-size:0.8rem}
+
+.filters{max-width:1200px;margin:0 auto 2rem;padding:0 2.5rem;display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap}
+.filter-btn{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:0.45rem 1rem;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:0.83rem;cursor:pointer;transition:all 0.2s}
+.filter-btn:hover,.filter-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.filter-select{margin-left:auto;background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:0.45rem 1rem;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.83rem;cursor:pointer;appearance:none}
+
+.empty-state{max-width:1200px;margin:0 auto;padding:5rem 2.5rem;text-align:center}
+.empty-icon{font-size:3rem;margin-bottom:1rem;opacity:0.35}
+.empty-state h3{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--muted);margin-bottom:0.5rem}
+.empty-state p{color:var(--muted);font-size:0.9rem;margin-bottom:1.5rem;opacity:0.7}
+.empty-cta{background:var(--accent);color:#fff;border:none;padding:0.75rem 1.6rem;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:500;cursor:pointer;transition:opacity 0.2s}
+.empty-cta:hover{opacity:0.85}
+
+.reviews-grid{max-width:1200px;margin:0 auto;padding:0 2.5rem 4rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.25rem}
+
+.review-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.5rem;transition:border-color 0.2s,transform 0.2s;position:relative;overflow:hidden;animation:cardIn 0.35s ease both}
+@keyframes cardIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.review-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));opacity:0;transition:opacity 0.2s}
+.review-card:hover{border-color:rgba(124,109,250,0.35);transform:translateY(-3px)}
+.review-card:hover::before{opacity:1}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1rem}
+.user-info{display:flex;align-items:center;gap:0.75rem}
+.avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:0.85rem;flex-shrink:0;color:#fff}
+.user-name{font-size:0.92rem;font-weight:500;margin-bottom:0.15rem}
+.user-meta{font-size:0.78rem;color:var(--muted)}
+.badge{font-size:0.7rem;font-weight:500;padding:0.22rem 0.6rem;border-radius:20px;white-space:nowrap}
+.badge.new-badge{background:rgba(62,207,142,0.14);color:var(--green)}
+.star-display{display:flex;gap:3px;margin-bottom:0.7rem}
+.star-display span{font-size:15px}
+.star-display .filled{color:var(--accent2)}
+.star-display .empty{color:rgba(255,255,255,0.1)}
+.review-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;margin-bottom:0.5rem;line-height:1.4}
+.review-body{font-size:0.87rem;color:var(--muted);line-height:1.7;margin-bottom:1rem}
+.review-tags{display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:1rem}
+.tag{background:var(--tag-bg);color:var(--tag-color);font-size:0.72rem;padding:0.2rem 0.55rem;border-radius:20px}
+.card-footer{display:flex;align-items:center;justify-content:space-between;padding-top:0.85rem;border-top:1px solid var(--border)}
+.card-date{font-size:0.78rem;color:var(--muted)}
+.helpful{display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--muted)}
+.helpful button{background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:0.25rem 0.65rem;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:0.78rem;cursor:pointer;transition:all 0.15s}
+.helpful button:hover,.helpful button.voted{background:var(--accent);border-color:var(--accent);color:#fff}
+.no-results{grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted)}
+
+.write-review{max-width:1200px;margin:0 auto 4rem;padding:0 2.5rem}
+.write-review-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2.5rem;display:flex;align-items:center;justify-content:space-between;gap:2rem}
+.write-review-box h3{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:600;margin-bottom:0.4rem}
+.write-review-box p{color:var(--muted);font-size:0.9rem}
+.cta-btn{background:var(--accent);color:#fff;border:none;padding:0.75rem 1.75rem;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:500;cursor:pointer;white-space:nowrap;transition:opacity 0.2s,transform 0.15s}
+.cta-btn:hover{opacity:0.85;transform:translateY(-1px)}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:500;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:2rem;width:min(580px,100%);max-height:92vh;overflow-y:auto;animation:modalIn 0.25s ease}
+@keyframes modalIn{from{opacity:0;transform:translateY(18px) scale(0.97)}to{opacity:1;transform:none}}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.modal-hdr h2{font-family:'Playfair Display',serif;font-size:1.4rem}
+.modal-close{background:var(--surface2);border:1px solid var(--border);color:var(--muted);width:32px;height:32px;border-radius:50%;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0}
+.modal-close:hover{background:var(--red);border-color:var(--red);color:#fff}
+
+.fg{margin-bottom:1rem}
+.fg label{display:block;font-size:0.82rem;color:var(--muted);margin-bottom:0.38rem;font-weight:500}
+.fg input,.fg textarea,.fg select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:0.7rem 1rem;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;transition:border-color 0.2s}
+.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--accent)}
+.fg input.err,.fg textarea.err,.fg select.err{border-color:var(--red)}
+.fg textarea{resize:vertical;min-height:110px}
+.fg select option{background:var(--surface2)}
+.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.sub-hint{font-size:0.74rem;color:var(--muted);margin-top:0.3rem}
+
+.sp-label{font-size:0.82rem;color:var(--muted);margin-bottom:0.4rem;font-weight:500}
+.star-picker{display:flex;gap:8px;margin-bottom:0.4rem;cursor:pointer}
+.star-picker span{font-size:30px;color:rgba(255,255,255,0.1);transition:color 0.1s,transform 0.1s;user-select:none;line-height:1}
+.star-picker span.lit{color:var(--accent2);transform:scale(1.12)}
+.rating-hint{font-size:0.78rem;min-height:1.1em;margin-bottom:1rem;color:var(--muted)}
+
+.modal-actions{display:flex;gap:0.75rem;margin-top:1.5rem;justify-content:flex-end}
+.btn-cancel{background:transparent;border:1px solid var(--border);color:var(--muted);padding:0.62rem 1.2rem;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.88rem;cursor:pointer;transition:all 0.15s}
+.btn-cancel:hover{border-color:var(--muted);color:var(--text)}
+.btn-submit{background:var(--accent);border:none;color:#fff;padding:0.62rem 1.6rem;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:500;cursor:pointer;transition:opacity 0.2s,transform 0.15s}
+.btn-submit:hover:not(:disabled){opacity:0.85;transform:translateY(-1px)}
+.btn-submit:disabled{opacity:0.5;cursor:not-allowed}
+
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(16px);background:var(--green);color:#05200f;padding:0.75rem 1.5rem;border-radius:50px;font-size:0.88rem;font-weight:500;opacity:0;transition:all 0.3s;z-index:999;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:700px){
+  header{padding:1rem 1.25rem}nav{display:none}
+  .hero,.stats-row,.rating-overview,.filters,.reviews-grid,.write-review{padding-left:1.25rem;padding-right:1.25rem}
+  .rating-overview{grid-template-columns:1fr}
+  .reviews-grid{grid-template-columns:1fr}
+  .write-review-box{flex-direction:column;text-align:center}
+  .fg-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo" style="cursor: pointer;" onclick="window.location.href='index.html'">Gear<span>Go</span></div>
+  <nav>
+    <a href="">Browse</a>
+    <a href="">Categories</a>
+    <a href="">Reviews</a>
+    <a href="">How it Works</a>
+  </nav>
+  <button class="header-btn" onclick="openModal()">+ Give a Review</button>
+</header>
+
+<section class="hero">
+  <div class="hero-label">Community Reviews</div>
+  <h1>What renters are saying about <em>GearGo</em></h1>
+  <p>Real experiences from real people. Every review is submitted by our community — nothing pre-filled, nothing fake.</p>
+</section>
+
+<div class="stats-row">
+  <div class="stat"><span class="stat-num" id="statAvg">—</span><span class="stat-label">Average Rating</span></div>
+  <div class="stat"><span class="stat-num" id="statTotal">0</span><span class="stat-label">Total Reviews</span></div>
+  <div class="stat"><span class="stat-num" id="statRecommend">—</span><span class="stat-label">Recommend Us</span></div>
+</div>
+
+<div class="rating-overview">
+  <div class="big-score">
+    <div class="num" id="bigAvg">—</div>
+    <div class="of">out of 5</div>
+    <div class="stars-row" id="bigStars"></div>
+    <div class="count" id="bigCount">0 reviews</div>
+  </div>
+  <div class="bars" id="barsContainer">
+    <div class="bar-row"><span class="bar-label">5 ★</span><div class="bar-track"><div class="bar-fill" style="width:0%"></div></div><span class="bar-count">0%</span></div>
+    <div class="bar-row"><span class="bar-label">4 ★</span><div class="bar-track"><div class="bar-fill" style="width:0%"></div></div><span class="bar-count">0%</span></div>
+    <div class="bar-row"><span class="bar-label">3 ★</span><div class="bar-track"><div class="bar-fill" style="width:0%"></div></div><span class="bar-count">0%</span></div>
+    <div class="bar-row"><span class="bar-label">2 ★</span><div class="bar-track"><div class="bar-fill" style="width:0%"></div></div><span class="bar-count">0%</span></div>
+    <div class="bar-row"><span class="bar-label">1 ★</span><div class="bar-track"><div class="bar-fill" style="width:0%"></div></div><span class="bar-count">0%</span></div>
+  </div>
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+  <button class="filter-btn" onclick="setFilter(5,this)">5 Stars</button>
+  <button class="filter-btn" onclick="setFilter(4,this)">4 Stars</button>
+  <button class="filter-btn" onclick="setFilter(3,this)">3 Stars</button>
+  <button class="filter-btn" onclick="setFilter(2,this)">2 Stars</button>
+  <button class="filter-btn" onclick="setFilter(1,this)">1 Star</button>
+  <select class="filter-select" id="sortSelect" onchange="renderReviews()">
+    <option value="newest">Sort: Newest First</option>
+    <option value="oldest">Sort: Oldest First</option>
+    <option value="highest">Sort: Highest Rated</option>
+    <option value="lowest">Sort: Lowest Rated</option>
+    <option value="helpful">Sort: Most Helpful</option>
+  </select>
+</div>
+
+<div id="reviewsSection"></div>
+
+<div class="write-review">
+  <div class="write-review-box">
+    <div>
+      <h3>Enjoyed your rental experience?</h3>
+      <p>Share your story and help fellow renters make better choices.</p>
+    </div>
+    <button class="cta-btn" onclick="openModal()">Give a Review →</button>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="overlayClick(event)">
+  <div class="modal">
+    <div class="modal-hdr">
+      <h2>Share Your Experience</h2>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+
+    <div class="fg-row">
+      <div class="fg">
+        <label>Your Name *</label>
+        <input type="text" id="fName" placeholder="e.g. Abhiram Reddy" maxlength="60"/>
+      </div>
+      <div class="fg">
+        <label>City *</label>
+        <input type="text" id="fCity" placeholder="e.g. Kandukur" maxlength="50"/>
+      </div>
+    </div>
+
+    <div class="fg-row">
+      <div class="fg">
+        <label>Category Rented *</label>
+        <select id="fCategory">
+          <option value="">— Select —</option>
+          <option>Sports Equipment</option>
+          <option>Gaming Consoles</option>
+          <option>Board Games</option>
+          <option>Outdoor</option>
+          <option>Indoor</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Item / Product Name</label>
+        <input type="text" id="fItem" placeholder="e.g. PS5, Cricket Kit" maxlength="60"/>
+      </div>
+    </div>
+
+    <div class="sp-label">Your Rating *</div>
+    <div class="star-picker" id="starPicker">
+      <span data-v="1">★</span><span data-v="2">★</span>
+      <span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+    </div>
+    <div class="rating-hint" id="rHint">Click a star to rate</div>
+
+    <div class="fg">
+      <label>Review Title *</label>
+      <input type="text" id="fTitle" placeholder="Summarise your experience in one line..." maxlength="100"/>
+    </div>
+
+    <div class="fg">
+      <label>Your Review *</label>
+      <textarea id="fBody" placeholder="What did you love? What could be better? Help others decide..." maxlength="800"></textarea>
+    </div>
+
+    <div class="fg">
+      <label>Tags <span style="font-weight:300;opacity:0.55">(optional)</span></label>
+      <input type="text" id="fTags" placeholder="e.g. Fast Delivery, Great Condition"/>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-submit" id="subBtn" onclick="submitReview()">Submit Review</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STORE = 'geargo_dashboard_reviews';
+const HINTS = ['','Terrible 😞','Poor 😕','Average 😐','Good 😊','Excellent! 🎉'];
+const COLORS = ['#2d1f6e','#1a3a2e','#3a1a1a','#3a2e10','#1a2e3a','#2e1a3a','#1f2d3a','#3a1a2e','#1a2f1a','#2e2b1a'];
+let activeFilter = 'all';
+let rating = 0;
+
+/* state */
+let cachedReviews = [];
+let serverOnline = true;
+const isLocalHTML = window.location.protocol === 'file:';
+const apiBase = '';
+const SAMPLE_REVIEWS = [
+  { id: 1, name: 'Aarav Sharma', city: 'Mumbai', category: 'Board Games', title: 'Great rental experience', body: 'The console arrived on time and the team was very responsive.', rating: 5, tags: ['PS5','Fast Delivery'], helpful: 12, created_at: new Date(Date.now() - 86400000).toISOString() },
+  { id: 2, name: 'Nisha Patel', city: 'Bengaluru', category: 'Outdoor', title: 'Smooth booking process', body: 'Loved the easy checkout and the gear quality was excellent.', rating: 4, tags: ['Outdoor','Comfortable'], helpful: 8, created_at: new Date(Date.now() - 172800000).toISOString() }
+];
+
+function loadLocalReviews(){
+  try {
+    const stored = JSON.parse(localStorage.getItem(STORE));
+    if(Array.isArray(stored) && stored.length) return stored.map(r => ({ ...r }));
+  } catch(e) {}
+  return SAMPLE_REVIEWS.map(r => ({ ...r }));
+}
+
+function saveLocalReviews(){
+  try { localStorage.setItem(STORE, JSON.stringify(cachedReviews)); } catch(e) {}
+}
+
+async function fetchReviews() {
+    console.log('Fetching reviews from:', apiBase || 'local');
+
+    try {
+        const res = await fetch(`${apiBase}/api/reviews`);
+        if (!res.ok) throw new Error(`Server error: ${res.status}`);
+        const json = await res.json();
+        cachedReviews = Array.isArray(json) ? json : [];
+        serverOnline = true;
+        saveLocalReviews();
+    } catch (e) {
+        console.error('Failed to fetch reviews:', e.message);
+        cachedReviews = loadLocalReviews();
+        serverOnline = false;
+    }
+}
+
+/* helpers */
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function initials(n){ return n.trim().split(/\s+/).map(w=>w[0]).join('').toUpperCase().slice(0,2)||'?'; }
+function avatarColor(n){ let h=0; for(let c of n) h=(h*31+c.charCodeAt(0))&0xffffffff; return COLORS[Math.abs(h)%COLORS.length]; }
+function starsHtml(r){ return [1,2,3,4,5].map(i=>`<span class="${i<=r?'filled':'empty'}">★</span>`).join(''); }
+function fmtDate(ts){ return new Date(ts).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}); }
+
+/* stats */
+function updateStats(){
+  const all = cachedReviews;
+  const n = all.length;
+  const dist = {5:0,4:0,3:0,2:0,1:0};
+  let sum = 0;
+  all.forEach(r=>{ sum+=r.rating; dist[r.rating]=(dist[r.rating]||0)+1; });
+  const avg = n ? (sum/n).toFixed(1) : null;
+  const rec = n ? Math.round(all.filter(r=>r.rating>=4).length/n*100)+'%' : '—';
+
+  document.getElementById('statAvg').textContent = avg||'—';
+  document.getElementById('statTotal').textContent = n;
+  document.getElementById('statRecommend').textContent = rec;
+  document.getElementById('bigAvg').textContent = avg||'—';
+  document.getElementById('bigCount').textContent = n+(n===1?' review':' reviews');
+
+  const bs = document.getElementById('bigStars');
+  bs.innerHTML = [1,2,3,4,5].map(i=>`<span style="font-size:18px;color:${avg&&i<=Math.round(avg)?'var(--accent2)':'rgba(255,255,255,0.1)'}">★</span>`).join('');
+
+  const bc = document.getElementById('barsContainer');
+  bc.innerHTML = [5,4,3,2,1].map(star=>{
+    const pct = n ? Math.round((dist[star]||0)/n*100) : 0;
+    return `<div class="bar-row"><span class="bar-label">${star} ★</span><div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div><span class="bar-count">${pct}%</span></div>`;
+  }).join('');
+}
+
+/* render reviews */
+function renderReviews(){
+  const all = cachedReviews;
+  const sort = document.getElementById('sortSelect').value;
+  let list = activeFilter==='all' ? [...all] : all.filter(r=>r.rating===activeFilter);
+
+  list.sort((a,b)=>{
+    const tsA = new Date(a.created_at || a.timestamp || 0).getTime();
+    const tsB = new Date(b.created_at || b.timestamp || 0).getTime();
+    if(sort==='newest') return tsB-tsA;
+    if(sort==='oldest') return tsA-tsB;
+    if(sort==='highest') return b.rating-a.rating;
+    if(sort==='lowest') return a.rating-b.rating;
+    return (b.helpful||0)-(a.helpful||0);
+  });
+
+  const sec = document.getElementById('reviewsSection');
+
+  if(!serverOnline && isLocalHTML){
+    // Local browser mode: continue rendering fallback or stored reviews.
+    console.info('Running in local review mode; data is loaded from browser storage.');
+  }
+
+  if(all.length===0){
+    sec.innerHTML=`<div class="empty-state">
+      <div class="empty-icon">📋</div>
+      <h3>No reviews yet</h3>
+      <p>Be the very first to share your GearGo experience with the community!</p>
+      <button class="empty-cta" onclick="openModal()">Write the First Review →</button>
+    </div>`;
+    return;
+  }
+
+  if(list.length===0){
+    sec.innerHTML=`<div class="reviews-grid"><div class="no-results">No reviews match this filter.</div></div>`;
+    return;
+  }
+
+  const cards = list.map((r,i)=>{
+    const ts = new Date(r.created_at || r.timestamp || 0).getTime();
+    const isNew = Date.now()-ts < 120000;
+    let parsedTags = r.tags;
+    if (typeof parsedTags === 'string') parsedTags = parsedTags.split(',').map(x=>x.trim()).filter(x=>x);
+    const tagsHtml = (parsedTags||[]).length ? `<div class="review-tags">${parsedTags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>` : '';
+    return `<div class="review-card" data-rating="${r.rating}" style="animation-delay:${Math.min(i*0.04,0.3)}s">
+      <div class="card-top">
+        <div class="user-info">
+          <div class="avatar" style="background:${avatarColor(r.name)}">${esc(initials(r.name))}</div>
+          <div>
+            <div class="user-name">${esc(r.name)}</div>
+            <div class="user-meta">${esc(r.city)}${r.category?' · '+esc(r.category):''}</div>
+          </div>
+        </div>
+        ${isNew?'<span class="badge new-badge">✓ New</span>':''}
+      </div>
+      <div class="star-display" style="align-items: center;">
+        ${starsHtml(r.rating)} 
+        <span style="margin-left: 6px; font-size: 0.85rem; color: var(--muted); font-weight: 500;">${r.rating}.0</span>
+      </div>
+      <div class="review-title">${esc(r.title)}</div>
+      <div class="review-body">${esc(r.body)}</div>
+      ${tagsHtml}
+      <div class="card-footer">
+        <span class="card-date">${fmtDate(ts)}</span>
+        <div class="helpful">Helpful? <button onclick="upvote(this,${r.id})"class="${r.voted?'voted':''}">👍 ${r.helpful||0}</button></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  sec.innerHTML=`<div class="reviews-grid">${cards}</div>`;
+}
+
+/* filter */
+function setFilter(val,btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  activeFilter=val;
+  renderReviews();
+}
+
+/* upvote */
+async function upvote(btn,id){
+  if(btn.classList.contains('voted')) return;
+  btn.classList.add('voted');
+  const review = cachedReviews.find(r => r.id === id);
+  if (review) review.helpful = (review.helpful || 0) + 1;
+  btn.textContent='👍 '+ (review ? review.helpful : '?');
+  if (review) review.voted = true;
+  saveLocalReviews();
+  if (isLocalHTML || !serverOnline) return;
+  try {
+     await fetch(`${apiBase}/api/reviews/${id}/upvote`, { method: 'POST' });
+  } catch (e) { console.error('Failed upvote', e); }
+}
+
+/* modal */
+/* storage for user */
+const STORE_KEY = 'geargo_account';
+function getAccount() { try { return JSON.parse(localStorage.getItem(STORE_KEY)) || null; } catch(e) { return null; } }
+
+function openModal(){ 
+  resetForm(); 
+  document.getElementById('modal').classList.add('open'); 
+  document.body.style.overflow='hidden'; 
+  
+  // Auto-fill logged in user!
+  const acc = getAccount();
+  if (acc && acc.name) {
+    const fNameInput = document.getElementById('fName');
+    if (fNameInput) {
+       fNameInput.value = acc.name;
+       fNameInput.style.backgroundColor = 'var(--surface)';
+    }
+  }
+}
+function closeModal(){ document.getElementById('modal').classList.remove('open'); document.body.style.overflow=''; }
+function overlayClick(e){ if(e.target===document.getElementById('modal')) closeModal(); }
+
+/* star picker */
+const sp=document.getElementById('starPicker');
+sp.querySelectorAll('span').forEach(s=>{
+  s.addEventListener('mouseover',()=>lightStars(+s.dataset.v,true));
+  s.addEventListener('mouseout',()=>lightStars(rating,false));
+  s.addEventListener('click',()=>{ rating=+s.dataset.v; lightStars(rating,false); document.getElementById('rHint').textContent=HINTS[rating]; document.getElementById('rHint').style.color='var(--accent2)'; });
+});
+function lightStars(n,h){
+  sp.querySelectorAll('span').forEach(s=>{
+    const v=+s.dataset.v, on=v<=n;
+    s.classList.toggle('lit',on);
+    s.style.color=on?'var(--accent2)':'rgba(255,255,255,0.1)';
+    s.style.transform=on&&h?'scale(1.2)':'';
+  });
+}
+
+/* form */
+function resetForm(){
+  ['fName','fCity','fTitle','fBody','fTags','fItem'].forEach(id=>{ const el=document.getElementById(id); if(el){el.value='';el.classList.remove('err');} });
+  document.getElementById('fCategory').value='';
+  document.getElementById('fCategory').classList.remove('err');
+  rating=0; lightStars(0,false);
+  document.getElementById('rHint').textContent='Click a star to rate';
+  document.getElementById('rHint').style.color='var(--muted)';
+  document.getElementById('subBtn').disabled=false;
+  document.getElementById('subBtn').textContent='Submit Review';
+}
+
+function validate(){
+  let ok=true;
+  [['fName'],['fCity'],['fTitle'],['fBody']].forEach(([id])=>{
+    const el=document.getElementById(id);
+    if(!el.value.trim()){ el.classList.add('err'); ok=false; }
+    else el.classList.remove('err');
+  });
+  const cat=document.getElementById('fCategory');
+  if(!cat.value){ cat.classList.add('err'); ok=false; } else cat.classList.remove('err');
+  if(!rating){ document.getElementById('rHint').textContent='⚠ Please select a rating'; document.getElementById('rHint').style.color='var(--red)'; ok=false; }
+  return ok;
+}
+
+async function submitReview(){
+  if(!validate()) return;
+  const btn=document.getElementById('subBtn');
+  btn.disabled=true; btn.textContent='Submitting…';
+
+  const rawTags=document.getElementById('fTags').value;
+  const item=document.getElementById('fItem').value.trim();
+  let tags=rawTags.split(',').map(t=>t.trim()).filter(t=>t.length>0&&t.length<50);
+  if(item) tags=[item,...tags];
+  tags=[...new Set(tags)].slice(0,5);
+
+  const review={
+    id: Date.now(),
+    name:document.getElementById('fName').value.trim(),
+    city:document.getElementById('fCity').value.trim(),
+    category:document.getElementById('fCategory').value,
+    title:document.getElementById('fTitle').value.trim(),
+    body:document.getElementById('fBody').value.trim(),
+    rating,tags,
+    helpful:0,
+    created_at: new Date().toISOString()
+  };
+
+  cachedReviews.unshift(review);
+  saveLocalReviews();
+
+  if(!serverOnline){
+     updateStats();
+     renderReviews();
+     closeModal();
+     toast('✓ Your review was saved locally');
+     const sec=document.getElementById('reviewsSection');
+     if(sec) window.scrollTo({top:sec.offsetTop-90,behavior:'smooth'});
+     return;
+  }
+
+  try {
+     await fetch(`${apiBase}/api/reviews`, {
+         method: 'POST',
+         headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify(review)
+     });
+     await initApp();
+     closeModal();
+     toast('✓ Your review was posted successfully!');
+     const sec=document.getElementById('reviewsSection');
+     if(sec) window.scrollTo({top:sec.offsetTop-90,behavior:'smooth'});
+  } catch (e) {
+     console.error('Failed to post review:', e);
+     updateStats();
+     renderReviews();
+     closeModal();
+     toast('✓ Your review was saved locally');
+  }
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+/* init */
+async function initApp() {
+    await fetchReviews();
+    updateStats();
+    renderReviews();
+}
+initApp();
+</script>
+</body>
+</html>

@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GearGo Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════
+       MASTER LOGIN GATE
+    ═══════════════════════════════════════ */
+    #master-gate {
+      display: flex;
+      position: fixed;
+      inset: 0;
+      z-index: 99999999;
+      background: #04040f;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    #master-gate.hidden { display: none; }
+
+    .gate-bg-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(22,169,124,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(22,169,124,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+    .gate-bg-glow {
+      position: absolute;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(22,169,124,0.08) 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .gate-card {
+      position: relative;
+      background: #080818;
+      border: 1px solid #16a97c33;
+      border-radius: 20px;
+      padding: 44px 48px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 0 80px rgba(22,169,124,0.08), 0 40px 80px rgba(0,0,0,0.6);
+      animation: gateIn 0.5s cubic-bezier(0.16,1,0.3,1);
+    }
+    @keyframes gateIn {
+      from { opacity: 0; transform: translateY(24px) scale(0.96); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .gate-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+      justify-content: center;
+    }
+    .gate-logo-icon {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, #16a97c, #0d7a59);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 20px rgba(22,169,124,0.4);
+    }
+    .gate-logo-icon svg {
+      width: 24px; height: 24px;
+      stroke: #fff; fill: none; stroke-width: 2;
+    }
+    .gate-logo-text {
+      font-family: 'Inter', sans-serif;
+      font-size: 22px; font-weight: 700;
+      color: #fff; letter-spacing: -0.5px;
+    }
+    .gate-logo-text span { color: #16a97c; }
+
+    .gate-terminal {
+      background: #02020a;
+      border: 1px solid #16a97c22;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 24px;
+      font-size: 10px;
+      line-height: 1.8;
+      color: #22c55e;
+    }
+    .t-dim  { color: #374151; }
+    .t-cyan { color: #06b6d4; }
+    .t-red  { color: #ef4444; }
+    .t-ylw  { color: #eab308; }
+    .t-grn  { color: #22c55e; }
+
+    .gate-label {
+      font-size: 10px; font-weight: 700;
+      color: #6b7280; letter-spacing: 1.2px;
+      text-transform: uppercase; margin-bottom: 8px;
+    }
+    .gate-input-wrap {
+      position: relative; margin-bottom: 14px;
+    }
+    .gate-input {
+      width: 100%;
+      background: #02020a;
+      border: 1px solid #1e3a5f;
+      border-radius: 10px;
+      padding: 14px 48px 14px 18px;
+      font-size: 15px;
+      color: #22c55e;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 3px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .gate-input::placeholder { color: #2a3a4a; letter-spacing: 0; font-size: 12px; }
+    .gate-input:focus {
+      border-color: #16a97c;
+      box-shadow: 0 0 0 3px rgba(22,169,124,0.15);
+    }
+    .gate-input.error {
+      border-color: #ef4444;
+      box-shadow: 0 0 0 3px rgba(239,68,68,0.15);
+      animation: shake 0.35s ease;
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+    }
+    .gate-eye {
+      position: absolute; right: 14px; top: 50%;
+      transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      color: #4b5563; font-size: 17px; padding: 4px;
+      transition: color 0.15s;
+    }
+    .gate-eye:hover { color: #16a97c; }
+
+    .gate-btn {
+      width: 100%; padding: 14px;
+      background: linear-gradient(135deg, #16a97c, #0d7a59);
+      color: #fff; border: none; border-radius: 10px;
+      font-size: 14px; font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      cursor: pointer; letter-spacing: 1px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 20px rgba(22,169,124,0.3);
+    }
+    .gate-btn:hover {
+      background: linear-gradient(135deg, #13c98f, #16a97c);
+      box-shadow: 0 6px 28px rgba(22,169,124,0.45);
+      transform: translateY(-1px);
+    }
+    .gate-btn:active { transform: translateY(0); }
+    .gate-btn:disabled {
+      background: #1f2937; box-shadow: none;
+      cursor: not-allowed; transform: none;
+    }
+
+    .gate-err {
+      color: #ef4444; font-size: 11px;
+      margin-top: 10px; min-height: 18px;
+      text-align: center;
+    }
+    .gate-attempts {
+      font-size: 10px; color: #4b5563;
+      text-align: center; margin-top: 12px;
+    }
+    .gate-attempts span { color: #ef4444; font-weight: 700; }
+
+    .gate-warn {
+      display: none;
+      background: #1a0a00;
+      border: 1px solid #b45309;
+      border-radius: 8px;
+      padding: 9px 14px;
+      margin: 10px 0;
+      font-size: 11px; color: #fbbf24;
+      text-align: center;
+    }
+    .gate-warn.show { display: block; }
+
+    .gate-cooldown {
+      display: none;
+      background: #1a0000;
+      border: 1px solid #7f1d1d;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 12px;
+      font-size: 11px; color: #ef4444;
+      text-align: center;
+    }
+    .gate-cooldown.show { display: block; }
+
+    /* LOCKOUT FULL SCREEN */
+    #gate-lockout {
+      display: none;
+      position: fixed; inset: 0;
+      background: #02010a;
+      z-index: 999999999;
+      align-items: center; justify-content: center;
+      flex-direction: column;
+      font-family: 'JetBrains Mono', monospace;
+      text-align: center; padding: 20px;
+    }
+    #gate-lockout.show { display: flex; }
+    .lockout-ascii {
+      color: #ef4444; font-size: 10px;
+      line-height: 1.4; margin-bottom: 20px;
+      white-space: pre;
+    }
+    .lockout-title { color: #ef4444; font-size: 15px; margin-bottom: 12px; font-weight: 700; }
+    .lockout-timer {
+      color: #eab308; font-size: 48px; font-weight: 700;
+      letter-spacing: 6px; margin-bottom: 16px;
+    }
+    .lockout-info { color: #374151; font-size: 11px; line-height: 2; }
+    .lockout-info span { color: #6b7280; }
+
+    /* ═══════════════════════════════════════
+       MAIN DASHBOARD (hidden until auth)
+    ═══════════════════════════════════════ */
+    #dashboard-wrap {
+      display: none;
+      width: 100%;
+    }
+    #dashboard-wrap.visible {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Rest of original dashboard styles ── */
+    * { box-sizing: border-box; }
+
+    :root {
+      --bg: #F7F8FA; --surface: #FFFFFF; --surface2: #F1F3F6;
+      --text: #1A1D23; --muted: #6B7280; --border: #E5E7EB;
+      --green: #16A97C; --green-light: #E8F8F2; --green-dark: #0D7A59;
+      --blue: #2563EB; --blue-light: #EFF6FF;
+      --amber: #D97706; --amber-light: #FFFBEB;
+      --red: #DC2626; --red-light: #FEF2F2;
+      --gray-light: #F3F4F6;
+      --radius: 8px; --radius-lg: 12px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .sidebar {
+      width: 230px; background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; flex-shrink: 0;
+      position: fixed; top: 0; left: 0; height: 100vh; z-index: 100;
+    }
+    .logo {
+      padding: 20px 20px 16px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .logo-icon {
+      width: 34px; height: 34px; background: var(--green);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    }
+    .logo-icon svg { width: 20px; height: 20px; stroke: #fff; fill: none; stroke-width: 2; }
+    .logo-text { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; }
+    .logo-text span { color: var(--green); }
+
+    .nav-section {
+      padding: 16px 12px 8px; font-size: 11px; font-weight: 600;
+      color: var(--muted); letter-spacing: 0.6px; text-transform: uppercase;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 12px; border-radius: var(--radius);
+      margin: 1px 8px; cursor: pointer; color: var(--muted);
+      font-size: 13.5px; font-weight: 500; transition: all 0.15s;
+      text-decoration: none;
+    }
+    .nav-item:hover { background: var(--gray-light); color: var(--text); }
+    .nav-item.active { background: var(--green-light); color: var(--green-dark); }
+    .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; stroke: currentColor; fill: none; stroke-width: 1.6; }
+
+    .sidebar-bottom {
+      margin-top: auto; padding: 12px;
+      border-top: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .user-avatar {
+      width: 34px; height: 34px; background: var(--green);
+      border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; color: #fff; font-weight: 600;
+      font-size: 13px; flex-shrink: 0;
+    }
+
+    .main { flex: 1; margin-left: 230px; display: flex; flex-direction: column; min-height: 100vh; }
+    .topbar {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 0 28px; height: 58px; display: flex; align-items: center;
+      justify-content: space-between; position: sticky; top: 0; z-index: 50;
+    }
+    .topbar-title { font-size: 16px; font-weight: 600; }
+    .content { padding: 28px; flex: 1; }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .metrics-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; }
+    .metric-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 10px 12px;
+      width: 180px; flex-shrink: 0; box-shadow: var(--shadow);
+    }
+    .metric-label { font-size: 10px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.2px; }
+    .metric-val { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; line-height: 1.2; }
+    .metric-icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-bottom: 6px; }
+    .metric-icon svg { width: 18px; height: 18px; stroke: #fff; fill: none; stroke-width: 2; }
+    .metric-icon.green { background: var(--green); }
+    .metric-icon.blue { background: var(--blue); }
+    .metric-icon.amber { background: var(--amber); }
+
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow); }
+    .card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .card-title { font-size: 14px; font-weight: 600; }
+    .table-wrap { overflow-x: auto; }
+
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 600;
+      color: var(--muted); letter-spacing: 0.4px; text-transform: uppercase;
+      background: var(--gray-light); border-bottom: 1px solid var(--border);
+    }
+    tbody td { padding: 13px 16px; border-bottom: 1px solid var(--border); font-size: 13.5px; vertical-align: middle; }
+    tbody tr:hover { background: #FAFBFC; }
+
+    .partner-row { cursor: context-menu; user-select: none; }
+    .partner-row.ctx-active { background: #FEF2F2 !important; outline: 2px solid #DC2626; outline-offset: -2px; }
+
+    .badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+    .badge.accepted { background: #E8F8F2; color: #0D7A59; }
+    .badge.pending { background: #FFFBEB; color: #92400E; }
+    .badge.active { background: #E8F8F2; color: #0D7A59; }
+
+    .btn { display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px; border-radius: var(--radius); font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid var(--border); background: var(--surface); }
+
+    .ctx-menu {
+      position: fixed; display: none; background: var(--surface);
+      border: 1px solid var(--border); border-radius: var(--radius-lg);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.08);
+      z-index: 99999; min-width: 210px; overflow: hidden;
+      animation: ctxIn 0.12s ease;
+    }
+    @keyframes ctxIn { from { opacity:0; transform:scale(0.93) translateY(-5px); } to { opacity:1; transform:scale(1) translateY(0); } }
+    .ctx-label { padding: 9px 14px 7px; font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: 0.7px; text-transform: uppercase; background: var(--gray-light); border-bottom: 1px solid var(--border); }
+    .ctx-name { padding: 9px 14px; font-size: 13px; font-weight: 600; color: var(--text); border-bottom: 1px solid var(--border); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ctx-item { display: flex; align-items: center; gap: 10px; padding: 11px 14px; width: 100%; border: none; background: none; font-size: 13.5px; font-weight: 500; color: var(--text); cursor: pointer; text-align: left; transition: background 0.1s; }
+    .ctx-item:hover { background: var(--gray-light); }
+    .ctx-item-icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+    .ctx-item.view .ctx-item-icon { background: var(--blue-light); }
+    .ctx-item.del { color: var(--red); }
+    .ctx-item.del:hover { background: var(--red-light); }
+    .ctx-item.del .ctx-item-icon { background: var(--red-light); }
+    .ctx-sep { height: 1px; background: var(--border); margin: 4px 0; }
+
+    .confirm-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 100000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+    .confirm-bg.open { display: flex; }
+    .confirm-box { background: var(--surface); border-radius: var(--radius-lg); padding: 28px; max-width: 400px; width: 90%; box-shadow: 0 25px 50px rgba(0,0,0,0.3); animation: cboxIn 0.18s ease; }
+    @keyframes cboxIn { from { opacity:0; transform:scale(0.88); } to { opacity:1; transform:scale(1); } }
+    .confirm-ico { width: 48px; height: 48px; background: var(--red-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 16px; }
+    .confirm-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .confirm-msg { font-size: 13.5px; color: var(--muted); line-height: 1.65; margin-bottom: 22px; }
+    .confirm-msg strong { color: var(--text); }
+    .confirm-btns { display: flex; gap: 10px; justify-content: flex-end; }
+    .btn-cancel { padding: 9px 18px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); font-size: 13px; font-weight: 600; cursor: pointer; }
+    .btn-cancel:hover { background: var(--gray-light); }
+    .btn-del { padding: 9px 18px; border-radius: var(--radius); border: none; background: var(--red); color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+    .btn-del:hover { background: #b91c1c; }
+
+    .toast { position: fixed; bottom: 24px; right: 24px; background: #1E1E2E; color: #fff; padding: 13px 20px; border-radius: var(--radius-lg); font-size: 13px; z-index: 999999; display: none; align-items: center; gap: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+    .toast.show { display: flex; }
+    .t-ico { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+    .t-ico.ok { background: var(--green); }
+    .t-ico.err { background: var(--red); }
+
+    .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+    .modal-bg.open { display: flex; }
+
+    #agreement-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(5px); }
+    #agreement-modal.show { display: flex; }
+    .agreement-card { background: white; width: 100%; max-width: 600px; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.3); animation: modalScale 0.3s ease; color: #333; }
+    @keyframes modalScale { from { opacity:0; transform:scale(0.9); } to { opacity:1; transform:scale(1); } }
+    .agreement-header { padding: 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+    .agreement-title { font-weight: 700; font-size: 16px; color: #1e293b; text-transform: uppercase; letter-spacing: 1px; }
+    .agreement-body { padding: 40px; font-family: 'Times New Roman', serif; line-height: 1.6; font-size: 14px; max-height: 70vh; overflow-y: auto; }
+    .agreement-field { margin-bottom: 12px; display: flex; border-bottom: 1px dotted #cbd5e1; padding-bottom: 4px; }
+    .agreement-label { font-weight: 700; width: 140px; color: #64748b; font-size: 12px; text-transform: uppercase; }
+    .agreement-val { flex: 1; color: #1e293b; font-weight: 500; }
+    .agreement-text-block { margin: 25px 0; background: #f1f5f9; padding: 15px; border-radius: 6px; font-style: italic; font-size: 13px; color: #475569; border-left: 4px solid #cbd5e1; }
+    .agreement-footer { padding: 30px; background: #fff; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: flex-end; }
+    .sig-box { text-align: center; border-top: 1px solid #333; width: 180px; padding-top: 8px; }
+    .sig-font { font-family: 'Dancing Script', cursive; font-size: 24px; color: #1e293b; margin-bottom: 5px; display: block; }
+    .sig-label { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; }
+  </style>
+</head>
+<body style="font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;display:flex;min-height:100vh">
+
+<!-- ═══════════════════════════════════════════════
+     MASTER PASSWORD GATE
+═══════════════════════════════════════════════ -->
+<div id="master-gate">
+  <div class="gate-bg-grid"></div>
+  <div class="gate-bg-glow"></div>
+  <div class="gate-card">
+    <div class="gate-logo">
+      <div class="gate-logo-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      </div>
+      <div class="gate-logo-text">Gear<span>Go</span></div>
+    </div>
+
+    <div class="gate-terminal" id="gate-terminal">
+      <span class="t-dim">[GEARGO_ADMIN_SYS v2.4.1]</span><br>
+      <span class="t-cyan">$ initialize admin_panel --auth=required</span><br>
+      <span class="t-red">ERR: 403 UNAUTHORIZED_ACCESS</span><br>
+      <span class="t-ylw">⚠ Master credentials required to proceed</span><br>
+      <span class="t-dim">$ awaiting master_password_</span>
+    </div>
+
+    <div class="gate-label">🔐 Master Admin Password</div>
+
+    <div class="gate-cooldown" id="gate-cooldown">
+      ⏳ RATE LIMITED — wait <span id="gate-cool-timer">30</span>s before next attempt
+    </div>
+    <div class="gate-warn" id="gate-warn">
+      ⚠️ FINAL WARNING: 1 attempt left — next failure triggers 5-minute lockout!
+    </div>
+
+    <div class="gate-input-wrap">
+      <input type="password" class="gate-input" id="gate-input"
+        placeholder="Enter master password..." autocomplete="off" spellcheck="false" />
+      <button class="gate-eye" onclick="toggleGateEye()">👁</button>
+    </div>
+
+    <button class="gate-btn" id="gate-btn" onclick="verifyMasterPassword()">
+      🔓 &nbsp;AUTHENTICATE &amp; ENTER
+    </button>
+    <div class="gate-err" id="gate-err"></div>
+    <div class="gate-attempts">Failed attempts: <span id="gate-attempt-count">0</span> / 5</div>
+  </div>
+</div>
+
+<!-- LOCKOUT SCREEN -->
+<div id="gate-lockout">
+  <div class="lockout-ascii">
+ ███████╗██████╗ ██████╗  ██████╗ ██████╗ 
+ ██╔════╝██╔══██╗██╔══██╗██╔═══██╗██╔══██╗
+ █████╗  ██████╔╝██████╔╝██║   ██║██████╔╝
+ ██╔══╝  ██╔══██╗██╔══██╗██║   ██║██╔══██╗
+ ███████╗██║  ██║██║  ██║╚██████╔╝██║  ██║
+ ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝</div>
+  <div class="lockout-title">⛔ ACCESS SUSPENDED — TOO MANY FAILED ATTEMPTS</div>
+  <div class="lockout-timer" id="gate-lockout-timer">05:00</div>
+  <div class="lockout-info">
+    [SYS] Brute-force protection activated<br>
+    [SYS] Session flagged at: <span id="gate-lockout-ts">—</span><br>
+    [SYS] All attempts are being logged<br>
+    [SYS] Countdown to re-entry shown above
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     DASHBOARD (revealed after auth)
+═══════════════════════════════════════════════ -->
+<div id="dashboard-wrap">
+
+  <!-- CONTEXT MENU -->
+  <div id="ctxMenu" class="ctx-menu">
+    <div class="ctx-label">Partner Actions</div>
+    <div class="ctx-name" id="ctx-pname">—</div>
+    <button class="ctx-item view" id="ctx-view"><span class="ctx-item-icon">👁️</span> View Full Details</button>
+    <div class="ctx-sep"></div>
+    <button class="ctx-item del" id="ctx-del"><span class="ctx-item-icon">🗑️</span> Delete Partner</button>
+  </div>
+
+  <!-- CONFIRM DIALOG -->
+  <div id="confirmBg" class="confirm-bg">
+    <div class="confirm-box">
+      <div class="confirm-ico">🗑️</div>
+      <div class="confirm-title">Delete this partner?</div>
+      <div class="confirm-msg">You are about to permanently remove <strong id="confirm-name">this partner</strong>. This cannot be undone.</div>
+      <div class="confirm-btns">
+        <button class="btn-cancel" onclick="closeConfirm()">Cancel</button>
+        <button class="btn-del" id="confirm-ok-btn">🗑️ Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast">
+    <div class="t-ico ok" id="t-ico">✓</div>
+    <span id="t-msg">Done</span>
+  </div>
+
+  <!-- AGREEMENT PREVIEW MODAL -->
+  <div id="agreement-modal" onclick="if(event.target===this) this.classList.remove('show')">
+    <div class="agreement-card">
+      <div class="agreement-header">
+        <div class="agreement-title">📄 RENTAL AGREEMENT #<span id="agr-id">---</span></div>
+        <button onclick="document.getElementById('agreement-modal').classList.remove('show')" style="background:none;border:none;font-size:24px;cursor:pointer;color:#94a3b8">&times;</button>
+      </div>
+      <div class="agreement-body">
+        <div style="text-align:center;margin-bottom:30px">
+          <h2 style="font-family:Inter;margin-top:10px;font-size:22px;color:#1e293b">GearGo Agreement</h2>
+          <p style="font-family:Inter;font-size:11px;color:#64748b">Verified &amp; Digitally Signed</p>
+        </div>
+        <div class="agreement-field"><div class="agreement-label">CUSTOMER NAME</div><div class="agreement-val" id="agr-name">---</div></div>
+        <div class="agreement-field"><div class="agreement-label">CONTACT PHONE</div><div class="agreement-val" id="agr-phone">---</div></div>
+        <div class="agreement-field"><div class="agreement-label">EMAIL ADDRESS</div><div class="agreement-val" id="agr-email">---</div></div>
+        <div class="agreement-field"><div class="agreement-label">PRODUCT RENTED</div><div class="agreement-val" id="agr-item">---</div></div>
+        <div class="agreement-field"><div class="agreement-label">RENTAL DURATION</div><div class="agreement-val" id="agr-days">--- Day(s)</div></div>
+        <div class="agreement-field"><div class="agreement-label">TOTAL AMOUNT</div><div class="agreement-val" id="agr-price">₹---</div></div>
+        <div class="agreement-field"><div class="agreement-label">BOOKING DATE</div><div class="agreement-val" id="agr-date">---</div></div>
+        <div class="agreement-field"><div class="agreement-label">DELIVERY ADDR.</div><div class="agreement-val" id="agr-addr">---</div></div>
+        <div class="agreement-text-block">"I hereby acknowledge that I have received the item(s) mentioned above in good working condition. I agree to pay the rental charges and return the item(s) by the end of the specified duration. I am responsible for any damages or loss during my possession."</div>
+        <div class="agreement-footer">
+          <div class="sig-box">
+            <span style="font-size:10px;color:#94a3b8;font-family:Inter">Authorized Signatory</span><br>
+            <div class="sig-label">GEARGO INDIA</div>
+          </div>
+          <div class="sig-box">
+            <span class="sig-font" id="agr-sig">---</span>
+            <div class="sig-label">DIGITAL SIGNATURE OF RENTER</div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:15px;background:#f8fafc;text-align:center">
+        <button onclick="window.print()" style="padding:8px 20px;background:#1e293b;color:white;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">Print Agreement</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="logo">
+      <div class="logo-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2"/></svg></div>
+      <div class="logo-text">Gear<span>Go</span></div>
+    </div>
+    <div class="nav-section">Admin Panel</div>
+    <div class="nav-item active" onclick="show('overview',this)">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Overview
+    </div>
+    <div class="nav-item" onclick="show('bookings',this)">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Bookings
+    </div>
+    <div class="nav-item" onclick="show('partners',this)">
+      <svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4"/></svg>
+      Partners List
+    </div>
+    <div class="nav-item" onclick="show('reviews',this)">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Manage Reviews
+    </div>
+    <a href="delivery-partner.html" class="nav-item">
+      <svg viewBox="0 0 24 24"><path d="M16 11v6M13 14h6"/><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4"/></svg>
+      Add New Partner
+    </a>
+    <div class="sidebar-bottom">
+      <button onclick="logoutDashboard()" style="width:100%;background:none;border:1px solid #fee2e2;border-radius:8px;padding:8px;font-size:11px;color:#ef4444;cursor:pointer;font-weight:600;font-family:inherit">🚪 Logout</button>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+    <div class="topbar">
+      <span class="topbar-title" id="page-title">Overview</span>
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="display:flex;align-items:center;gap:6px;background:#dcfce7;color:#15803d;font-size:11px;font-weight:700;padding:5px 12px;border-radius:999px;border:1px solid #bbf7d0">
+          🛡️ Admin Session Active
+        </div>
+        <div class="user-avatar">AD</div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- OVERVIEW -->
+      <div class="section active" id="sec-overview">
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-icon green"><svg viewBox="0 0 24 24"><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+            <div class="metric-label">Total Rentals</div>
+            <div class="metric-val" id="m-total-rentals">0</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon blue"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/></svg></div>
+            <div class="metric-label">Total Partners</div>
+            <div class="metric-val" id="m-active-team">0</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon amber"><svg viewBox="0 0 24 24"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+            <div class="metric-label">Revenue Estimate</div>
+            <div class="metric-val" id="m-revenue">₹0</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Live Booking Stream</span></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Booking</th><th>Item</th><th>Customer</th><th>Amount</th><th>Status</th><th>Contract</th></tr></thead>
+              <tbody id="overview-rentals"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted)">Syncing...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOOKINGS -->
+      <div class="section" id="sec-bookings">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Master Booking Log</span></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>ID</th><th>Customer</th><th>Item</th><th>Schedule</th><th>Total</th><th>Status</th><th>Contract</th></tr></thead>
+              <tbody id="full-rentals"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PARTNERS -->
+      <div class="section" id="sec-partners">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Registered Partners</span>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:11px;color:var(--muted);background:var(--gray-light);padding:4px 10px;border-radius:999px;">🖱️ Right-click to delete</span>
+              <button class="btn" onclick="clearAllPartners()" style="padding:4px 10px;font-size:11px;color:var(--red);border-color:#fee2e2">🗑️ Clear All</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>#</th><th>Partner Name</th><th>Age</th><th>Mobile</th><th>Vehicle Info</th><th>Status</th><th>Action</th></tr></thead>
+              <tbody id="full-partners"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- REVIEWS -->
+      <div class="section" id="sec-reviews">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Manage Posted Reviews</span>
+            <button class="btn" style="background:var(--blue);color:white;border:none;padding:8px 16px;border-radius:var(--radius);cursor:pointer;font-weight:600" onclick="window.open('reviews.html','_blank')">Live Review Page ↗</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>ID</th><th>Customer</th><th>Subject</th><th>Rating</th><th>Review Text</th><th>Likes</th><th>Date</th><th>Action</th></tr></thead>
+              <tbody id="full-reviews"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PARTNER DETAIL MODAL -->
+  <div id="partnerModal" class="modal-bg">
+    <div style="background:var(--surface);width:90%;max-width:800px;border-radius:var(--radius-lg);max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 25px 50px rgba(0,0,0,0.5)">
+      <div style="padding:24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--surface);z-index:10">
+        <h2 style="font-size:18px;font-weight:700">Partner Full Profile</h2>
+        <button onclick="closeModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted)">&times;</button>
+      </div>
+      <div id="modal-body" style="padding:24px"></div>
+    </div>
+  </div>
+
+</div><!-- end #dashboard-wrap -->
+
+<script>
+// ════════════════════════════════════════════════════════════
+//  MASTER PASSWORD GATE
+//  Password: GearGo@Admin2024
+//  SHA-256:  4609a41daef53158e41ef4ca5ae61cba91b571cadacbb39bec74361bef167393
+// ════════════════════════════════════════════════════════════
+
+const MASTER_HASH  = '4609a41daef53158e41ef4ca5ae61cba91b571cadacbb39bec74361bef167393';
+const GATE_MAX_FAIL  = 5;
+const GATE_LOCKOUT   = 5 * 60 * 1000;   // 5 min
+const GATE_COOLDOWN  = 30 * 1000;        // 30 sec
+const GATE_SESSION   = 8 * 60 * 60 * 1000; // 8 hours
+const GATE_AUTH_KEY  = btoa('gg_master_auth');
+const GATE_TS_KEY    = btoa('gg_master_ts');
+const GATE_FAIL_KEY  = btoa('gg_master_fail');
+const GATE_LOCK_KEY  = btoa('gg_master_lock');
+const GATE_COOL_KEY  = btoa('gg_master_cool');
+
+let gateCoolIv = null, gateLockIv = null;
+
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+function toggleGateEye() {
+  const i = document.getElementById('gate-input');
+  i.type = i.type === 'password' ? 'text' : 'password';
+}
+
+function showDashboard() {
+  document.getElementById('master-gate').classList.add('hidden');
+  document.getElementById('dashboard-wrap').classList.add('visible');
+  fetchData();
+  setInterval(fetchData, 3000);
+}
+
+function logoutDashboard() {
+  if (!confirm('Log out of GearGo Admin?')) return;
+  sessionStorage.removeItem(GATE_AUTH_KEY);
+  sessionStorage.removeItem(GATE_TS_KEY);
+  document.getElementById('master-gate').classList.remove('hidden');
+  document.getElementById('dashboard-wrap').classList.remove('visible');
+  document.getElementById('gate-input').value = '';
+  document.getElementById('gate-err').textContent = '';
+  document.getElementById('gate-attempt-count').textContent = '0';
+}
+
+function checkGateSession() {
+  if (sessionStorage.getItem(GATE_AUTH_KEY) === '1') {
+    const ts = parseInt(sessionStorage.getItem(GATE_TS_KEY) || '0');
+    if (Date.now() - ts < GATE_SESSION) { showDashboard(); return; }
+    sessionStorage.removeItem(GATE_AUTH_KEY);
+  }
+  // Check lockout
+  const lockUntil = parseInt(sessionStorage.getItem(GATE_LOCK_KEY) || '0');
+  if (Date.now() < lockUntil) { showGateLockout(); return; }
+  // Show gate
+  const fails = parseInt(sessionStorage.getItem(GATE_FAIL_KEY) || '0');
+  document.getElementById('gate-attempt-count').textContent = fails;
+  updateGateCoolUI();
+  if (GATE_MAX_FAIL - fails === 1) document.getElementById('gate-warn').classList.add('show');
+  setTimeout(() => document.getElementById('gate-input').focus(), 300);
+}
+
+function updateGateCoolUI() {
+  const coolUntil = parseInt(sessionStorage.getItem(GATE_COOL_KEY) || '0');
+  const rem = Math.ceil((coolUntil - Date.now()) / 1000);
+  const btn = document.getElementById('gate-btn');
+  const inp = document.getElementById('gate-input');
+  const cd  = document.getElementById('gate-cooldown');
+  if (Date.now() < coolUntil && rem > 0) {
+    cd.classList.add('show'); btn.disabled = true; inp.disabled = true;
+    document.getElementById('gate-cool-timer').textContent = rem;
+    if (gateCoolIv) clearInterval(gateCoolIv);
+    gateCoolIv = setInterval(() => {
+      const r = Math.ceil((parseInt(sessionStorage.getItem(GATE_COOL_KEY)||'0') - Date.now()) / 1000);
+      if (r <= 0) {
+        clearInterval(gateCoolIv);
+        cd.classList.remove('show'); btn.disabled = false; inp.disabled = false;
+        document.getElementById('gate-input').focus();
+      } else {
+        document.getElementById('gate-cool-timer').textContent = r;
+      }
+    }, 1000);
+  } else {
+    cd.classList.remove('show'); btn.disabled = false; inp.disabled = false;
+  }
+}
+
+async function verifyMasterPassword() {
+  const coolUntil = parseInt(sessionStorage.getItem(GATE_COOL_KEY) || '0');
+  if (Date.now() < coolUntil) return;
+
+  const raw = document.getElementById('gate-input').value.trim();
+  const errEl = document.getElementById('gate-err');
+  const inp   = document.getElementById('gate-input');
+  if (!raw) { errEl.textContent = '⚠ Password cannot be empty'; return; }
+
+  const hash = await sha256(raw);
+
+  document.getElementById('gate-terminal').innerHTML =
+    `<span class="t-dim">[GEARGO_ADMIN_SYS v2.4.1]</span><br>` +
+    `<span class="t-cyan">$ verifying master credentials...</span><br>` +
+    `<span class="t-dim">hash=${hash.slice(0,28)}...</span><br>` +
+    `<span class="t-ylw">⏳ comparing against master hash...</span>`;
+
+  await new Promise(r => setTimeout(r, 650));
+
+  if (hash === MASTER_HASH) {
+    // ✅ SUCCESS
+    sessionStorage.setItem(GATE_AUTH_KEY, '1');
+    sessionStorage.setItem(GATE_TS_KEY, Date.now().toString());
+    sessionStorage.setItem(GATE_FAIL_KEY, '0');
+
+    document.getElementById('gate-terminal').innerHTML =
+      `<span class="t-dim">[GEARGO_ADMIN_SYS v2.4.1]</span><br>` +
+      `<span class="t-grn">✓ AUTHENTICATION SUCCESSFUL</span><br>` +
+      `<span class="t-grn">✓ Loading admin dashboard...</span>`;
+
+    inp.style.borderColor = '#22c55e';
+    await new Promise(r => setTimeout(r, 500));
+    showDashboard();
+
+  } else {
+    // ✕ FAILURE
+    let fails = parseInt(sessionStorage.getItem(GATE_FAIL_KEY) || '0');
+    fails++;
+    sessionStorage.setItem(GATE_FAIL_KEY, fails.toString());
+    document.getElementById('gate-attempt-count').textContent = fails;
+
+    inp.classList.add('error');
+    setTimeout(() => inp.classList.remove('error'), 400);
+
+    const left = GATE_MAX_FAIL - fails;
+
+    document.getElementById('gate-terminal').innerHTML =
+      `<span class="t-dim">[GEARGO_ADMIN_SYS v2.4.1]</span><br>` +
+      `<span class="t-red">ERR: AUTHENTICATION_FAILED — wrong password</span><br>` +
+      `<span class="t-red">SECURITY: ${fails} failed attempt(s) logged</span><br>` +
+      `<span class="t-ylw">⚠ ${left} attempt(s) remaining before lockout</span>`;
+
+    if (fails >= GATE_MAX_FAIL) {
+      const lockUntil = Date.now() + GATE_LOCKOUT;
+      sessionStorage.setItem(GATE_LOCK_KEY, lockUntil.toString());
+      showGateLockout();
+    } else {
+      if (left === 1) {
+        document.getElementById('gate-warn').classList.add('show');
+        errEl.textContent = '✕ Wrong password — ⚠ LAST CHANCE before lockout!';
+      } else {
+        document.getElementById('gate-warn').classList.remove('show');
+        errEl.textContent = `✕ Wrong password — ${left} attempt(s) remaining`;
+      }
+      if (fails >= 2) {
+        sessionStorage.setItem(GATE_COOL_KEY, (Date.now() + GATE_COOLDOWN).toString());
+        updateGateCoolUI();
+      }
+      inp.value = '';
+    }
+  }
+}
+
+function showGateLockout() {
+  const lockUntil = parseInt(sessionStorage.getItem(GATE_LOCK_KEY) || '0');
+  document.getElementById('master-gate').classList.add('hidden');
+  document.getElementById('gate-lockout').classList.add('show');
+  document.getElementById('gate-lockout-ts').textContent = new Date().toLocaleString();
+  if (gateLockIv) clearInterval(gateLockIv);
+  gateLockIv = setInterval(() => {
+    const rem = lockUntil - Date.now();
+    if (rem <= 0) {
+      clearInterval(gateLockIv);
+      document.getElementById('gate-lockout').classList.remove('show');
+      document.getElementById('master-gate').classList.remove('hidden');
+      sessionStorage.setItem(GATE_FAIL_KEY, '0');
+      sessionStorage.setItem(GATE_LOCK_KEY, '0');
+      document.getElementById('gate-attempt-count').textContent = '0';
+      document.getElementById('gate-warn').classList.remove('show');
+      document.getElementById('gate-err').textContent = '';
+      document.getElementById('gate-terminal').innerHTML =
+        `<span class="t-dim">[GEARGO_ADMIN_SYS v2.4.1]</span><br>` +
+        `<span class="t-cyan">$ lockout_expired — access restored</span><br>` +
+        `<span class="t-ylw">⚠ You may attempt authentication again</span><br>` +
+        `<span class="t-dim">$ awaiting master_password_</span>`;
+      setTimeout(() => document.getElementById('gate-input').focus(), 300);
+    } else {
+      const m = Math.floor(rem/60000).toString().padStart(2,'0');
+      const s = Math.floor((rem%60000)/1000).toString().padStart(2,'0');
+      document.getElementById('gate-lockout-timer').textContent = `${m}:${s}`;
+    }
+  }, 1000);
+}
+
+document.getElementById('gate-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') verifyMasterPassword();
+});
+
+// ════════════════════════════════════════════════════════════
+//  DASHBOARD LOGIC
+// ════════════════════════════════════════════════════════════
+let allPartners = [], allReviews = [], allRentals = [], selId = null, selName = '', contextTargetType = 'partner';
+const DASHBOARD_BOOKING_KEY = 'geargo_dashboard_bookings';
+const DASHBOARD_PARTNER_KEY = 'geargo_dashboard_partners';
+const DASHBOARD_REVIEW_KEY  = 'geargo_dashboard_reviews';
+
+const SAMPLE_DASHBOARD_RENTALS = [
+  { id:1, name:'Riya Singh', phone:'9876543210', email:'riya@example.com', item:'Gaming Console', price:1200, status:'active', booking_date:new Date(Date.now()-86400000).toISOString(), booking_time:'10:00 AM', days:3, address:'MG Road, Bengaluru', signature:'Riya Singh' },
+  { id:2, name:'Vikram Joshi', phone:'9123456780', email:'', item:'Carrom Board', price:350, status:'pending', booking_date:new Date(Date.now()-172800000).toISOString(), booking_time:'2:30 PM', days:2, address:'Park Street, Kolkata', signature:'' }
+];
+const SAMPLE_DASHBOARD_PARTNERS = [
+  { id:1, first_name:'Aman', last_name:'Kumar', mobile:'9876501234', city:'Delhi', vehicle_type:'Bike', vehicle_brand:'Honda', vehicle_model:'Activa', status:'active', emergency_name:'Meera', emergency_mobile:'9876504321', emergency_relationship:'Spouse', bank_holder_name:'Aman Kumar', bank_name:'HDFC', account_number:'123456789012', ifsc_code:'HDFC0001234', upi_id:'aman@upi', payment_preference:'Bank transfer', work_type:'Delivery', experience:'3 years', expected_salary:'900', languages:'Hindi, English', delivery_zones:'Central Delhi', time_slots:'Morning, Evening', created_at:new Date(Date.now()-259200000).toISOString() },
+  { id:2, first_name:'Priya', last_name:'Mehta', mobile:'9012345678', city:'Mumbai', vehicle_type:'Scooter', vehicle_brand:'TVS', vehicle_model:'Jupiter', status:'pending', emergency_name:'Tarun', emergency_mobile:'9012340000', emergency_relationship:'Brother', bank_holder_name:'Priya Mehta', bank_name:'SBI', account_number:'987654321098', ifsc_code:'SBIN0005678', upi_id:'priya@upi', payment_preference:'UPI', work_type:'Delivery', experience:'1 year', expected_salary:'750', languages:'Marathi, English', delivery_zones:'South Mumbai', time_slots:'Afternoon', created_at:new Date(Date.now()-345600000).toISOString() }
+];
+const SAMPLE_DASHBOARD_REVIEWS = [
+  { id:1, name:'Kavya Shah', city:'Pune', category:'Sports Equipment', title:'Prompt support', body:'Support responded quickly and the equipment quality was great.', rating:5, helpful:15, created_at:new Date(Date.now()-43200000).toISOString() },
+  { id:2, name:'Rahul Mehra', city:'Chennai', category:'Board Games', title:'Excellent service', body:'Easy booking and timely delivery, nothing to complain about.', rating:4, helpful:9, created_at:new Date(Date.now()-129600000).toISOString() }
+];
+
+function loadLocalDashboardData(key, sample) {
+  try { const s = JSON.parse(localStorage.getItem(key)); if (Array.isArray(s) && s.length) return s.map(x=>({...x})); } catch(e){}
+  return sample.map(x=>({...x}));
+}
+function saveLocalDashboardData(key, data) {
+  try { localStorage.setItem(key, JSON.stringify(data)); } catch(e){}
+}
+
+function age(dob) {
+  if (!dob) return 'N/A';
+  const b = new Date(dob), t = new Date();
+  let a = t.getFullYear() - b.getFullYear();
+  const m = t.getMonth() - b.getMonth();
+  if (m < 0 || (m === 0 && t.getDate() < b.getDate())) a--;
+  return a;
+}
+
+const ctxMenu = document.getElementById('ctxMenu');
+document.addEventListener('contextmenu', e => {
+  const row = e.target.closest('.partner-row');
+  if (row) {
+    e.preventDefault(); e.stopPropagation();
+    document.querySelectorAll('.partner-row.ctx-active').forEach(r=>r.classList.remove('ctx-active'));
+    row.classList.add('ctx-active');
+    selId = row.dataset.id; selName = row.dataset.name || 'this partner';
+    document.getElementById('ctx-pname').textContent = selName;
+    const mw=210, mh=150; let x=e.clientX, y=e.clientY;
+    if (x+mw>window.innerWidth) x=window.innerWidth-mw-8;
+    if (y+mh>window.innerHeight) y=window.innerHeight-mh-8;
+    ctxMenu.style.left=x+'px'; ctxMenu.style.top=y+'px'; ctxMenu.style.display='block';
+  } else { hideCtx(); }
+});
+document.addEventListener('click', e=>{ if (!e.target.closest('#ctxMenu')) hideCtx(); });
+document.addEventListener('scroll', hideCtx, true);
+function hideCtx() { ctxMenu.style.display='none'; document.querySelectorAll('.partner-row.ctx-active').forEach(r=>r.classList.remove('ctx-active')); }
+document.getElementById('ctx-view').onclick = ()=>{ hideCtx(); showDetails(selId); };
+document.getElementById('ctx-del').onclick  = ()=>{ hideCtx(); openConfirm(selId, selName, 'partner'); };
+
+function openConfirm(id, name, type='partner') {
+  document.getElementById('confirm-name').textContent = name;
+  document.getElementById('confirmBg').classList.add('open');
+  contextTargetType = type; selId = id;
+}
+function closeConfirm() { document.getElementById('confirmBg').classList.remove('open'); }
+document.getElementById('confirmBg').addEventListener('click', e=>{ if (e.target===document.getElementById('confirmBg')) closeConfirm(); });
+document.addEventListener('keydown', e=>{ if (e.key==='Escape') closeConfirm(); });
+
+async function clearAllPartners() {
+  if (!confirm("⚠️ Delete ALL registered partners?")) return;
+  if (!confirm("FINAL: This will permanently wipe all partner data. Proceed?")) return;
+  const isLocal = window.location.protocol === 'file:';
+  if (isLocal) { allPartners=[]; saveLocalDashboardData(DASHBOARD_PARTNER_KEY, allPartners); toast("All partners removed",'ok'); fetchData(); return; }
+  try {
+    const res = await fetch('/api/delete-all-delivery-boys',{method:'POST'});
+    const r = await res.json();
+    if (r.success) { toast("All partners removed",'ok'); fetchData(); } else toast(r.error||"Failed",'err');
+  } catch { toast("Network error",'err'); }
+}
+
+async function deletePartner(id) {
+  if (!id) return; closeConfirm();
+  const isLocal = window.location.protocol === 'file:';
+  if (isLocal) {
+    if (contextTargetType==='review') { allReviews=allReviews.filter(r=>r.id!=id); saveLocalDashboardData(DASHBOARD_REVIEW_KEY, allReviews); }
+    else { allPartners=allPartners.filter(p=>p.id!=id); saveLocalDashboardData(DASHBOARD_PARTNER_KEY, allPartners); }
+    updateMetricsUI();
+    document.querySelector(`.partner-row[data-id="${id}"]`)?.remove();
+    toast('Deleted successfully','ok'); fetchData(); return;
+  }
+  try {
+    const base = '';
+    const path = contextTargetType==='review' ? `/api/reviews/${id}` : `/api/delete-delivery-boy`;
+    const res = await fetch(`${base}${path}`,{method: contextTargetType==='review'?'DELETE':'POST', headers:{'Content-Type':'application/json'}, body: contextTargetType==='review'?null:JSON.stringify({id})});
+    if (!res.ok) throw new Error(await res.text()||res.statusText);
+    const r = await res.json();
+    if (r.success) {
+      const row = document.querySelector(`.partner-row[data-id="${id}"]`);
+      if (row) { row.style.transition='opacity .25s,transform .25s'; row.style.opacity='0'; row.style.transform='translateX(12px)'; setTimeout(()=>row.remove(),260); }
+      allPartners=allPartners.filter(p=>p.id!=id);
+      document.getElementById('m-active-team').textContent=allPartners.length;
+      toast('Deleted successfully','ok'); setTimeout(fetchData,500);
+    } else toast(r.message||'Could not delete','err');
+  } catch(err) { console.error(err); toast('Network error','err'); }
+}
+document.getElementById('confirm-ok-btn').onclick = ()=>deletePartner(selId);
+
+function toast(msg, type='ok') {
+  const t=document.getElementById('toast'), ico=document.getElementById('t-ico');
+  if (!t||!ico) return;
+  document.getElementById('t-msg').textContent=msg;
+  ico.textContent=type==='ok'?'✓':'✕'; ico.className='t-ico '+type;
+  t.classList.add('show'); t.style.display='flex';
+  setTimeout(()=>{ t.classList.remove('show'); t.style.display='none'; }, 3500);
+}
+
+function showDetails(id) {
+  const p=allPartners.find(x=>x.id==id); if (!p) return;
+  document.getElementById('modal-body').innerHTML=`
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:30px">
+    <div><h3 style="font-size:13px;color:var(--green);text-transform:uppercase;margin-bottom:12px">👤 Personal Info</h3>
+      <p style="margin-bottom:6px"><b>Name:</b> ${p.first_name} ${p.last_name||''}</p>
+      <p style="margin-bottom:6px"><b>DOB:</b> ${p.dob?p.dob.split('T')[0]:'N/A'} (Age: ${age(p.dob)})</p>
+      <p style="margin-bottom:6px"><b>Gender:</b> ${p.gender||'N/A'}</p>
+      <p style="margin-bottom:6px"><b>Mobile:</b> ${p.mobile}</p>
+      <p style="margin-bottom:6px"><b>Email:</b> ${p.email||'N/A'}</p></div>
+    <div><h3 style="font-size:13px;color:var(--blue);text-transform:uppercase;margin-bottom:12px">📍 Address</h3>
+      <p style="margin-bottom:6px"><b>Address:</b> ${p.address||'N/A'}</p>
+      <p style="margin-bottom:6px"><b>City/State:</b> ${p.city||''}, ${p.state||''}</p>
+      <p style="margin-bottom:6px"><b>Pincode:</b> ${p.pincode||''}</p></div>
+    <div><h3 style="font-size:13px;color:var(--amber);text-transform:uppercase;margin-bottom:12px">🏍️ Vehicle</h3>
+      <p style="margin-bottom:6px"><b>Type:</b> ${p.vehicle_type}</p>
+      <p style="margin-bottom:6px"><b>Brand/Model:</b> ${p.vehicle_brand} ${p.vehicle_model}</p>
+      <p style="margin-bottom:6px"><b>Reg No:</b> ${p.registration_number||'N/A'}</p></div>
+    <div><h3 style="font-size:13px;color:var(--red);text-transform:uppercase;margin-bottom:12px">🛡️ Emergency & Payment</h3>
+      <p style="margin-bottom:6px"><b>Emergency:</b> ${p.emergency_name} (${p.emergency_mobile})</p>
+      <p style="margin-bottom:6px"><b>Bank:</b> ${p.bank_name||'N/A'}</p>
+      <p style="margin-bottom:6px"><b>UPI ID:</b> ${p.upi_id||'N/A'}</p></div>
+    <div style="grid-column:1/-1;border-top:1px solid var(--border);padding-top:20px">
+      <h3 style="font-size:13px;color:var(--muted);text-transform:uppercase;margin-bottom:12px">⚙️ Work Preferences</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div>
+          <p style="margin-bottom:6px"><b>Work Type:</b> ${p.work_type||'N/A'}</p>
+          <p style="margin-bottom:6px"><b>Experience:</b> ${p.experience||'N/A'}</p>
+          <p style="margin-bottom:6px"><b>Exp. Salary:</b> ₹${p.expected_salary||'N/A'}/day</p>
+        </div>
+        <div>
+          <p style="margin-bottom:6px"><b>Zones:</b> ${p.delivery_zones||'N/A'}</p>
+          <p style="margin-bottom:6px"><b>Status:</b> <span class="badge ${p.status}">${p.status}</span></p>
+          <p style="margin-bottom:6px"><b>Registered:</b> ${new Date(p.created_at).toLocaleString()}</p>
+        </div>
+      </div>
+    </div>
+  </div>`;
+  document.getElementById('partnerModal').classList.add('open');
+}
+function closeModal() { document.getElementById('partnerModal').classList.remove('open'); }
+document.getElementById('partnerModal').addEventListener('click', e=>{ if (e.target===document.getElementById('partnerModal')) closeModal(); });
+
+function updateMetricsUI() {
+  document.getElementById('m-total-rentals').textContent = allRentals.length;
+  document.getElementById('m-active-team').textContent = allPartners.length;
+  const totalRev = allRentals.reduce((sum,b)=>sum+(parseInt(b.price)||0), 0);
+  document.getElementById('m-revenue').textContent = '₹'+totalRev.toLocaleString();
+}
+
+async function fetchData() {
+  const api = '';
+  let localRentals  = loadLocalDashboardData(DASHBOARD_BOOKING_KEY, SAMPLE_DASHBOARD_RENTALS);
+  let localPartners = loadLocalDashboardData(DASHBOARD_PARTNER_KEY, SAMPLE_DASHBOARD_PARTNERS);
+  let localReviews  = loadLocalDashboardData(DASHBOARD_REVIEW_KEY,  SAMPLE_DASHBOARD_REVIEWS);
+  try {
+    const [bR, pR, revR] = await Promise.all([
+      fetch(api+'/api/view-bookings').catch(()=>({ok:false})),
+      fetch(api+'/api/delivery-boys').catch(()=>({ok:false})),
+      fetch(api+'/api/reviews').catch(()=>({ok:false}))
+    ]);
+    if (bR.ok && pR.ok) {
+      const serverRentals  = await bR.json();
+      const serverPartners = await pR.json();
+      const serverReviews  = (revR&&revR.ok) ? await revR.json() : [];
+      const merge = (local, server) => {
+        const map = new Map();
+        local.forEach(x=>map.set(String(x.id),x));
+        server.forEach(x=>map.set(String(x.id),x));
+        return Array.from(map.values()).sort((a,b)=>b.id-a.id);
+      };
+      allRentals  = merge(localRentals,  serverRentals);
+      allPartners = merge(localPartners, serverPartners);
+      allReviews  = merge(localReviews,  serverReviews);
+      saveLocalDashboardData(DASHBOARD_BOOKING_KEY, allRentals);
+      saveLocalDashboardData(DASHBOARD_PARTNER_KEY, allPartners);
+      saveLocalDashboardData(DASHBOARD_REVIEW_KEY,  allReviews);
+    } else { allRentals=localRentals; allPartners=localPartners; allReviews=localReviews; }
+  } catch { allRentals=localRentals; allPartners=localPartners; allReviews=localReviews; }
+
+  const bRow = b => `<tr>
+    <td>#BPR${b.id}</td>
+    <td><b>${b.item}</b></td>
+    <td>${b.name}<br><small>${b.phone}${b.email?' | '+b.email:''}</small></td>
+    <td>₹${b.price}</td>
+    <td><span class="badge ${b.status}">${b.status}</span></td>
+    <td><button class="btn" style="padding:4px 8px;font-size:11px;color:var(--blue);border-color:var(--blue-light)" onclick="openAgreementPreview(${b.id})">📄 View</button></td>
+  </tr>`;
+
+  document.getElementById('overview-rentals').innerHTML = allRentals.length ? allRentals.slice(0,5).map(bRow).join('') : '<tr><td colspan="6" style="text-align:center;padding:20px">No bookings yet.</td></tr>';
+
+  document.getElementById('full-rentals').innerHTML = allRentals.length ? allRentals.map(b=>`
+  <tr>
+    <td>#BPR${b.id}</td>
+    <td>${b.name}<br><small>${b.phone}${b.email?' | '+b.email:''}</small></td>
+    <td><b>${b.item}</b></td>
+    <td>${b.booking_date?.split('T')[0]||'N/A'}<br><small>${b.booking_time||''}</small></td>
+    <td>₹${b.price}</td>
+    <td><span class="badge ${b.status}">${b.status}</span></td>
+    <td><button class="btn" style="padding:4px 8px;font-size:11px;color:var(--blue);border-color:var(--blue-light)" onclick="openAgreementPreview(${b.id})">📄 Agreement</button></td>
+  </tr>`).join('') : '<tr><td colspan="7" style="text-align:center;padding:20px">No bookings found.</td></tr>';
+
+  document.getElementById('full-reviews').innerHTML = allReviews.length ? allReviews.map(r=>`
+  <tr>
+    <td>#R${r.id}</td>
+    <td><b>${r.name}</b><br><small>${r.city}</small></td>
+    <td>${r.title}<br><small>${r.category}</small></td>
+    <td style="color:var(--amber);font-size:16px">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</td>
+    <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.body}</td>
+    <td>${r.helpful}</td>
+    <td>${r.created_at?.split('T')[0]||'N/A'}</td>
+    <td><button class="btn" onclick="openConfirm(${r.id},'Review #${r.id} by ${r.name}','review')" style="padding:4px 8px;font-size:11px;color:#ef4444;border-color:#fee2e2">🗑️ Delete</button></td>
+  </tr>`).join('') : '<tr><td colspan="8" style="text-align:center;padding:20px">No reviews found.</td></tr>';
+
+  document.getElementById('full-partners').innerHTML = allPartners.length ? allPartners.map((p,i)=>`
+  <tr class="partner-row" data-id="${p.id}" data-name="${p.first_name} ${p.last_name||''}" onclick="showDetails(${p.id})" title="Click to view full profile">
+    <td><span style="color:var(--blue);font-weight:700">#DRP${p.id}</span></td>
+    <td><b>${p.first_name} ${p.last_name||''}</b></td>
+    <td>${p.mobile}</td>
+    <td>${p.city||'N/A'}</td>
+    <td>${p.vehicle_type}<br><small>${p.vehicle_brand||''} ${p.vehicle_model||''}</small></td>
+    <td><span class="badge ${p.status||'pending'}">${p.status||'pending'}</span></td>
+    <td>
+      <div style="display:flex;gap:5px">
+        <button class="btn" style="padding:4px 8px;font-size:11px" onclick="event.stopPropagation();showDetails(${p.id})">View</button>
+        <button class="btn" onclick="event.stopPropagation();openConfirm(${p.id},'${p.first_name} ${p.last_name||''}')" style="padding:4px 8px;font-size:11px;color:#ef4444;border-color:#fee2e2">🗑️</button>
+      </div>
+    </td>
+  </tr>`).join('') : '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted)">No partners found.</td></tr>';
+
+  updateMetricsUI();
+}
+
+function openAgreementPreview(id) {
+  const b=allRentals.find(x=>x.id==id); if (!b) return;
+  document.getElementById('agr-id').textContent=b.id;
+  document.getElementById('agr-name').textContent=b.name;
+  document.getElementById('agr-phone').textContent=b.phone;
+  document.getElementById('agr-email').textContent=b.email||'N/A';
+  document.getElementById('agr-item').textContent=b.item;
+  document.getElementById('agr-days').textContent=b.days;
+  document.getElementById('agr-price').textContent='₹'+b.price;
+  document.getElementById('agr-date').textContent=b.booking_date?.split('T')[0]||'N/A';
+  document.getElementById('agr-addr').textContent=b.address;
+  document.getElementById('agr-sig').textContent=b.signature||'Digital Sign Missing';
+  document.getElementById('agreement-modal').classList.add('show');
+}
+
+function show(id, el) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('sec-'+id)?.classList.add('active');
+  el?.classList.add('active');
+  document.getElementById('page-title').textContent = id.charAt(0).toUpperCase()+id.slice(1);
+  hideCtx();
+}
+
+// ── INIT ──
+checkGateSession();
+</script>
+</body>
+</html>

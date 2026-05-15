@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GearGo — Terms & Conditions</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0d0f;
+    --surface: #141418;
+    --card: #1a1a20;
+    --accent: #ff5c35;
+    --accent2: #ff8c69;
+    --text: #f0ede8;
+    --muted: #8a8690;
+    --border: rgba(255,255,255,0.08);
+    --danger: #ff2d2d;
+    --danger-bg: rgba(255,45,45,0.08);
+    --danger-border: rgba(255,45,45,0.3);
+    --warn: #ffb520;
+    --warn-bg: rgba(255,181,32,0.08);
+    --warn-border: rgba(255,181,32,0.3);
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.8;
+    min-height: 100vh;
+  }
+
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,13,15,0.95);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 2.5rem;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-mark { width: 34px; height: 34px; background: var(--accent); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+  .logo-mark svg { width: 18px; height: 18px; }
+  .logo-name { font-family: var(--font-head); font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; }
+  .nav-links { display: flex; gap: 2rem; }
+  .nav-links a { font-size: 14px; color: var(--muted); text-decoration: none; font-weight: 400; transition: color 0.2s; }
+  .nav-links a:hover, .nav-links a.active { color: var(--text); }
+
+  .hero {
+    background: linear-gradient(135deg, #1a1018 0%, #0d0d0f 60%);
+    border-bottom: 1px solid var(--border);
+    padding: 5rem 2.5rem 4rem;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: -60px; right: -60px;
+    width: 360px; height: 360px;
+    background: radial-gradient(circle, rgba(255,92,53,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-inner { max-width: 760px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,92,53,0.12);
+    border: 1px solid rgba(255,92,53,0.3);
+    border-radius: 99px; padding: 5px 14px;
+    font-size: 12px; font-weight: 500; color: var(--accent2);
+    margin-bottom: 1.5rem; letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .badge-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+  h1 {
+    font-family: var(--font-head);
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 800; line-height: 1.05;
+    letter-spacing: -1.5px; margin-bottom: 1rem;
+  }
+  h1 span { color: var(--accent); }
+  .hero-meta { font-size: 14px; color: var(--muted); display: flex; gap: 1.5rem; flex-wrap: wrap; }
+
+  .wrapper {
+    max-width: 1100px; margin: 0 auto;
+    padding: 3rem 2.5rem 6rem;
+    display: grid; grid-template-columns: 230px 1fr; gap: 3rem;
+  }
+
+  .sidebar { position: sticky; top: 80px; height: fit-content; }
+  .sidebar-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem; }
+  .toc-list { list-style: none; }
+  .toc-list li { margin-bottom: 2px; }
+  .toc-list a {
+    display: block; padding: 7px 12px;
+    font-size: 13px; color: var(--muted);
+    text-decoration: none; border-radius: 8px;
+    border-left: 2px solid transparent; transition: all 0.18s;
+  }
+  .toc-list a:hover { color: var(--text); background: var(--card); border-left-color: var(--accent); }
+  .toc-list a.danger-link { color: #ff7070; }
+  .toc-list a.danger-link:hover { border-left-color: var(--danger); }
+  .sidebar-divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
+  .sidebar-contact { font-size: 12px; color: var(--muted); line-height: 1.8; }
+  .sidebar-contact a { color: var(--accent2); text-decoration: none; }
+
+  .content section { margin-bottom: 3.5rem; padding-bottom: 3.5rem; border-bottom: 1px solid var(--border); }
+  .content section:last-child { border-bottom: none; }
+
+  h2 {
+    font-family: var(--font-head); font-size: 22px; font-weight: 700;
+    letter-spacing: -0.5px; margin-bottom: 1.25rem;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 8px;
+    background: rgba(255,92,53,0.15);
+    color: var(--accent); font-size: 13px; font-weight: 700; flex-shrink: 0;
+    font-family: var(--font-head);
+  }
+  .section-num.red { background: var(--danger-bg); color: var(--danger); }
+
+  p { font-size: 15px; color: #bbb8c0; margin-bottom: 1rem; }
+  ul { padding-left: 0; list-style: none; margin-bottom: 1rem; }
+  ul li { font-size: 15px; color: #bbb8c0; padding: 6px 0 6px 22px; position: relative; }
+  ul li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-size: 13px; }
+  ul.danger-list li::before { content: '✕'; color: var(--danger); font-size: 12px; font-weight: 700; top: 7px; }
+  ul.penalty-list li::before { content: '⚖'; color: var(--warn); font-size: 11px; top: 8px; }
+
+  .callout {
+    background: var(--card); border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 10px; padding: 1.25rem 1.5rem; margin: 1.5rem 0;
+  }
+  .callout p { margin: 0; font-size: 14px; color: var(--muted); font-style: italic; }
+
+  .danger-callout {
+    background: var(--danger-bg);
+    border: 1px solid var(--danger-border);
+    border-left: 4px solid var(--danger);
+    border-radius: 10px; padding: 1.25rem 1.5rem; margin: 1.5rem 0;
+  }
+  .danger-callout .callout-head {
+    font-family: var(--font-head); font-size: 14px; font-weight: 700;
+    color: var(--danger); margin-bottom: 8px;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .danger-callout p { margin: 0; font-size: 14px; color: #ff9090; line-height: 1.7; }
+
+  .warn-callout {
+    background: var(--warn-bg);
+    border: 1px solid var(--warn-border);
+    border-left: 4px solid var(--warn);
+    border-radius: 10px; padding: 1.25rem 1.5rem; margin: 1.5rem 0;
+  }
+  .warn-callout .callout-head {
+    font-family: var(--font-head); font-size: 14px; font-weight: 700;
+    color: var(--warn); margin-bottom: 8px;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .warn-callout p { margin: 0; font-size: 14px; color: #ffd480; line-height: 1.7; }
+
+  .punishment-table {
+    width: 100%; border-collapse: collapse;
+    margin: 1.5rem 0; font-size: 14px;
+    border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+  }
+  .punishment-table th {
+    font-family: var(--font-head); font-size: 12px; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--muted); padding: 12px 16px;
+    background: var(--card);
+    border-bottom: 1px solid var(--border); text-align: left;
+  }
+  .punishment-table td {
+    padding: 12px 16px; border-bottom: 1px solid var(--border);
+    color: #bbb8c0; vertical-align: top; line-height: 1.6;
+  }
+  .punishment-table tr:last-child td { border-bottom: none; }
+  .punishment-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .severity {
+    display: inline-block; padding: 3px 10px; border-radius: 99px;
+    font-size: 11px; font-weight: 700; white-space: nowrap;
+    font-family: var(--font-head);
+  }
+  .severity.low { background: rgba(255,181,32,0.14); color: var(--warn); }
+  .severity.high { background: rgba(255,92,53,0.14); color: var(--accent); }
+  .severity.critical { background: rgba(255,45,45,0.18); color: var(--danger); }
+
+  .enforcement-banner {
+    background: linear-gradient(135deg, rgba(255,45,45,0.1), rgba(255,92,53,0.06));
+    border: 1px solid rgba(255,45,45,0.22);
+    border-radius: 14px; padding: 2rem 2rem;
+    margin: 2rem 0; text-align: center;
+  }
+  .enforcement-banner .icon { font-size: 38px; margin-bottom: 12px; }
+  .enforcement-banner h3 {
+    font-family: var(--font-head); font-size: 20px; font-weight: 800;
+    color: var(--danger); margin-bottom: 10px; letter-spacing: -0.5px;
+  }
+  .enforcement-banner p { font-size: 14px; color: #ff9090; margin: 0; max-width: 520px; margin: 0 auto; line-height: 1.7; }
+
+  footer {
+    background: var(--surface); border-top: 1px solid var(--border);
+    padding: 2rem 2.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-links { display: flex; gap: 2rem; }
+  .footer-links a { font-size: 13px; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--text); }
+  .footer-copy { font-size: 13px; color: var(--muted); }
+
+  @media (max-width: 700px) {
+    .wrapper { grid-template-columns: 1fr; }
+    .sidebar { position: static; }
+    nav { padding: 1rem 1.25rem; }
+    .nav-links { display: none; }
+    .hero { padding: 3rem 1.25rem 2.5rem; }
+    .wrapper { padding: 2rem 1.25rem 4rem; }
+    footer { flex-direction: column; align-items: flex-start; }
+    .punishment-table { font-size: 12px; }
+    .punishment-table th, .punishment-table td { padding: 9px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 18 18" fill="none"><path d="M9 1C4.58 1 1 4.13 1 8c0 2.38 1.34 4.47 3.37 5.79L4 16l2.8-1.4A8.6 8.6 0 009 15c4.42 0 8-3.13 8-7S13.42 1 9 1z" fill="white"/></svg>
+    </div>
+    <span class="logo-name">GearGo</span>
+  </a>
+  <div class="nav-links">
+    <a href="" class="active">Terms</a>
+    <a href="Privacy.html">Privacy</a>
+    <a href="Support.html">Support</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="badge"><span class="badge-dot"></span>Legal — Strictly Enforced</div>
+    <h1>Terms &amp; <span>Conditions</span></h1>
+    <div class="hero-meta">
+      <span>⚖️ Violations subject to severe penalties</span>
+    </div>
+  </div>
+</div>
+
+<div class="wrapper">
+  <aside class="sidebar">
+    <div class="sidebar-label">Contents</div>
+    <ul class="toc-list">
+      <li><a href="#acceptance">1. Acceptance of Terms</a></li>
+      <li><a href="#eligibility">2. Account Eligibility</a></li>
+      <li><a href="#acceptable-use">3. Acceptable Use</a></li>
+      <li><a href="#prohibited">4. Prohibited Activities</a></li>
+      <li><a href="#misuse" class="danger-link">5. Misuse &amp; Violations</a></li>
+      <li><a href="#penalties" class="danger-link">6. Penalties &amp; Punishments</a></li>
+      <li><a href="#enforcement" class="danger-link">7. Enforcement &amp; Legal Action</a></li>
+      <li><a href="#ip">8. Intellectual Property</a></li>
+      <li><a href="#liability">9. Limitation of Liability</a></li>
+      <li><a href="#termination">10. Termination</a></li>
+      <li><a href="#changes">11. Changes to Terms</a></li>
+      <li><a href="#contact">12. Contact Us</a></li>
+    </ul>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-contact">
+      Legal queries:<br/>
+      <a href="mailto:legal@geargo.com">legal@geargo.com</a><br/><br/>
+      Report abuse:<br/>
+      <a href="mailto:abuse@geargo.com">abuse@geargo.com</a><br/><br/>
+      Appeals:<br/>
+      <a href="mailto:appeals@geargo.com">appeals@geargo.com</a>
+    </div>
+  </aside>
+
+  <main class="content">
+
+    <div class="callout">
+      <p>Please read these terms carefully before using GearGo. By accessing or using our service, you agree to be fully bound by these terms — including all misuse, penalty, and enforcement provisions. Violations will result in <strong style="color:var(--accent2)">immediate action, permanent bans, financial penalties, and legal prosecution.</strong></p>
+    </div>
+
+    <!-- 1 -->
+    <section id="acceptance">
+      <h2><span class="section-num">1</span> Acceptance of Terms</h2>
+      <p>By accessing or using GearGo ("the Service"), you confirm that you are at least 13 years of age, have read and understood these Terms of Service in their entirety, and agree to be legally bound by them.</p>
+      <p>These terms form a legally binding agreement between you and GearGo Inc. If you do not agree to these terms, please discontinue use of the Service immediately. Continued use of the platform constitutes full acceptance of all terms — including all penalty and enforcement clauses contained herein.</p>
+    </section>
+
+    <!-- 2 -->
+    <section id="eligibility">
+      <h2><span class="section-num">2</span> Account Eligibility</h2>
+      <p>To use GearGo, you must register for an account. You agree to:</p>
+      <ul>
+        <li>Provide accurate, complete, and current information during registration</li>
+        <li>Maintain the security and confidentiality of your account credentials at all times</li>
+        <li>Promptly update any information that becomes inaccurate</li>
+        <li>Not create multiple accounts to evade bans or circumvent any platform restriction</li>
+        <li>Not share your account access with any third party under any circumstances</li>
+        <li>Notify us immediately at <a href="mailto:geargo199@gmail.com" style="color:var(--accent2);text-decoration:none;">geargo199@gmail.com</a> of any unauthorised account access</li>
+      </ul>
+      <div class="warn-callout">
+        <div class="callout-head">⚠️ Account Fraud Warning</div>
+        <p>Registering with false identity information, creating fake accounts, or impersonating other individuals or entities is a serious violation. Detected fraudulent accounts are permanently banned without appeal, and the incident may be reported to relevant law enforcement authorities.</p>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section id="acceptable-use">
+      <h2><span class="section-num">3</span> Acceptable Use Policy</h2>
+      <p>GearGo is a platform built on trust, community respect, and free expression within lawful boundaries. You are permitted to use GearGo to:</p>
+      <ul>
+        <li>Share opinions, stories, and experiences in a respectful and lawful manner</li>
+        <li>Engage with and respond to other users' content constructively</li>
+        <li>Report content or behaviour you believe violates these Terms</li>
+        <li>Promote your own original creative content and legitimate business activity</li>
+      </ul>
+      <p>GearGo continuously monitors platform activity using automated detection systems and a dedicated human moderation team to ensure compliance with these terms. All users acknowledge that their activity on the platform is subject to monitoring at all times in accordance with our Privacy Policy.</p>
+    </section>
+
+    <!-- 4 -->
+    <section id="prohibited">
+      <h2><span class="section-num">4</span> Prohibited Activities</h2>
+      <p>The following activities are strictly prohibited on GearGo. Any user found engaging in these activities will face immediate and severe enforcement action:</p>
+      <ul class="danger-list">
+        <li>Posting hateful, racist, sexist, or discriminatory content targeting any individual or group</li>
+        <li>Harassment, cyberbullying, stalking, intimidation, or threatening any person</li>
+        <li>Sharing, distributing, or soliciting sexually explicit content without verified consent</li>
+        <li>Posting content that promotes, glorifies, recruits for, or facilitates violence or terrorism</li>
+        <li>Deliberately spreading misinformation, disinformation, or manipulated media</li>
+        <li>Spamming, unsolicited advertising, phishing, or defrauding other users</li>
+        <li>Sharing private personal information of others without their consent (doxxing)</li>
+        <li>Uploading or distributing malware, viruses, ransomware, or malicious code</li>
+        <li>Attempting to hack, reverse-engineer, or exploit any platform vulnerability</li>
+        <li>Using bots, scrapers, or automated systems without prior written authorisation</li>
+        <li>Infringing on copyrights, trademarks, patents, or any third-party intellectual property</li>
+        <li>Engaging in any form of fraud, identity theft, or financial crime on or through the platform</li>
+        <li>Posting any content involving minors in harmful, sexual, or exploitative contexts</li>
+      </ul>
+      <div class="danger-callout">
+        <div class="callout-head">🚫 Zero Tolerance Policy</div>
+        <p>GearGo operates a strict zero-tolerance policy on hate speech, child exploitation, terrorism, and violent threats. Such violations result in an instant permanent ban and are reported directly to law enforcement authorities — including NCMEC, Interpol, and national cybercrime units — without prior warning or notice to the user.</p>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section id="misuse">
+      <h2><span class="section-num red">5</span> Misuse &amp; Violations</h2>
+
+      <div class="enforcement-banner">
+        <div class="icon">⚖️</div>
+        <h3>Misuse of GearGo Will Not Be Tolerated</h3>
+        <p>Any misuse of the GearGo platform — whether deliberate or negligent — carries serious and lasting consequences. We track, log, and thoroughly investigate all suspicious activity. Every violation is recorded permanently in our enforcement database. Violators will face penalties proportional to the severity and frequency of their misconduct.</p>
+      </div>
+
+      <p>Misuse of GearGo includes — but is not limited to — the following behaviours:</p>
+      <ul class="danger-list">
+        <li>Repeatedly violating community guidelines after receiving formal warnings</li>
+        <li>Coordinated attacks on individuals ("pile-ons") or organised harassment campaigns</li>
+        <li>Attempting to manipulate platform algorithms through artificial or inauthentic engagement</li>
+        <li>Evading a permanent or temporary ban by creating new accounts</li>
+        <li>Sharing another user's private messages, media, or personal data without explicit consent</li>
+        <li>Using the platform to recruit, organise, or promote illegal, harmful, or extremist activities</li>
+        <li>Deliberately misrepresenting yourself as a GearGo employee, partner, moderator, or official</li>
+        <li>Conducting commercial data scraping, competitive intelligence gathering, or bulk data extraction</li>
+        <li>Manipulating or attempting to manipulate any appeal, moderation, or reporting process</li>
+      </ul>
+
+      <p>GearGo reserves the right to determine what constitutes misuse at its sole and absolute discretion. Our Trust &amp; Safety team reviews all flagged accounts and content, and their decisions are binding unless successfully overturned through the formal appeals process.</p>
+
+      <div class="warn-callout">
+        <div class="callout-head">⚠️ Ignorance Is Not a Valid Defence</div>
+        <p>Claiming ignorance of these terms is not an accepted defence against any violation. All users are expected to have read and fully understood the Terms &amp; Conditions upon creating an account on GearGo. GearGo holds every user fully and personally accountable for all activity conducted on or through their account.</p>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section id="penalties">
+      <h2><span class="section-num red">6</span> Penalties &amp; Punishments</h2>
+      <p>GearGo enforces a graduated but firm penalty system. The severity of consequences depends on the nature, intent, and frequency of the violation. All penalties are permanently recorded in our enforcement database and will be considered in any future appeal or account review.</p>
+
+      <table class="punishment-table">
+        <thead>
+          <tr>
+            <th>Violation Type</th>
+            <th>Severity</th>
+            <th>Consequence</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Minor guideline breach (first offence)</td>
+            <td><span class="severity low">Low</span></td>
+            <td>Formal written warning issued to account email</td>
+          </tr>
+          <tr>
+            <td>Repeated minor violations (2–3 offences)</td>
+            <td><span class="severity low">Low</span></td>
+            <td>Temporary account suspension (7–30 days); content removed</td>
+          </tr>
+          <tr>
+            <td>Spam, phishing, or scam activity</td>
+            <td><span class="severity high">High</span></td>
+            <td>Immediate permanent account ban; IP address blocked</td>
+          </tr>
+          <tr>
+            <td>Harassment or targeted cyberbullying</td>
+            <td><span class="severity high">High</span></td>
+            <td>Permanent ban; all content removed; legal referral if threats are involved</td>
+          </tr>
+          <tr>
+            <td>Doxxing or privacy invasion</td>
+            <td><span class="severity high">High</span></td>
+            <td>Permanent ban; data preserved for civil and criminal proceedings</td>
+          </tr>
+          <tr>
+            <td>Ban evasion (creating new accounts)</td>
+            <td><span class="severity high">High</span></td>
+            <td>All accounts permanently banned; device fingerprint blocked; possible legal action</td>
+          </tr>
+          <tr>
+            <td>Platform hacking or security exploitation</td>
+            <td><span class="severity critical">Critical</span></td>
+            <td>Permanent ban; civil lawsuit for damages; criminal referral to law enforcement</td>
+          </tr>
+          <tr>
+            <td>Hate speech or credible violent threats</td>
+            <td><span class="severity critical">Critical</span></td>
+            <td>Immediate permanent ban; mandatory law enforcement report; legal prosecution</td>
+          </tr>
+          <tr>
+            <td>Child exploitation or CSAM</td>
+            <td><span class="severity critical">Critical</span></td>
+            <td>Instant permanent ban; immediate reporting to NCMEC &amp; law enforcement; full criminal prosecution pursued</td>
+          </tr>
+          <tr>
+            <td>Terrorism or extremist content</td>
+            <td><span class="severity critical">Critical</span></td>
+            <td>Instant permanent ban; immediate reporting to national counter-terrorism authorities; all data preserved</td>
+          </tr>
+          <tr>
+            <td>Unauthorised commercial data scraping</td>
+            <td><span class="severity high">High</span></td>
+            <td>Permanent ban; civil damages claim up to $150,000 USD per violation under applicable law</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="danger-callout">
+        <div class="callout-head">🚨 Severe Punishment — Important Notice</div>
+        <p>Misuse of GearGo is treated with the utmost seriousness and severity. Critical violations result in immediate permanent bans, full and active cooperation with law enforcement agencies worldwide, and vigorous legal prosecution. GearGo will pursue all available civil and criminal remedies to the fullest extent of applicable law — including seeking full recovery of legal costs, damages, and all associated expenses directly from the violating party.</p>
+      </div>
+
+      <p>In all confirmed cases of violation, GearGo additionally reserves the right to:</p>
+      <ul class="penalty-list">
+        <li>Preserve and disclose all relevant account data, IP addresses, device identifiers, messages, and activity logs to law enforcement agencies and courts</li>
+        <li>Seek financial compensation and full damages for harm caused to the platform, its users, or its reputation</li>
+        <li>Pursue a permanent court injunction preventing the violator from accessing any GearGo service in perpetuity</li>
+        <li>Share violation details, anonymised or otherwise where legally permissible, with partner platforms, industry safety bodies, and internet trust organisations</li>
+        <li>Publicly disclose enforcement actions in cases involving significant public interest, public safety, or widespread harm</li>
+      </ul>
+    </section>
+
+    <!-- 7 -->
+    <section id="enforcement">
+      <h2><span class="section-num red">7</span> Enforcement &amp; Legal Action</h2>
+
+      <p>GearGo maintains a dedicated Trust &amp; Safety team that operates 24 hours a day, 7 days a week, to proactively identify and act on violations. Our enforcement infrastructure includes:</p>
+      <ul>
+        <li>Automated AI-powered content detection and real-time behavioural analysis systems</li>
+        <li>Trained human moderators who review all escalated and flagged content and accounts</li>
+        <li>A permanent enforcement log that records all violations, warnings, and actions taken</li>
+        <li>Established partnerships with national and international law enforcement agencies</li>
+        <li>Active cooperation with global internet safety bodies including NCMEC, IWF, and Interpol</li>
+      </ul>
+
+      <div class="warn-callout">
+        <div class="callout-head">⚠️ Evidence Preservation Policy</div>
+        <p>Upon detecting any violation, GearGo immediately and automatically preserves all associated data — including full account information, IP addresses, geolocation data, device identifiers, all messages, and complete activity logs — for use in potential legal proceedings. This data is securely retained for a minimum of 7 years in cases involving criminal violations, and may never be deleted at a user's request where legal proceedings are active or anticipated.</p>
+      </div>
+
+      <p>Users who believe they have been penalised in error may submit a formal written appeal to <a href="mailto:appeals@geargo.com" style="color:var(--accent2);text-decoration:none;">appeals@geargo.com</a> within 14 calendar days of receiving the penalty notice. Appeals are reviewed within 10 business days. All decisions reached following the formal appeal review process are final and binding.</p>
+
+      <div class="danger-callout">
+        <div class="callout-head">🔴 Legal Prosecution — Final Warning</div>
+        <p>GearGo will not hesitate to pursue full and aggressive legal action — including civil lawsuits, injunctions, and formal criminal complaints — against any user who causes harm to the platform, its users, its partners, or its public reputation. This includes actively seeking full recovery of all legal costs, court fees, damages, and associated expenses from the violating party. No misuse of GearGo will go unanswered.</p>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section id="ip">
+      <h2><span class="section-num">8</span> Intellectual Property</h2>
+      <p>All content you submit to GearGo remains your intellectual property. By posting, you grant GearGo a worldwide, non-exclusive, royalty-free licence to use, display, reproduce, and distribute your content within the Service for the purposes of operating and promoting the platform.</p>
+      <p>GearGo's name, logo, platform code, interface design, branding, and all related marks are the exclusive property of GearGo Inc. Unauthorised use, reproduction, imitation, or misappropriation of GearGo's intellectual property is a serious legal violation and will result in immediate enforcement action including injunctions and substantial financial penalties.</p>
+    </section>
+
+    <!-- 9 -->
+    <section id="liability">
+      <h2><span class="section-num">9</span> Limitation of Liability</h2>
+      <p>To the fullest extent permitted by applicable law, GearGo Inc. shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of — or inability to use — the Service. The Service is provided on an "as is" and "as available" basis without warranties of any kind, either express or implied.</p>
+      <p>Users bear full and exclusive personal liability for all content they post and all actions they take on the platform. GearGo accepts no responsibility whatsoever for harm caused by user-generated content or user behaviour.</p>
+    </section>
+
+    <!-- 10 -->
+    <section id="termination">
+      <h2><span class="section-num">10</span> Termination</h2>
+      <p>We may suspend or permanently terminate your access to GearGo at any time, with or without cause, and with or without prior notice. Grounds for termination include — but are not limited to — any breach of these Terms, misuse of the platform, or conduct that GearGo determines to be harmful to the community.</p>
+      <p>Upon termination, all licences granted to you cease immediately. GearGo retains the right to preserve your data for legal and compliance purposes for as long as necessary, even after account termination. Termination of your account does not in any way limit GearGo's right to pursue legal remedies for any prior violations.</p>
+      <p>You may voluntarily delete your account at any time via Settings → Account. Data will be removed or anonymised within 90 days, except where required by law or where legal proceedings are ongoing or anticipated.</p>
+    </section>
+
+    <!-- 11 -->
+    <section id="changes">
+      <h2><span class="section-num">11</span> Changes to Terms</h2>
+      <p>We may modify these Terms at any time at our sole discretion. When we do, we will update the "Last updated" date at the top of this page and, where changes are material, notify registered users via email. Continued use of the Service after any changes constitutes your acceptance of the revised Terms.</p>
+      <p>We strongly encourage all users to review this page periodically — particularly the misuse, penalties, and enforcement sections — to remain fully informed of your rights and obligations.</p>
+    </section>
+
+    <!-- 12 -->
+    <section id="contact">
+      <h2><span class="section-num">12</span> Contact Us</h2>
+      <p>If you have questions about these Terms, wish to report a violation, or need to submit an appeal, please contact us using the appropriate channel below:</p>
+      <ul>
+        <li>General legal enquiries: <a href="mailto:legal@geargo.com" style="color:var(--accent2);text-decoration:none;">legal@geargo.com</a></li>
+        <li>Report abuse or misuse: <a href="mailto:abuse@geargo.com" style="color:var(--accent2);text-decoration:none;">abuse@geargo.com</a></li>
+        <li>Appeal a penalty or ban: <a href="mailto:appeals@geargo.com" style="color:var(--accent2);text-decoration:none;">appeals@geargo.com</a></li>
+        <li>Security vulnerabilities: <a href="mailto:security@geargo.com" style="color:var(--accent2);text-decoration:none;">security@geargo.com</a></li>
+        <li>Postal address: GearGo Inc., Legal Department, 123 Main Street, San Francisco, CA 94105, USA</li>
+        <li>Response time: within 5 business days for general queries; within 48 hours for abuse reports</li>
+      </ul>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <div class="footer-links">
+    <a href="Privacy.html">Privacy</a>
+    <a href="Support.html">Support</a>
+    <a href="index.html">Home</a>
+  </div>
+  <span class="footer-copy">@ 2026 GearGo Inc. All rights reserved.</span>
+</footer>
+
+</body>
+</html>
