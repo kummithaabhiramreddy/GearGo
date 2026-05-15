@@ -8,6 +8,7 @@
 
 <!-- Google Identity Services SDK — Real Google OAuth -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+<link rel="icon" type="image/png" href="geargo_stamp.png" />
 
 <style>
   /* ════════════════════════════════════════
@@ -269,9 +270,8 @@
 
 <!-- Hidden Google One Tap container -->
 <div id="g_id_onload"
-     data-client_id="440675514682-lng0e1v467junk79btos6fvdbbuht0jv.apps.googleusercontent.com"
-     data-callback="onGoogleSignInCallback"
-     data-auto_prompt="false"></div>
+     data-auto_prompt="false"
+     data-skip_prompt_cookie="g_skip_prompt"></div>
 
 <!-- NAV (Page 1 style — hamburger) -->
 <nav>
@@ -956,18 +956,12 @@ async function handleFPStep1() {
   showToast('⏳ Sending reset code...');
 
   try {
-    if (window.location.protocol === 'file:') {
-      throw new Error('Please run the server (npm start) and open http://localhost:3005 to use this feature.');
-    }
-    const res = await fetch('http://localhost:3005/api/auth-flow/dispatch-otp', {
+    const res = await fetch('/api/auth-flow/dispatch-otp', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: _fpEmail })
     });
     if (!res.ok) {
-      if (!res.headers.get('X-Backend')) {
-        throw new Error('You are hitting the wrong server. Please open http://localhost:3005 instead.');
-      }
       const errData = await res.json().catch(() => ({ message: 'Server error ' + res.status }));
       throw new Error(errData.message || 'Server error');
     }
@@ -1009,13 +1003,14 @@ async function handleFPStep2() {
   }
   showToast('⏳ Verifying code...');
   try {
-    const res = await fetch('http://localhost:3005/api/auth-flow/confirm-otp', {
+    const res = await fetch('/api/auth-flow/confirm-otp', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: _fpEmail, otp: entered })
     });
-    if (!res.ok || !res.headers.get('X-Backend')) {
-      throw new Error('You are hitting the wrong server. Please open http://localhost:3005 instead.');
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({ message: 'Server error ' + res.status }));
+      throw new Error(errData.message || 'Server error');
     }
     const data = await res.json();
     if (data.success) {
