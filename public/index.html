@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -763,7 +763,7 @@ function checkGPSAndRedirect() {
 
   if (!navigator.geolocation) {
     msg.innerHTML = '<span style="color:var(--accent3)">❌ GPS not supported.</span><br>Redirecting...';
-    setTimeout(() => { window.location.href = 'Search page.html'; }, 1500);
+    setTimeout(() => { window.location.href = 'search.html'; }, 1500);
     return;
   }
 
@@ -773,7 +773,7 @@ function checkGPSAndRedirect() {
       bar.style.animation = 'none';
       bar.style.width = '100%';
       bar.style.background = 'var(--accent2)';
-      setTimeout(() => { window.location.href = 'Search page.html'; }, 1000);
+      setTimeout(() => { window.location.href = 'search.html'; }, 1000);
     },
     (err) => {
       let reason = "Please turn on GPS";
